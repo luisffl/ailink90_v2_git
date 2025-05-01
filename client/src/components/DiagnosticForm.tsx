@@ -55,6 +55,24 @@ export default function DiagnosticForm({
       if (!formData.mayor_desafio) {
         newErrors.mayor_desafio = "Por favor, selecciona una opción";
       }
+      
+      if (formData.tipos_negocio_preferidos.length === 0) {
+        newErrors.tipos_negocio_preferidos = "Selecciona al menos un tipo de negocio";
+      }
+    }
+    else if (currentStep === 3) {
+      if (!formData.habilidades_actuales) {
+        newErrors.habilidades_actuales = "Por favor, completa este campo";
+      }
+    }
+    else if (currentStep === 4) {
+      if (!formData.compromiso_tiempo) {
+        newErrors.compromiso_tiempo = "Por favor, selecciona una opción";
+      }
+      
+      if (!formData.objetivo_inicial) {
+        newErrors.objetivo_inicial = "Por favor, selecciona un objetivo";
+      }
     }
     else if (currentStep === 5) {
       if (!formData.terminos_aceptados) {
@@ -90,14 +108,24 @@ export default function DiagnosticForm({
         // Enviar datos al webhook
         const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
         
-        await fetch(webhookUrl, {
+        const response = await fetch(webhookUrl, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
-          body: JSON.stringify(formData)
+          mode: 'cors',
+          body: JSON.stringify({
+            data: formData,
+            timestamp: new Date().toISOString()
+          })
         });
         
+        if (!response.ok) {
+          throw new Error(`Error de respuesta: ${response.status}`);
+        }
+        
+        console.log('Respuesta del webhook:', await response.text());
         onSubmitSuccess();
       } catch (error) {
         console.error('Error submitting form:', error);
