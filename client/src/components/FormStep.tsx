@@ -104,20 +104,6 @@ export default function FormStep({
           <h2 className="form-heading">Tu perfil profesional</h2>
           
           <div className="mb-6">
-            <Label htmlFor="habilidades_actuales" className="text-sm font-medium mb-2 block text-gray-300">
-              ¿Qué habilidades o experiencia tienes actualmente?
-            </Label>
-            <Textarea
-              id="habilidades_actuales"
-              value={formData.habilidades_actuales}
-              onChange={(e) => updateFormData("habilidades_actuales", e.target.value)}
-              placeholder="Ej: ventas, diseño, marketing, experiencia en algún sector..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
-              rows={4}
-            />
-          </div>
-          
-          <div className="mb-6">
             <Label htmlFor="mayor_desafio" className="text-sm font-medium mb-2 block text-gray-300">
               Mi mayor dificultad ahora mismo es: <span className="text-blue-500">*</span>
             </Label>
@@ -139,6 +125,41 @@ export default function FormStep({
             </Select>
             {errors.mayor_desafio && (
               <p className="text-red-500 text-sm mt-1">{errors.mayor_desafio}</p>
+            )}
+          </div>
+          
+          <div className="mb-6">
+            <Label className="text-sm font-medium mb-3 block text-gray-300">
+              Prefiero trabajar con: (marca todas las que apliquen) <span className="text-blue-500">*</span>
+            </Label>
+            
+            <div className="space-y-3 mt-2">
+              {[
+                "Negocios que venden a otros negocios (B2B)",
+                "Negocios que venden al consumidor final (B2C)",
+                "Servicios profesionales (abogados, consultores...)",
+                "Oficios y servicios a domicilio (fontaneros, electricistas...)",
+                "Tiendas físicas / Comercios",
+                "Negocios online"
+              ].map((option) => (
+                <div key={option} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={option.replace(/[^a-zA-Z0-9]/g, '_')}
+                    checked={formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption)}
+                    onCheckedChange={() => handleCheckboxChange(option as TipoNegocioOption)}
+                    className="custom-checkbox"
+                  />
+                  <Label 
+                    htmlFor={option.replace(/[^a-zA-Z0-9]/g, '_')} 
+                    className="text-sm text-gray-300 cursor-pointer"
+                  >
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </div>
+            {errors.tipos_negocio_preferidos && (
+              <p className="text-red-500 text-sm mt-1">{errors.tipos_negocio_preferidos}</p>
             )}
           </div>
           
@@ -167,6 +188,23 @@ export default function FormStep({
           <h2 className="form-heading">Nichos y preferencias</h2>
           
           <div className="mb-6">
+            <Label htmlFor="habilidades_actuales" className="text-sm font-medium mb-2 block text-gray-300">
+              ¿Qué habilidades o experiencia tienes actualmente? <span className="text-blue-500">*</span>
+            </Label>
+            <Textarea
+              id="habilidades_actuales"
+              value={formData.habilidades_actuales}
+              onChange={(e) => updateFormData("habilidades_actuales", e.target.value)}
+              placeholder="Ej: ventas, diseño, marketing, experiencia en algún sector..."
+              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
+              rows={4}
+            />
+            {errors.habilidades_actuales && (
+              <p className="text-red-500 text-sm mt-1">{errors.habilidades_actuales}</p>
+            )}
+          </div>
+          
+          <div className="mb-6">
             <Label htmlFor="nichos_potenciales" className="text-sm font-medium mb-2 block text-gray-300">
               Si ya tienes alguna idea de nicho en mente, escríbela aquí
             </Label>
@@ -178,38 +216,6 @@ export default function FormStep({
               className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
               rows={3}
             />
-          </div>
-          
-          <div className="mb-6">
-            <Label className="text-sm font-medium mb-3 block text-gray-300">
-              Prefiero trabajar con: (marca todas las que apliquen)
-            </Label>
-            
-            <div className="space-y-3 mt-2">
-              {[
-                "Negocios que venden a otros negocios (B2B)",
-                "Negocios que venden al consumidor final (B2C)",
-                "Servicios profesionales (abogados, consultores...)",
-                "Oficios y servicios a domicilio (fontaneros, electricistas...)",
-                "Tiendas físicas / Comercios",
-                "Negocios online"
-              ].map((option) => (
-                <div key={option} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={option.replace(/[^a-zA-Z0-9]/g, '_')}
-                    checked={formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption)}
-                    onCheckedChange={() => handleCheckboxChange(option as TipoNegocioOption)}
-                    className="custom-checkbox"
-                  />
-                  <Label 
-                    htmlFor={option.replace(/[^a-zA-Z0-9]/g, '_')} 
-                    className="text-sm text-gray-300 cursor-pointer"
-                  >
-                    {option}
-                  </Label>
-                </div>
-              ))}
-            </div>
           </div>
           
           <div className="flex justify-between mt-10">
@@ -238,7 +244,7 @@ export default function FormStep({
           
           <div className="mb-6">
             <Label htmlFor="compromiso_tiempo" className="text-sm font-medium mb-2 block text-gray-300">
-              ¿Cuánto tiempo puedes dedicarle a esto semanalmente?
+              ¿Cuánto tiempo puedes dedicarle a esto semanalmente? <span className="text-blue-500">*</span>
             </Label>
             <Select
               value={formData.compromiso_tiempo}
@@ -254,11 +260,14 @@ export default function FormStep({
                 <SelectItem value="Más de 20 horas (Tiempo completo)">Más de 20 horas (Tiempo completo)</SelectItem>
               </SelectContent>
             </Select>
+            {errors.compromiso_tiempo && (
+              <p className="text-red-500 text-sm mt-1">{errors.compromiso_tiempo}</p>
+            )}
           </div>
           
           <div className="mb-6">
             <Label htmlFor="objetivo_inicial" className="text-sm font-medium mb-2 block text-gray-300">
-              Mi meta principal al empezar es:
+              Mi meta principal al empezar es: <span className="text-blue-500">*</span>
             </Label>
             <Select
               value={formData.objetivo_inicial}
@@ -275,6 +284,9 @@ export default function FormStep({
                 <SelectItem value="Validar la idea">Validar la idea</SelectItem>
               </SelectContent>
             </Select>
+            {errors.objetivo_inicial && (
+              <p className="text-red-500 text-sm mt-1">{errors.objetivo_inicial}</p>
+            )}
           </div>
           
           <div className="flex justify-between mt-10">
