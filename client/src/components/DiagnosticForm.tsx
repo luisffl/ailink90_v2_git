@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 interface DiagnosticFormProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
-  onSubmitSuccess: () => void;
+  onSubmitSuccess: (response?: any) => void;
 }
 
 export default function DiagnosticForm({ 
@@ -147,6 +147,13 @@ export default function DiagnosticForm({
         .then(({ status, data }) => {
           console.log("Respuesta del proxy:", status, data);
           
+          // Verificamos si la respuesta tiene el formato del diagnóstico
+          const hasValidDiagnostico = 
+            data && 
+            typeof data === 'object' && 
+            data.saludo && 
+            data.diagnostico_nicho;
+          
           // Siempre mostramos mensaje de éxito para la UI
           toast({
             title: "Éxito",
@@ -155,7 +162,13 @@ export default function DiagnosticForm({
           });
           
           setIsSubmitting(false);
-          onSubmitSuccess();
+          
+          // Si tenemos datos válidos, los pasamos al componente padre
+          if (hasValidDiagnostico) {
+            onSubmitSuccess(data);
+          } else {
+            onSubmitSuccess();
+          }
         })
         .catch(error => {
           console.error("Error en proxy:", error);

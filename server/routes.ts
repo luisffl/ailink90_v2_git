@@ -56,8 +56,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         proxyRes.on('end', () => {
           console.log("Respuesta de n8n:", responseData);
+          
+          // Intentamos parsear la respuesta para ver si es un JSON válido
+          let jsonResponse;
+          try {
+            jsonResponse = JSON.parse(responseData);
+          } catch (e) {
+            // Si no es un JSON válido, enviamos la respuesta tal cual
+            jsonResponse = { message: responseData };
+          }
+          
           // Enviar la respuesta al cliente
-          res.status(proxyRes.statusCode || 200).send(responseData);
+          res.status(proxyRes.statusCode || 200).json(jsonResponse);
         });
       });
       
