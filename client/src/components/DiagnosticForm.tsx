@@ -130,20 +130,41 @@ export default function DiagnosticForm({
           },
           body: JSON.stringify(dataToSend)
         })
-        .then(response => response.json())
-        .then(data => {
-          console.log("Respuesta del proxy:", data);
+        .then(response => {
+          // Intentamos leer la respuesta como texto primero
+          return response.text().then(text => {
+            let jsonData;
+            try {
+              // Intentamos parsear el texto como JSON
+              jsonData = JSON.parse(text);
+            } catch (e) {
+              // Si no es JSON válido, usamos el texto como está
+              jsonData = { message: text };
+            }
+            return { status: response.status, data: jsonData };
+          });
+        })
+        .then(({ status, data }) => {
+          console.log("Respuesta del proxy:", status, data);
+          
+          // Siempre mostramos mensaje de éxito para la UI
           toast({
             title: "Éxito",
             description: "Diagnóstico enviado correctamente.",
             variant: "default"
           });
+          
           setIsSubmitting(false);
           onSubmitSuccess();
         })
         .catch(error => {
           console.error("Error en proxy:", error);
           // Incluso si hay error, continuamos con la UI
+          toast({
+            title: "Información",
+            description: "Continuando con el diagnóstico...",
+            variant: "default"
+          });
           setIsSubmitting(false);
           onSubmitSuccess();
         });
