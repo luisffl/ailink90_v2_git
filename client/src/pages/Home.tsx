@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FormData } from "@/lib/types";
 import DiagnosticForm from "@/components/DiagnosticForm";
 import SuccessMessage from "@/components/SuccessMessage";
-import logoPath from "../assets/logo_nuevo.png";
+import logoPath from "../assets/logo.svg";
 import { motion } from "framer-motion";
 
 const initialFormData: FormData = {
