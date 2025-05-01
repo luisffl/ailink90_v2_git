@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { FormData } from "@/lib/types";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import FormStep from "@/components/FormStep";
 import ProgressIndicator from "@/components/ProgressIndicator";
+import { motion } from "framer-motion";
 
 interface DiagnosticFormProps {
   formData: FormData;
@@ -23,7 +23,7 @@ export default function DiagnosticForm({
   
   const totalSteps = 5;
 
-  const updateFormData = (field: keyof FormData, value: string | boolean) => {
+  const updateFormData = <T extends string | boolean | string[]>(field: keyof FormData, value: T) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Clear error for this field if it exists
@@ -41,24 +41,24 @@ export default function DiagnosticForm({
     
     // Validation rules for each step
     if (currentStep === 1) {
-      if (!formData.user_email) {
-        newErrors.user_email = "El correo electrónico es requerido";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.user_email)) {
-        newErrors.user_email = "Por favor, introduce un correo electrónico válido";
+      if (!formData.correo_electronico_usuario) {
+        newErrors.correo_electronico_usuario = "El correo electrónico es requerido";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo_electronico_usuario)) {
+        newErrors.correo_electronico_usuario = "Por favor, introduce un correo electrónico válido";
       }
       
-      if (!formData.user_city_region) {
-        newErrors.user_city_region = "La ciudad/región es requerida";
+      if (!formData.ciudad_region_usuario) {
+        newErrors.ciudad_region_usuario = "La ciudad/región es requerida";
       }
     } 
     else if (currentStep === 2) {
-      if (!formData.biggest_challenge) {
-        newErrors.biggest_challenge = "Por favor, selecciona una opción";
+      if (!formData.mayor_desafio) {
+        newErrors.mayor_desafio = "Por favor, selecciona una opción";
       }
     }
     else if (currentStep === 5) {
-      if (!formData.terms_accepted) {
-        newErrors.terms_accepted = "Debes aceptar para continuar";
+      if (!formData.terminos_aceptados) {
+        newErrors.terminos_aceptados = "Debes aceptar para continuar";
       }
     }
     
@@ -87,10 +87,16 @@ export default function DiagnosticForm({
       setIsSubmitting(true);
       
       try {
-        // Here you would replace with your actual webhook URL
-        const webhookUrl = import.meta.env.VITE_WEBHOOK_URL || 'https://your-webhook-url.com/endpoint';
+        // Enviar datos al webhook
+        const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
         
-        await apiRequest('POST', webhookUrl, formData);
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
         
         onSubmitSuccess();
       } catch (error) {
@@ -107,70 +113,72 @@ export default function DiagnosticForm({
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <ProgressIndicator 
         currentStep={currentStep} 
         totalSteps={totalSteps} 
       />
       
-      <div className="bg-white rounded-2xl shadow-md p-6 md:p-8 relative overflow-hidden">
-        <form onSubmit={handleSubmit} className="relative">
-          <FormStep
-            step={1}
-            currentStep={currentStep}
-            formData={formData}
-            updateFormData={updateFormData}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            validateCurrentStep={validateCurrentStep}
-            errors={errors}
-          />
-          
-          <FormStep
-            step={2}
-            currentStep={currentStep}
-            formData={formData}
-            updateFormData={updateFormData}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            validateCurrentStep={validateCurrentStep}
-            errors={errors}
-          />
-          
-          <FormStep
-            step={3}
-            currentStep={currentStep}
-            formData={formData}
-            updateFormData={updateFormData}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            validateCurrentStep={validateCurrentStep}
-            errors={errors}
-          />
-          
-          <FormStep
-            step={4}
-            currentStep={currentStep}
-            formData={formData}
-            updateFormData={updateFormData}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            validateCurrentStep={validateCurrentStep}
-            errors={errors}
-          />
-          
-          <FormStep
-            step={5}
-            currentStep={currentStep}
-            formData={formData}
-            updateFormData={updateFormData}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            validateCurrentStep={validateCurrentStep}
-            errors={errors}
-          />
-        </form>
-      </div>
-    </>
+      <form onSubmit={handleSubmit} className="relative">
+        <FormStep
+          step={1}
+          currentStep={currentStep}
+          formData={formData}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          validateCurrentStep={validateCurrentStep}
+          errors={errors}
+        />
+        
+        <FormStep
+          step={2}
+          currentStep={currentStep}
+          formData={formData}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          validateCurrentStep={validateCurrentStep}
+          errors={errors}
+        />
+        
+        <FormStep
+          step={3}
+          currentStep={currentStep}
+          formData={formData}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          validateCurrentStep={validateCurrentStep}
+          errors={errors}
+        />
+        
+        <FormStep
+          step={4}
+          currentStep={currentStep}
+          formData={formData}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          validateCurrentStep={validateCurrentStep}
+          errors={errors}
+        />
+        
+        <FormStep
+          step={5}
+          currentStep={currentStep}
+          formData={formData}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          validateCurrentStep={validateCurrentStep}
+          errors={errors}
+        />
+      </form>
+    </motion.div>
   );
 }

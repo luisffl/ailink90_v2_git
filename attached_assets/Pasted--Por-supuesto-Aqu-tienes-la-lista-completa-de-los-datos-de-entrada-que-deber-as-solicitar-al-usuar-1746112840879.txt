@@ -1,0 +1,59 @@
+¡Por supuesto! Aquí tienes la lista completa de los datos de entrada que deberías solicitar al usuario en tu formulario interactivo (hecho con Replit), todo en español:
+
+Datos Esenciales (Necesarios para la Lógica Central):
+
+correo_electronico_usuario (o email_usuario):
+Tipo: Correo Electrónico.
+Propósito: Fundamental para poder enviarle el diagnóstico personalizado por correo. Es la clave de la comunicación.
+Validación: Obligatorio, formato de email válido.
+Etiqueta Sugerida: "Tu Correo Electrónico (para recibir el diagnóstico):"
+ciudad_region_usuario:
+Tipo: Texto simple.
+Propósito: Crucial para contextualizar el análisis de nichos. La IA necesita saber dónde buscar oportunidades locales.
+Validación: Obligatorio.
+Etiqueta Sugerida: "Tu Ciudad o Región Principal:"
+Datos para el Análisis de Nichos e ICP (Muy Recomendados):
+
+nichos_potenciales:
+Tipo: Área de texto (Textarea).
+Propósito: Permite al usuario expresar sus ideas iniciales. La IA puede evaluar estas ideas junto con las suyas propias, haciendo el diagnóstico más relevante.
+Validación: Opcional (pero anima a que lo rellenen si tienen ideas).
+Etiqueta Sugerida: "Si ya tienes alguna idea de nicho (tipo de negocio local) en mente, escríbela aquí (separadas por comas, opcional):"
+tipos_negocio_preferidos:
+Tipo: Selección múltiple (Casillas de verificación) o Selección única (Lista desplegable/Botones de opción).
+Propósito: Ayuda a la IA a filtrar nichos según las preferencias del usuario (ej. B2B, B2C, servicios, oficios, tiendas, etc.).
+Validación: Opcional u Obligatorio (depende de cuánto quieras guiar).
+Etiqueta Sugerida: "Prefiero trabajar con: (marca todas las que apliquen)"
+Ejemplo de Opciones: "[ ] Negocios que venden a otros negocios (B2B)", "[ ] Negocios que venden al consumidor final (B2C)", "[ ] Servicios profesionales (abogados, consultores...)", "[ ] Oficios y servicios a domicilio (fontaneros, electricistas...)", "[ ] Tiendas físicas / Comercios", "[ ] Negocios online".
+Datos para el Diagnóstico Personalizado del Usuario (Recomendados para Valor Añadido):
+
+mayor_desafio:
+Tipo: Selección única (Lista desplegable o Botones de opción).
+Propósito: Permite a la IA dar un consejo más enfocado y empático sobre cómo superar el principal obstáculo percibido por el usuario.
+Validación: Obligatorio.
+Etiqueta Sugerida: "Mi mayor dificultad ahora mismo es:"
+Ejemplo de Opciones: "No sé qué nicho elegir", "No sé qué servicio ofrecer", "Tengo miedo a empezar / Síndrome del impostor", "Me falta tiempo / Cómo organizarme", "Dudas sobre la parte técnica", "Otro (especificar)". (Podrías añadir un campo de texto condicional si eligen "Otro").
+habilidades_actuales:
+Tipo: Área de texto (Textarea) o Casillas de verificación con habilidades comunes.
+Propósito: Ayuda a la IA a identificar posibles ventajas iniciales del usuario y a darle un feedback más positivo y relevante.
+Validación: Opcional.
+Etiqueta Sugerida: "Menciona brevemente si tienes alguna experiencia o habilidad previa que creas relevante (ej: ventas, diseño, marketing, experiencia en algún sector, etc. Opcional):"
+Datos Opcionales (Podrían Añadir Más Contexto):
+
+compromiso_tiempo:
+Tipo: Selección única (Lista desplegable/Botones de opción).
+Propósito: Podría ayudar a la IA a sugerir nichos o enfoques más adecuados según el tiempo disponible del usuario.
+Validación: Opcional.
+Etiqueta Sugerida: "¿Cuánto tiempo puedes dedicarle a esto semanalmente?"
+Ejemplo de Opciones: "Menos de 5 horas", "5-10 horas", "10-20 horas", "Más de 20 horas (Tiempo completo)".
+objetivo_inicial:
+Tipo: Selección única (Lista desplegable/Botones de opción).
+Propósito: Entender la motivación principal del usuario.
+Validación: Opcional.
+Etiqueta Sugerida: "Mi meta principal al empezar es:"
+Ejemplo de Opciones: "Conseguir mi primer cliente rápido", "Generar un ingreso extra", "Aprender sobre automatización e IA", "Construir un negocio escalable", "Validar la idea".
+En resumen (en español):
+
+Necesitas sí o sí el correo y la ciudad/región. Para hacer un buen análisis de nicho e ICP, es muy útil pedirle ideas de nicho y sus preferencias de tipo de negocio. Para personalizar el consejo, pregúntale por su mayor desafío y sus habilidades actuales. Puedes añadir opcionalmente preguntas sobre su tiempo disponible y su meta inicial.
+
+Recomendación: Empieza pidiendo los puntos 1 a 6. Así mantienes el formulario relativamente corto pero obtienes la información clave para que la IA genere un diagnóstico útil y personalizado.

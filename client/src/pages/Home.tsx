@@ -3,26 +3,33 @@ import { FormData } from "@/lib/types";
 import DiagnosticForm from "@/components/DiagnosticForm";
 import SuccessMessage from "@/components/SuccessMessage";
 import logoPath from "../assets/logo.png";
+import { motion } from "framer-motion";
 
 const initialFormData: FormData = {
-  user_email: "",
-  user_city_region: "",
-  current_skills: "",
-  biggest_challenge: "",
-  potential_niches: "",
-  business_goals: "",
-  time_available: "",
-  budget_range: "",
-  additional_comments: "",
-  terms_accepted: false,
+  correo_electronico_usuario: "",
+  ciudad_region_usuario: "",
+  nichos_potenciales: "",
+  tipos_negocio_preferidos: [],
+  mayor_desafio: "",
+  habilidades_actuales: "",
+  compromiso_tiempo: "",
+  objetivo_inicial: "",
+  comentarios_adicionales: "",
+  terminos_aceptados: false,
 };
 
 export default function Home() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmitSuccess = () => {
-    setIsSubmitted(true);
+    setIsProcessing(true);
+    // Simulamos un tiempo de procesamiento antes de mostrar el mensaje final
+    setTimeout(() => {
+      setIsSubmitted(true);
+      setIsProcessing(false);
+    }, 2000);
   };
 
   const handleRestart = () => {
@@ -31,29 +38,52 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 md:px-6 py-8 max-w-3xl">
-      <header className="text-center mb-12">
-        <div className="flex justify-center mb-4">
-          <img src={logoPath} alt="AILINK Logo" className="h-16 md:h-20" />
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[#0a0f2c]">
-          Guía de Diagnóstico Inicial
-        </h1>
-        <p className="text-silver text-lg max-w-xl mx-auto">
-          Completa este breve cuestionario para recibir un diagnóstico personalizado 
-          para tu negocio con AILINK Starter.
-        </p>
-      </header>
+    <div className="min-h-screen bg-gradient-to-b from-black to-[#121212] py-10 px-4">
+      <div className="container mx-auto max-w-4xl">
+        <motion.header 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="flex justify-center mb-6">
+            <img src={logoPath} alt="AILINK Logo" className="h-24 md:h-28" />
+          </div>
+          <h1 className="text-3xl md:text-5xl font-medium mb-4 text-white leading-tight">
+            Diagnóstico Operativo <span className="text-blue-500">AILINK</span>
+          </h1>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Completa este breve cuestionario para recibir un diagnóstico personalizado 
+            de tu negocio con inteligencia artificial.
+          </p>
+        </motion.header>
 
-      {isSubmitted ? (
-        <SuccessMessage onRestart={handleRestart} />
-      ) : (
-        <DiagnosticForm 
-          formData={formData} 
-          setFormData={setFormData}
-          onSubmitSuccess={handleSubmitSuccess}
-        />
-      )}
+        {isSubmitted ? (
+          <SuccessMessage onRestart={handleRestart} />
+        ) : isProcessing ? (
+          <motion.div 
+            className="glass-card p-10 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="flex justify-center mb-8">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+            </div>
+            <h2 className="text-2xl font-medium mb-4 text-white">
+              Procesando tu información
+            </h2>
+            <p className="text-gray-400">
+              Estamos analizando tus respuestas para preparar tu diagnóstico...
+            </p>
+          </motion.div>
+        ) : (
+          <DiagnosticForm 
+            formData={formData} 
+            setFormData={setFormData}
+            onSubmitSuccess={handleSubmitSuccess}
+          />
+        )}
+      </div>
     </div>
   );
 }

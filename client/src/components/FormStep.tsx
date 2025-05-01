@@ -1,4 +1,4 @@
-import { FormStepProps } from "@/lib/types";
+import { FormStepProps, TipoNegocioOption } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { 
@@ -31,54 +31,67 @@ export default function FormStep({
     visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeInOut" } }
   };
 
+  const handleCheckboxChange = (option: TipoNegocioOption) => {
+    const currentSelections = [...formData.tipos_negocio_preferidos];
+    const index = currentSelections.indexOf(option);
+    
+    if (index > -1) {
+      currentSelections.splice(index, 1);
+    } else {
+      currentSelections.push(option);
+    }
+    
+    updateFormData("tipos_negocio_preferidos", currentSelections);
+  };
+
   return (
     <motion.div
-      className={`${isActive ? 'block' : 'hidden'}`}
+      className={`${isActive ? 'block' : 'hidden'} modern-form`}
       initial="hidden"
       animate="visible"
       variants={stepVariants}
     >
       {step === 1 && (
         <div>
-          <h2 className="text-2xl font-semibold mb-6">Información básica</h2>
+          <h2 className="form-heading">Información básica</h2>
           
           <div className="mb-6">
-            <Label htmlFor="user_email" className="text-sm font-medium mb-1 block">
-              Correo electrónico <span className="text-[#2f5aff]">*</span>
+            <Label htmlFor="correo_electronico_usuario" className="text-sm font-medium mb-2 block text-gray-300">
+              Tu Correo Electrónico <span className="text-blue-500">*</span>
             </Label>
             <Input
-              id="user_email"
-              value={formData.user_email}
-              onChange={(e) => updateFormData("user_email", e.target.value)}
+              id="correo_electronico_usuario"
+              value={formData.correo_electronico_usuario}
+              onChange={(e) => updateFormData("correo_electronico_usuario", e.target.value)}
               placeholder="tu@email.com"
-              className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0]"
+              className="form-control-focus w-full px-4 py-3 rounded-lg"
             />
-            {errors.user_email && (
-              <p className="text-red-500 text-sm mt-1">{errors.user_email}</p>
+            {errors.correo_electronico_usuario && (
+              <p className="text-red-500 text-sm mt-1">{errors.correo_electronico_usuario}</p>
             )}
           </div>
           
           <div className="mb-6">
-            <Label htmlFor="user_city_region" className="text-sm font-medium mb-1 block">
-              Ciudad/Región <span className="text-[#2f5aff]">*</span>
+            <Label htmlFor="ciudad_region_usuario" className="text-sm font-medium mb-2 block text-gray-300">
+              Tu Ciudad o Región Principal <span className="text-blue-500">*</span>
             </Label>
             <Input
-              id="user_city_region"
-              value={formData.user_city_region}
-              onChange={(e) => updateFormData("user_city_region", e.target.value)}
+              id="ciudad_region_usuario"
+              value={formData.ciudad_region_usuario}
+              onChange={(e) => updateFormData("ciudad_region_usuario", e.target.value)}
               placeholder="Madrid, Barcelona, etc."
-              className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0]"
+              className="form-control-focus w-full px-4 py-3 rounded-lg"
             />
-            {errors.user_city_region && (
-              <p className="text-red-500 text-sm mt-1">{errors.user_city_region}</p>
+            {errors.ciudad_region_usuario && (
+              <p className="text-red-500 text-sm mt-1">{errors.ciudad_region_usuario}</p>
             )}
           </div>
           
-          <div className="flex justify-end mt-8">
+          <div className="flex justify-end mt-10">
             <Button
               type="button"
               onClick={nextStep}
-              className="btn-primary-hover bg-[#2f5aff] text-white px-6 py-3 rounded-lg font-medium"
+              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium"
             >
               Continuar
             </Button>
@@ -88,59 +101,60 @@ export default function FormStep({
 
       {step === 2 && (
         <div>
-          <h2 className="text-2xl font-semibold mb-6">Tu experiencia actual</h2>
+          <h2 className="form-heading">Tu perfil profesional</h2>
           
           <div className="mb-6">
-            <Label htmlFor="current_skills" className="text-sm font-medium mb-1 block">
+            <Label htmlFor="habilidades_actuales" className="text-sm font-medium mb-2 block text-gray-300">
               ¿Qué habilidades o experiencia tienes actualmente?
             </Label>
             <Textarea
-              id="current_skills"
-              value={formData.current_skills}
-              onChange={(e) => updateFormData("current_skills", e.target.value)}
-              placeholder="Describe tus habilidades relevantes..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0] resize-none"
+              id="habilidades_actuales"
+              value={formData.habilidades_actuales}
+              onChange={(e) => updateFormData("habilidades_actuales", e.target.value)}
+              placeholder="Ej: ventas, diseño, marketing, experiencia en algún sector..."
+              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
               rows={4}
             />
           </div>
           
           <div className="mb-6">
-            <Label htmlFor="biggest_challenge" className="text-sm font-medium mb-1 block">
-              ¿Cuál es tu mayor desafío? <span className="text-[#2f5aff]">*</span>
+            <Label htmlFor="mayor_desafio" className="text-sm font-medium mb-2 block text-gray-300">
+              Mi mayor dificultad ahora mismo es: <span className="text-blue-500">*</span>
             </Label>
             <Select
-              value={formData.biggest_challenge}
-              onValueChange={(value) => updateFormData("biggest_challenge", value)}
+              value={formData.mayor_desafio}
+              onValueChange={(value) => updateFormData("mayor_desafio", value)}
             >
-              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0]">
+              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg">
                 <SelectValue placeholder="Selecciona una opción..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-[#1a1a1a] border-[#333] text-white">
                 <SelectItem value="No sé qué nicho elegir">No sé qué nicho elegir</SelectItem>
                 <SelectItem value="No sé qué servicio ofrecer">No sé qué servicio ofrecer</SelectItem>
-                <SelectItem value="Miedo a empezar">Miedo a empezar</SelectItem>
-                <SelectItem value="Falta de tiempo">Falta de tiempo</SelectItem>
+                <SelectItem value="Miedo a empezar / Síndrome del impostor">Miedo a empezar / Síndrome del impostor</SelectItem>
+                <SelectItem value="Me falta tiempo / Cómo organizarme">Me falta tiempo / Cómo organizarme</SelectItem>
+                <SelectItem value="Dudas sobre la parte técnica">Dudas sobre la parte técnica</SelectItem>
                 <SelectItem value="Otro">Otro</SelectItem>
               </SelectContent>
             </Select>
-            {errors.biggest_challenge && (
-              <p className="text-red-500 text-sm mt-1">{errors.biggest_challenge}</p>
+            {errors.mayor_desafio && (
+              <p className="text-red-500 text-sm mt-1">{errors.mayor_desafio}</p>
             )}
           </div>
           
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between mt-10">
             <Button
               type="button"
               onClick={prevStep}
               variant="ghost"
-              className="text-[#B0B0B0] font-medium transition-colors hover:text-[#0a0f2c]"
+              className="text-gray-400 font-medium transition-colors hover:text-white"
             >
               Atrás
             </Button>
             <Button
               type="button"
               onClick={nextStep}
-              className="btn-primary-hover bg-[#2f5aff] text-white px-6 py-3 rounded-lg font-medium"
+              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium"
             >
               Continuar
             </Button>
@@ -150,48 +164,67 @@ export default function FormStep({
 
       {step === 3 && (
         <div>
-          <h2 className="text-2xl font-semibold mb-6">Tu negocio ideal</h2>
+          <h2 className="form-heading">Nichos y preferencias</h2>
           
           <div className="mb-6">
-            <Label htmlFor="potential_niches" className="text-sm font-medium mb-1 block">
-              ¿Qué nichos te interesan?
+            <Label htmlFor="nichos_potenciales" className="text-sm font-medium mb-2 block text-gray-300">
+              Si ya tienes alguna idea de nicho en mente, escríbela aquí
             </Label>
             <Textarea
-              id="potential_niches"
-              value={formData.potential_niches}
-              onChange={(e) => updateFormData("potential_niches", e.target.value)}
+              id="nichos_potenciales"
+              value={formData.nichos_potenciales}
+              onChange={(e) => updateFormData("nichos_potenciales", e.target.value)}
               placeholder="Ej: Restaurantes locales, Gimnasios, Consultoría..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0] resize-none"
-              rows={4}
+              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
+              rows={3}
             />
           </div>
           
           <div className="mb-6">
-            <Label htmlFor="business_goals" className="text-sm font-medium mb-1 block">
-              ¿Cuáles son tus objetivos de negocio a corto plazo?
+            <Label className="text-sm font-medium mb-3 block text-gray-300">
+              Prefiero trabajar con: (marca todas las que apliquen)
             </Label>
-            <Input
-              id="business_goals"
-              value={formData.business_goals}
-              onChange={(e) => updateFormData("business_goals", e.target.value)}
-              placeholder="Ej: Conseguir 5 clientes en 3 meses..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0]"
-            />
+            
+            <div className="space-y-3 mt-2">
+              {[
+                "Negocios que venden a otros negocios (B2B)",
+                "Negocios que venden al consumidor final (B2C)",
+                "Servicios profesionales (abogados, consultores...)",
+                "Oficios y servicios a domicilio (fontaneros, electricistas...)",
+                "Tiendas físicas / Comercios",
+                "Negocios online"
+              ].map((option) => (
+                <div key={option} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={option.replace(/[^a-zA-Z0-9]/g, '_')}
+                    checked={formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption)}
+                    onCheckedChange={() => handleCheckboxChange(option as TipoNegocioOption)}
+                    className="custom-checkbox"
+                  />
+                  <Label 
+                    htmlFor={option.replace(/[^a-zA-Z0-9]/g, '_')} 
+                    className="text-sm text-gray-300 cursor-pointer"
+                  >
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </div>
           </div>
           
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between mt-10">
             <Button
               type="button"
               onClick={prevStep}
               variant="ghost"
-              className="text-[#B0B0B0] font-medium transition-colors hover:text-[#0a0f2c]"
+              className="text-gray-400 font-medium transition-colors hover:text-white"
             >
               Atrás
             </Button>
             <Button
               type="button"
               onClick={nextStep}
-              className="btn-primary-hover bg-[#2f5aff] text-white px-6 py-3 rounded-lg font-medium"
+              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium"
             >
               Continuar
             </Button>
@@ -201,63 +234,62 @@ export default function FormStep({
 
       {step === 4 && (
         <div>
-          <h2 className="text-2xl font-semibold mb-6">Recursos disponibles</h2>
+          <h2 className="form-heading">Recursos y objetivos</h2>
           
           <div className="mb-6">
-            <Label htmlFor="time_available" className="text-sm font-medium mb-1 block">
-              ¿Cuántas horas semanales puedes dedicar a tu negocio?
+            <Label htmlFor="compromiso_tiempo" className="text-sm font-medium mb-2 block text-gray-300">
+              ¿Cuánto tiempo puedes dedicarle a esto semanalmente?
             </Label>
             <Select
-              value={formData.time_available}
-              onValueChange={(value) => updateFormData("time_available", value)}
+              value={formData.compromiso_tiempo}
+              onValueChange={(value) => updateFormData("compromiso_tiempo", value)}
             >
-              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0]">
+              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg">
                 <SelectValue placeholder="Selecciona una opción..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-[#1a1a1a] border-[#333] text-white">
                 <SelectItem value="Menos de 5 horas">Menos de 5 horas</SelectItem>
                 <SelectItem value="5-10 horas">5-10 horas</SelectItem>
-                <SelectItem value="11-20 horas">11-20 horas</SelectItem>
-                <SelectItem value="21-30 horas">21-30 horas</SelectItem>
-                <SelectItem value="Tiempo completo">Tiempo completo</SelectItem>
+                <SelectItem value="10-20 horas">10-20 horas</SelectItem>
+                <SelectItem value="Más de 20 horas (Tiempo completo)">Más de 20 horas (Tiempo completo)</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
           <div className="mb-6">
-            <Label htmlFor="budget_range" className="text-sm font-medium mb-1 block">
-              ¿Cuál es tu presupuesto inicial para tu negocio?
+            <Label htmlFor="objetivo_inicial" className="text-sm font-medium mb-2 block text-gray-300">
+              Mi meta principal al empezar es:
             </Label>
             <Select
-              value={formData.budget_range}
-              onValueChange={(value) => updateFormData("budget_range", value)}
+              value={formData.objetivo_inicial}
+              onValueChange={(value) => updateFormData("objetivo_inicial", value)}
             >
-              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0]">
+              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg">
                 <SelectValue placeholder="Selecciona una opción..." />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Menos de 500€">Menos de 500€</SelectItem>
-                <SelectItem value="500-1000€">500-1000€</SelectItem>
-                <SelectItem value="1001-3000€">1001-3000€</SelectItem>
-                <SelectItem value="3001-5000€">3001-5000€</SelectItem>
-                <SelectItem value="Más de 5000€">Más de 5000€</SelectItem>
+              <SelectContent className="bg-[#1a1a1a] border-[#333] text-white">
+                <SelectItem value="Conseguir mi primer cliente rápido">Conseguir mi primer cliente rápido</SelectItem>
+                <SelectItem value="Generar un ingreso extra">Generar un ingreso extra</SelectItem>
+                <SelectItem value="Aprender sobre automatización e IA">Aprender sobre automatización e IA</SelectItem>
+                <SelectItem value="Construir un negocio escalable">Construir un negocio escalable</SelectItem>
+                <SelectItem value="Validar la idea">Validar la idea</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between mt-10">
             <Button
               type="button"
               onClick={prevStep}
               variant="ghost"
-              className="text-[#B0B0B0] font-medium transition-colors hover:text-[#0a0f2c]"
+              className="text-gray-400 font-medium transition-colors hover:text-white"
             >
               Atrás
             </Button>
             <Button
               type="button"
               onClick={nextStep}
-              className="btn-primary-hover bg-[#2f5aff] text-white px-6 py-3 rounded-lg font-medium"
+              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium"
             >
               Continuar
             </Button>
@@ -267,25 +299,25 @@ export default function FormStep({
 
       {step === 5 && (
         <div>
-          <h2 className="text-2xl font-semibold mb-6">Finalizar diagnóstico</h2>
+          <h2 className="form-heading">Finalizar diagnóstico</h2>
           
-          <div className="bg-blue-50 p-4 rounded-lg mb-6">
-            <p className="text-sm text-[#0a0f2c]">
-              Estás a punto de completar tu diagnóstico inicial. Después de enviar tus respuestas, 
-              recibirás un análisis personalizado a tu correo electrónico.
+          <div className="bg-blue-950/30 border border-blue-900/50 p-5 rounded-lg mb-6">
+            <p className="text-sm text-gray-300">
+              Estás a punto de completar tu diagnóstico inicial. Al enviar tus respuestas,
+              nuestro sistema analizará tu información para crear un diagnóstico personalizado.
             </p>
           </div>
           
           <div className="mb-6">
-            <Label htmlFor="additional_comments" className="text-sm font-medium mb-1 block">
+            <Label htmlFor="comentarios_adicionales" className="text-sm font-medium mb-2 block text-gray-300">
               ¿Algo más que quieras contarnos?
             </Label>
             <Textarea
-              id="additional_comments"
-              value={formData.additional_comments}
-              onChange={(e) => updateFormData("additional_comments", e.target.value)}
+              id="comentarios_adicionales"
+              value={formData.comentarios_adicionales}
+              onChange={(e) => updateFormData("comentarios_adicionales", e.target.value)}
               placeholder="Cualquier detalle adicional que nos ayude a personalizar tu diagnóstico..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg border border-[#e0e0e0] resize-none"
+              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
               rows={3}
             />
           </div>
@@ -293,37 +325,37 @@ export default function FormStep({
           <div className="mb-6">
             <div className="flex items-start space-x-3">
               <Checkbox
-                id="terms_accepted"
-                checked={formData.terms_accepted}
+                id="terminos_aceptados"
+                checked={formData.terminos_aceptados}
                 onCheckedChange={(checked) => 
-                  updateFormData("terms_accepted", checked === true)
+                  updateFormData("terminos_aceptados", checked === true)
                 }
-                className="mt-1"
+                className="custom-checkbox mt-1"
               />
               <Label 
-                htmlFor="terms_accepted" 
-                className="text-sm text-[#B0B0B0]"
+                htmlFor="terminos_aceptados" 
+                className="text-sm text-gray-400"
               >
-                Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK Starter <span className="text-[#2f5aff]">*</span>
+                Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK <span className="text-blue-500">*</span>
               </Label>
             </div>
-            {errors.terms_accepted && (
-              <p className="text-red-500 text-sm mt-1">{errors.terms_accepted}</p>
+            {errors.terminos_aceptados && (
+              <p className="text-red-500 text-sm mt-1">{errors.terminos_aceptados}</p>
             )}
           </div>
           
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between mt-10">
             <Button
               type="button"
               onClick={prevStep}
               variant="ghost"
-              className="text-[#B0B0B0] font-medium transition-colors hover:text-[#0a0f2c]"
+              className="text-gray-400 font-medium transition-colors hover:text-white"
             >
               Atrás
             </Button>
             <Button
               type="submit"
-              className="btn-primary-hover bg-[#2f5aff] text-white px-6 py-3 rounded-lg font-medium"
+              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium"
             >
               Obtener Mi Diagnóstico
             </Button>

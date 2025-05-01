@@ -1,42 +1,50 @@
 export interface FormData {
-  user_email: string;
-  user_city_region: string;
-  current_skills: string;
-  biggest_challenge: string;
-  potential_niches: string;
-  business_goals: string;
-  time_available: string;
-  budget_range: string;
-  additional_comments: string;
-  terms_accepted: boolean;
+  correo_electronico_usuario: string;
+  ciudad_region_usuario: string;
+  nichos_potenciales: string;
+  tipos_negocio_preferidos: string[];
+  mayor_desafio: string;
+  habilidades_actuales: string;
+  compromiso_tiempo: string;
+  objetivo_inicial: string;
+  comentarios_adicionales: string;
+  terminos_aceptados: boolean;
 }
 
-export type ChallengeOption = 
+export type DesafioOption = 
   | "No sé qué nicho elegir"
   | "No sé qué servicio ofrecer"
-  | "Miedo a empezar"
-  | "Falta de tiempo"
+  | "Miedo a empezar / Síndrome del impostor"
+  | "Me falta tiempo / Cómo organizarme"
+  | "Dudas sobre la parte técnica"
   | "Otro";
 
-export type TimeOption = 
+export type TiempoOption = 
   | "Menos de 5 horas"
   | "5-10 horas"
-  | "11-20 horas"
-  | "21-30 horas"
-  | "Tiempo completo";
+  | "10-20 horas"
+  | "Más de 20 horas (Tiempo completo)";
 
-export type BudgetOption = 
-  | "Menos de 500€"
-  | "500-1000€"
-  | "1001-3000€"
-  | "3001-5000€"
-  | "Más de 5000€";
+export type ObjetivoOption = 
+  | "Conseguir mi primer cliente rápido"
+  | "Generar un ingreso extra"
+  | "Aprender sobre automatización e IA"
+  | "Construir un negocio escalable"
+  | "Validar la idea";
+
+export type TipoNegocioOption =
+  | "Negocios que venden a otros negocios (B2B)"
+  | "Negocios que venden al consumidor final (B2C)"
+  | "Servicios profesionales (abogados, consultores...)"
+  | "Oficios y servicios a domicilio (fontaneros, electricistas...)"
+  | "Tiendas físicas / Comercios"
+  | "Negocios online";
 
 export interface FormStepProps {
   step: number;
   currentStep: number;
   formData: FormData;
-  updateFormData: (field: keyof FormData, value: string | boolean) => void;
+  updateFormData: <T extends string | boolean | string[]>(field: keyof FormData, value: T) => void;
   nextStep: () => void;
   prevStep: () => void;
   validateCurrentStep: () => boolean;

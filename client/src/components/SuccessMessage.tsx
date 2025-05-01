@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
 import logoPath from "../assets/logo.png";
 
 interface SuccessMessageProps {
@@ -10,33 +9,34 @@ interface SuccessMessageProps {
 export default function SuccessMessage({ onRestart }: SuccessMessageProps) {
   return (
     <motion.div 
-      className="bg-white rounded-2xl shadow-md p-8 text-center"
+      className="glass-card p-10 text-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.6 }}
     >
-      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <CheckCircle className="h-8 w-8 text-green-500" />
+      <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-8 accent-glow">
+        <CheckCircle className="h-10 w-10 text-blue-500" />
       </div>
       
-      <h2 className="text-2xl font-semibold mb-3">Diagnóstico en proceso</h2>
+      <h2 className="text-3xl font-grotesk font-medium mb-4 text-white">
+        ESTAMOS REALIZANDO EL DIAGNÓSTICO OPERATIVO
+      </h2>
       
-      <p className="text-[#B0B0B0] mb-6">
-        Recibirás los resultados en tu correo electrónico pronto. 
-        ¡Gracias por confiar en AILINK Starter!
+      <p className="text-gray-400 mb-8 text-lg">
+        Gracias por completar el formulario. Estamos procesando tu información 
+        para crear un diagnóstico personalizado para tu negocio.
       </p>
       
-      <div className="mt-8 mb-4">
-        <img src={logoPath} alt="AILINK Logo" className="h-10 mx-auto opacity-50" />
+      <div className="border-t border-[#333] pt-8 mt-8">
+        <div className="flex items-center justify-center space-x-2 text-blue-500 cursor-pointer" onClick={() => window.location.href = "https://ailink.es"}>
+          <span>Ir a AILINK.es</span>
+          <ArrowRight className="w-4 h-4" />
+        </div>
       </div>
       
-      <Button 
-        onClick={onRestart}
-        variant="link" 
-        className="text-[#2f5aff] underline"
-      >
-        Realizar otro diagnóstico
-      </Button>
+      <div className="mt-10">
+        <img src={logoPath} alt="AILINK Logo" className="h-12 mx-auto opacity-70" />
+      </div>
     </motion.div>
   );
 }

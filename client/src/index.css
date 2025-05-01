@@ -5,36 +5,36 @@
 @layer base {
   :root {
     /* Base Colors */
-    --midnight: 228 57% 11%;   /* #0a0f2c */
-    --sapphire: 223 100% 59%;  /* #2f5aff */
-    --snow: 0 0% 100%;         /* #FFFFFF */
-    --silver: 0 0% 69%;        /* #B0B0B0 */
-    --silver-light: 0 0% 88%;  /* #e0e0e0 */
+    --midnight: 0 0% 10%;       /* #1a1a1a */
+    --sapphire: 223 100% 59%;   /* #2f5aff */
+    --snow: 0 0% 100%;          /* #FFFFFF */
+    --silver: 0 0% 70%;         /* #B3B3B3 */
+    --silver-light: 0 0% 20%;   /* #333333 */
     
     /* Shadcn UI Variables */
-    --background: var(--snow);
-    --foreground: var(--midnight);
+    --background: 0 0% 0%;      /* #000000 */
+    --foreground: var(--snow);
     
-    --muted: 220 14% 96%;
+    --muted: 0 0% 15%;          /* #262626 */
     --muted-foreground: var(--silver);
     
-    --popover: var(--snow);
-    --popover-foreground: var(--midnight);
+    --popover: 0 0% 7%;         /* #121212 */
+    --popover-foreground: var(--snow);
     
-    --card: var(--snow);
-    --card-foreground: var(--midnight);
+    --card: 0 0% 7%;            /* #121212 */
+    --card-foreground: var(--snow);
     
     --border: var(--silver-light);
-    --input: var(--silver-light);
+    --input: 0 0% 15%;          /* #262626 */
     
     --primary: var(--sapphire);
     --primary-foreground: var(--snow);
     
-    --secondary: 220 14% 96%;
-    --secondary-foreground: var(--midnight);
+    --secondary: 0 0% 15%;      /* #262626 */
+    --secondary-foreground: var(--snow);
     
-    --accent: 220 14% 96%;
-    --accent-foreground: var(--midnight);
+    --accent: var(--sapphire);
+    --accent-foreground: var(--snow);
     
     --destructive: 0 84% 60%;
     --destructive-foreground: var(--snow);
@@ -49,11 +49,11 @@
   }
   
   body {
-    @apply font-sans antialiased bg-[#FAFBFF] text-foreground;
+    @apply font-sans antialiased bg-black text-white;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-playfair;
+    @apply font-grotesk font-medium;
   }
 }
 
@@ -105,9 +105,57 @@
 
 /* Micro-interactions */
 .btn-primary-hover {
-  @apply transform transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
+  @apply transform transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/20 active:translate-y-0;
 }
 
 .form-control-focus {
-  @apply transform transition-all duration-300 focus:scale-[1.01] focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30 focus:outline-none;
+  @apply transform transition-all duration-300 bg-[#111] border-[#333] focus:bg-[#181818] focus:border-blue-500 focus:scale-[1.01] focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30 focus:outline-none;
+}
+
+/* Modern glassmorphism styles */
+.glass-card {
+  @apply bg-[#111111]/80 backdrop-blur-md border border-[#333333] rounded-xl shadow-xl;
+}
+
+.glass-input {
+  @apply bg-[#1a1a1a]/70 border-[#333333] rounded-lg;
+}
+
+/* Accent elements */
+.accent-border {
+  @apply border-blue-500;
+}
+
+.accent-glow {
+  @apply shadow-lg shadow-blue-500/20;
+}
+
+/* Custom form elements */
+.custom-checkbox {
+  @apply bg-[#1a1a1a] border-[#333333] text-blue-500;
+}
+
+.custom-radio {
+  @apply bg-[#1a1a1a] border-[#333333] text-blue-500;
+}
+
+.custom-select {
+  @apply bg-[#1a1a1a] border-[#333333] text-white;
+}
+
+/* Modern form styling */
+.modern-form {
+  @apply space-y-6 glass-card p-8;
+}
+
+.form-header {
+  @apply text-center mb-8;
+}
+
+.form-heading {
+  @apply text-3xl font-grotesk font-medium text-white mb-2;
+}
+
+.form-subheading {
+  @apply text-gray-400 text-lg;
 }
