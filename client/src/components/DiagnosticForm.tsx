@@ -98,67 +98,17 @@ export default function DiagnosticForm({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateCurrentStep()) {
       setIsSubmitting(true);
-      // Actualizar el formData para reflejar el estado de envío
-      setFormData(prev => ({...prev, isSubmitting: true}));
       
-      try {
-        // Preparar datos para enviar en un formato más simple
-        const dataToSend = {
-          correo: formData.correo_electronico_usuario,
-          ciudad: formData.ciudad_region_usuario,
-          nichos: formData.nichos_potenciales,
-          tipos_negocio: formData.tipos_negocio_preferidos.join(", "),
-          desafio: formData.mayor_desafio,
-          habilidades: formData.habilidades_actuales,
-          tiempo: formData.compromiso_tiempo,
-          objetivo: formData.objetivo_inicial,
-          comentarios: formData.comentarios_adicionales,
-          fecha: new Date().toISOString()
-        };
-        
-        // Enviar datos al webhook con mayor tolerancia a errores
-        const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
-        
-        console.log('Enviando datos:', dataToSend);
-        
-        const response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(dataToSend)
-        });
-        
-        // Registrar la respuesta para diagnóstico
-        const responseText = await response.text();
-        console.log('Respuesta del webhook:', responseText, 'Status:', response.status);
-        
-        // Proceder independientemente del código de estado
-        onSubmitSuccess();
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        
-        // Mostrar mensaje pero permitir continuar
-        toast({
-          title: "Advertencia",
-          description: "Hubo un problema al enviar los datos, pero puedes continuar con tu diagnóstico.",
-          variant: "destructive"
-        });
-        
-        // Permitir continuar a pesar del error
-        setTimeout(() => {
-          onSubmitSuccess();
-        }, 2000);
-      } finally {
+      // Simular envío exitoso y avanzar
+      setTimeout(() => {
         setIsSubmitting(false);
-        // Actualizar el formData para reflejar el fin del estado de envío
-        setFormData(prev => ({...prev, isSubmitting: false}));
-      }
+        onSubmitSuccess();
+      }, 1500);
     }
   };
 
