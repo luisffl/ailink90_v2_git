@@ -1,0 +1,78 @@
+quí tienes el prompt mejorado y ampliado, incorporando tus directrices de diseño y requisitos técnicos:
+
+Prompt para Replit (Generación de App/Front-end con Diseño Sofisticado):
+
+**Objetivo:** Crear una aplicación web (front-end sofisticado pero minimalista con HTML, CSS y JavaScript) que sirva como una **Guía Interactiva de Diagnóstico Inicial** para usuarios de mi programa AILINK Starter. Debe seguir una filosofía de diseño "Como Apple, sin ser Apple", ser muy fácil de usar y guiar al usuario paso a paso.
+
+**Filosofía de Diseño: "Como Apple, sin ser Apple"**
+*   **Minimalismo Funcional:** Eliminar lo superfluo. Cada elemento debe tener un propósito claro.
+*   **Claridad y Legibilidad:** Prioridad absoluta en todos los componentes.
+*   **Espacios y Ritmo:** Diseño que respire, uso estratégico de espacios en blanco, ritmo visual intuitivo.
+*   **Detalles Invisibles:** Microinteracciones y animaciones sutiles, transiciones fluidas y naturales.
+*   **Materialidad Digital:** Sensación táctil y tangible, uso de sombras/capas para profundidad y jerarquía.
+
+**Parámetros de Diseño Específicos:**
+*   **Paleta de Colores:**
+    *   Base: Azul oscuro tipo 'midnight' (ej: `#0a0f2c`).
+    *   Acentos: Azul 'sapphire' vibrante (ej: `#2f5aff`).
+    *   Contrastes/Texto Principal: Blanco 'nieve' (ej: `#FFFFFF` o similar).
+    *   Detalles/Bordes Sutiles: Plata mate (ej: `#B0B0B0` o gris claro).
+*   **Tipografía:**
+    *   Titulares/Preguntas Principales: Una serif elegante y moderna (ej: `Playfair Display` - asegúrate de importarla si no es estándar).
+    *   Cuerpo/Instrucciones/Etiquetas: Una sans-serif minimalista y legible (ej: `Inter` o `Space Grotesk` - asegúrate de importarlas).
+    *   Implementar una jerarquía tipográfica clara.
+*   **Layout y Grid:**
+    *   Utilizar un sistema de grid (idealmente 12 columnas si aplica al layout general) con márgenes amplios para crear espacio y sensación de apertura.
+*   **Animaciones y Microinteracciones:**
+    *   Transiciones suaves en cambios de estado (ej: `ease-in-out`, duración `300-500ms`).
+    *   Microinteracciones sutiles en elementos interactivos (botones, campos de formulario) al hacer hover o focus (ej: cambio ligero de color, sombra sutil).
+*   **Iconografía (si se usa):**
+    *   Estilo minimalista, lineal, limpio y moderno. Evitar ornamentos.
+
+**Funcionalidad Principal:**
+1.  Presentar una serie de preguntas simples al usuario para recopilar información clave. Idealmente, guiar al usuario **paso a paso**, mostrando pocas preguntas a la vez. Implementar una **barra de progreso** visualmente integrada con el diseño.
+2.  Validar mínimamente las entradas (ej: que el email tenga formato de email, campos requeridos no estén vacíos). Mostrar mensajes de error sutiles y claros.
+3.  Al completar el formulario (botón con texto claro como "Obtener Mi Diagnóstico", estilizado con el color de acento), debe recopilar **TODAS** las respuestas del usuario.
+4.  Enviar estas respuestas como un objeto **JSON** mediante una solicitud **POST** a mi webhook de n8n: `[Pega aquí la URL COMPLETA de tu Webhook de n8n]`
+5.  Mostrar un mensaje de confirmación simple, elegante y alineado con el diseño en la página al usuario después de enviar los datos (ej: "Diagnóstico en proceso. Recibirás los resultados en tu correo pronto.").
+
+**Campos del Formulario (Información a Recopilar - AJUSTA SEGÚN NECESITES):**
+*   `user_email`: Campo Email, requerido.
+*   `user_city_region`: Campo Texto, requerido.
+*   `potential_niches`: Campo Textarea, opcional. Etiqueta clara.
+*   `biggest_challenge`: Campo Select (Dropdown) con opciones predefinidas (["No sé qué nicho elegir", "No sé qué servicio ofrecer", "Miedo a empezar", "Falta de tiempo", "Otro"]), requerido. Estilizar el dropdown.
+*   `current_skills`: Campo Textarea, opcional. Etiqueta clara.
+*   `[Añade otros campos necesarios para tu diagnóstico]`
+
+**Formato JSON para n8n (Ejemplo):**
+```json
+{
+  "user_email": "usuario@ejemplo.com",
+  "user_city_region": "Madrid",
+  "potential_niches": "Fontaneros, Gimnasios locales",
+  "biggest_challenge": "No sé qué nicho elegir",
+  "current_skills": "Tengo experiencia en ventas"
+}
+Use code with caution.
+Prompt
+Requisitos Técnicos para el Desarrollo Frontend:
+
+Tecnología Preferida: Utilizar React, Vue o Svelte para construir la interfaz, asegurando una experiencia dinámica y reactiva. (Si Replit no puede directamente con estos frameworks complejos, generar con HTML/CSS/JS lo más modular posible).
+Código Modular: Estructurar el código con componentes reutilizables si es posible.
+Accesibilidad: Seguir las directrices WCAG básicas para asegurar la usabilidad para todos.
+Responsividad: Diseño totalmente adaptable a dispositivos móviles, tablets y escritorio.
+Optimización: Código limpio y optimizado para un buen rendimiento.
+Qué NO debe hacer esta aplicación Replit:
+
+NO realizar el análisis de IA.
+NO almacenar datos localmente (más allá del envío).
+NO requerir autenticación.
+Por favor, genera el código necesario (idealmente usando [Elige React, Vue o Svelte si es posible, si no HTML/CSS/JS]) para esta aplicación web front-end, siguiendo estrictamente las directrices de diseño y los requisitos funcionales y técnicos.
+
+---
+
+**Consideraciones Adicionales:**
+
+*   **Capacidad de Replit:** La capacidad de Replit para generar código complejo de frontend con frameworks como React/Vue/Svelte puede variar. Si no lo hace bien, podrías pedirle que genere la estructura HTML y CSS siguiendo tus guías de diseño, y luego tú (o alguien) añadir la lógica JavaScript o integrarlo en un framework.
+*   **Importación de Fuentes:** Asegúrate de que las fuentes elegidas (Playfair Display, Inter, Space Grotesk) se importen correctamente en el CSS (por ejemplo, desde Google Fonts).
+*   **Iteración:** Es probable que necesites iterar un poco con Replit o refinar el código generado manualmente para que quede exactamente como quieres, especialmente con los detalles de diseño más sutiles.
