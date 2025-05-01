@@ -71,9 +71,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       });
       
+      // Configurar un timeout para la solicitud al webhook
+      const timeout = setTimeout(() => {
+        console.log("Timeout alcanzado en la solicitud al webhook");
+        proxyReq.destroy();
+        res.status(504).json({ 
+          error: 'Timeout en la solicitud al webhook',
+          message: 'La solicitud al webhook ha tardado demasiado tiempo en responder'
+        });
+      }, 12000); // 12 segundos de timeout
+      
       proxyReq.on('error', (error) => {
+        clearTimeout(timeout);
         console.error("Error en proxy de n8n:", error);
-        res.status(500).json({ error: 'Error al contactar con el webhook' });
+        res.status(500).json({ 
+          error: 'Error al contactar con el webhook',
+          message: error.message
+        });
+      });
+      // Limpiar timeout cuando finalice la solicitud
+      proxyReq.on('response', (proxyRes) => {
+        proxyRes.on('end', () => {
+          clearTimeout(timeout);
+        });
       });
       
       // Enviar los datos

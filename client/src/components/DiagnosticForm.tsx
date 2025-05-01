@@ -101,8 +101,16 @@ export default function DiagnosticForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Si ya está en curso un envío, evitamos procesarlo de nuevo
+    if (isSubmitting) {
+      console.log("Envío en curso, evitando duplicación");
+      return;
+    }
+    
     if (validateCurrentStep()) {
       setIsSubmitting(true);
+      // Actualizamos también el estado del formulario para deshabilitar el botón a nivel de renderizado
+      setFormData(prev => ({ ...prev, isSubmitting: true }));
       
       // Preparar datos para enviar
       const dataToSend = {
@@ -123,17 +131,23 @@ export default function DiagnosticForm({
         console.log("Enviando datos a través del proxy del backend");
         
         // Enviamos al proxy del backend
+        // Configuramos un timeout para abortar la solicitud si tarda demasiado
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos de timeout
+        
         fetch('/api/n8n-webhook', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(dataToSend)
+          body: JSON.stringify(dataToSend),
+          signal: controller.signal
         })
-        .then(response => {
+        .then((response: Response) => {
+          clearTimeout(timeoutId); // Limpiamos el timeout si la solicitud completa antes
           // Intentamos leer la respuesta como texto primero
-          return response.text().then(text => {
-            let jsonData;
+          return response.text().then((text: string) => {
+            let jsonData: any;
             try {
               // Intentamos parsear el texto como JSON
               jsonData = JSON.parse(text);
