@@ -12,7 +12,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log("Recibiendo solicitud de proxy para webhook n8n:", req.body);
     
     // Preparar la solicitud a n8n
-    const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
+    const webhookUrl = "https://ailink.app.n8n.cloud/webhook/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
     const data = JSON.stringify(req.body);
     
     // Opciones para la solicitud

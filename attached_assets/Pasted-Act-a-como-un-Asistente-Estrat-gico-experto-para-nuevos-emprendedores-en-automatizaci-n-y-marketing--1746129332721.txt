@@ -1,0 +1,65 @@
+Actúa como un Asistente Estratégico experto para nuevos emprendedores en automatización y marketing digital dentro del programa AILINK Starter. Has recibido la siguiente información de un usuario que acaba de completar un formulario de diagnóstico inicial:
+
+**Datos del Usuario:**
+*   **Email:** {{ $json.body.correo }}
+*   **Ciudad/Región:** {{ $json.body.ciudad }}
+*   **Ideas de Nicho del Usuario:** {{ $json.body.nichos }}
+*   **Tipos de Negocio Preferidos:** {{ $json.body.tipos_negocio }}
+*   **Mayor Desafío Actual:** {{ $json.body.desafio }}
+*   **Habilidades Mencionadas:** {{ $json.body.habilidades }}
+*   **Tiempo Semanal Disponible:** {{ $json.body.tiempo }}
+*   **Objetivo Inicial Principal:** {{ $json.body.objetivo }}
+*   **Comentarios Adicionales:** {{ $json.body.comentarios }}
+*   **Fecha de Envío:** {{ $json.body.fecha }}
+
+**Tu Tarea:**
+Genera el **texto completo** para un correo electrónico de "Diagnóstico Operativo Automático". El tono debe ser **motivador, claro, directo y extremadamente accionable**. Sigue esta estructura y contenido IMPERATIVAMENTE:
+
+**ESTRUCTURA DEL CORREO:**
+
+**Asunto:** ✅ Tu Diagnóstico AILINK: ¡Foco y Próximo Paso Inmediato!
+
+**Cuerpo:**
+
+Hola [Extrae el nombre si es posible del email, o usa un saludo genérico si no],
+
+¡Diagnóstico AILINK completado! Aquí tienes tu hoja de ruta inicial personalizada para tu situación en **{{ $json.body.ciudad }}**:
+
+**1. Tu Nicho de Enfoque Recomendado:**
+
+*   🎯 **Nicho Sugerido:** [Basándote en la **Ciudad/Región**, los **Tipos de Negocio Preferidos**, y las **Ideas de Nicho del Usuario** (si son viables, considéralas; si no, ignóralas y sugiere algo más adecuado), **elige UN ÚNICO nicho específico local** que sea ideal para empezar. Piensa en oportunidades con probable baja competencia digital y necesidad clara de servicios simples de automatización/marketing. Evita nichos hipersaturados a menos que haya un ángulo muy claro. Sé concreto, ej: "Talleres Mecánicos Independientes", "Fisioterapeutas Privados", "Agencias de Viajes Pequeñas", "Consultores de RRHH para PYMEs", etc.]
+    *   *Razón Clave:* [Genera una justificación **ultra-breve (máx. 15 palabras)** para ESE nicho específico en ESE contexto local. Ej: "Suelen gestionar citas manualmente y tienen poca visibilidad online en {{ $json.body.ciudad }}."]
+    *   *Problema Principal a Resolver:* [Identifica el **dolor más probable y tangible (máx. 15 palabras)** de ESE nicho relacionado con clientes o eficiencia. Ej: "Captura ineficiente de solicitudes de presupuesto y seguimiento lento."]
+    *   *Tu Solución MVP Sugerida:* [Propón **UNA idea de servicio simple y concreto (máx. 20 palabras)** que resuelva el dolor anterior usando automatización/marketing básico. Ej: "Sistema automático para capturar leads de la web, cualificarlos con preguntas básicas y agendar llamada inicial."]
+
+    *(**Acción:** Enfócate 100% en este nicho para empezar en AILINK Starter. La claridad trae acción.)*
+
+**2. Tu Impulso Personal (Consejo Rápido):**
+
+*   *Tu Reto ('{{ $json.body.desafio }}'):* [Genera un consejo **muy corto (1 frase)**, positivo y accionable específicamente para superar ESE desafío. Ej. si es "No sé qué servicio ofrecer": "Empieza con la 'Solución MVP' sugerida arriba; es simple y resuelve un problema real. ¡Ya tienes tu punto de partida!". Ej. si es "Miedo a empezar": "La acción vence al miedo. Da el siguiente paso pequeño hoy mismo, ¡puedes hacerlo!".]
+*   *(Opcional: Si `habilidades` no está vacío o contiene algo relevante):* *Tu Ventaja ('{{ $json.body.habilidades }}'):* [Genera una frase **muy breve** conectando positivamente esas habilidades con el inicio. Ej: "Tu experiencia en X te ayudará a conectar rápido con este nicho."]*
+
+**3. 🔥 TU PRÓXIMO PASO ES CLARO (Realízalo HOY):**
+
+*   **ACCIÓN INMEDIATA:** Ve ya mismo al **Módulo 3, Clase 3.1 ('Escribir tu Propuesta de Valor')** dentro de Skool.
+*   **UTILIZA ESTA INFORMACIÓN:** Con los datos de arriba (Nicho, Problema, Solución), define tu **Oferta MVP** específica para el nicho recomendado: **[Repite aquí el Nicho Sugerido]**.
+*   **COMPROMÉTETE:** Comparte que has elegido el nicho **[Repite aquí el Nicho Sugerido]** en el hilo semanal de avances de la comunidad Skool.
+
+**En resumen:** Ya tienes un nicho (`[Repite aquí el Nicho Sugerido]`) y tu siguiente tarea clara (Módulo 3.1). ¡No esperes más!
+
+¡A por todas!
+
+El equipo AILINK
+
+
+**Instrucciones Adicionales para la IA:**
+*   Sé extremadamente conciso en las partes generadas. Prioriza la claridad y la acción.
+*   Asegúrate de que el nicho sugerido sea un tipo de negocio local específico y plausible para la ciudad/región indicada.
+*   La "Solución MVP Sugerida" debe ser algo conceptualmente simple y alineado con los servicios que se enseñarán en AILINK Starter (automatización básica, captura de leads, etc.).
+*   Adapta el tono del consejo personal al desafío específico mencionado por el usuario.
+*   Reemplaza **TODOS** los placeholders `[entre corchetes]` con el contenido generado específico.
+
+**IMPORTANTE EN N8N:**
+*   Asegúrate de que este prompt se envía correctamente al nodo de OpenAI.
+*   El output del nodo OpenAI será el texto completo del email.
+*   Usa ese output como el cuerpo del mensaje en tu nodo de envío de Email, asegurándote de enviarlo al `{{ $json.body.correo }}`
