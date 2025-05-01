@@ -104,54 +104,46 @@ export default function DiagnosticForm({
     if (validateCurrentStep()) {
       setIsSubmitting(true);
       
-      // Preparar datos para el webhook en formato URLSearchParams (similar a form-urlencoded)
-      const params = new URLSearchParams();
-      params.append('correo', formData.correo_electronico_usuario);
-      params.append('ciudad', formData.ciudad_region_usuario);
-      params.append('nichos', formData.nichos_potenciales);
-      params.append('tipos_negocio', formData.tipos_negocio_preferidos.join(", "));
-      params.append('desafio', formData.mayor_desafio);
-      params.append('habilidades', formData.habilidades_actuales);
-      params.append('tiempo', formData.compromiso_tiempo);
-      params.append('objetivo', formData.objetivo_inicial);
-      params.append('comentarios', formData.comentarios_adicionales);
-      params.append('fecha', new Date().toISOString());
+      // Preparar datos para enviar
+      const dataToSend = {
+        correo: formData.correo_electronico_usuario,
+        ciudad: formData.ciudad_region_usuario,
+        nichos: formData.nichos_potenciales,
+        tipos_negocio: formData.tipos_negocio_preferidos.join(", "),
+        desafio: formData.mayor_desafio,
+        habilidades: formData.habilidades_actuales,
+        tiempo: formData.compromiso_tiempo,
+        objetivo: formData.objetivo_inicial,
+        comentarios: formData.comentarios_adicionales,
+        fecha: new Date().toISOString()
+      };
       
-      // URL del webhook
-      const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
-      
-      console.log("Enviando datos al webhook como form-urlencoded:", params.toString());
-      
-      // Usar el método que funcionó con curl
+      // Usamos nuestro proxy en el backend para evitar problemas de CORS
       try {
-        fetch(webhookUrl, {
+        console.log("Enviando datos a través del proxy del backend");
+        
+        // Enviamos al proxy del backend
+        fetch('/api/n8n-webhook', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json'
           },
-          body: params
+          body: JSON.stringify(dataToSend)
         })
-        .then(response => {
-          if (response.ok) {
-            console.log("Webhook envío exitoso:", response.status);
-            toast({
-              title: "Éxito",
-              description: "Datos enviados correctamente.",
-              variant: "default"
-            });
-          } else {
-            console.warn("Webhook respondió con error:", response.status);
-          }
-          return response.text();
-        })
-        .then(text => {
-          console.log("Respuesta completa:", text);
+        .then(response => response.json())
+        .then(data => {
+          console.log("Respuesta del proxy:", data);
+          toast({
+            title: "Éxito",
+            description: "Diagnóstico enviado correctamente.",
+            variant: "default"
+          });
+          setIsSubmitting(false);
+          onSubmitSuccess();
         })
         .catch(error => {
-          console.error("Error al enviar al webhook:", error);
-        })
-        .finally(() => {
-          // Siempre avanzar al siguiente paso
+          console.error("Error en proxy:", error);
+          // Incluso si hay error, continuamos con la UI
           setIsSubmitting(false);
           onSubmitSuccess();
         });
