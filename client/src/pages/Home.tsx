@@ -16,6 +16,7 @@ const initialFormData: FormData = {
   objetivo_inicial: "",
   comentarios_adicionales: "",
   terminos_aceptados: false,
+  isSubmitting: false
 };
 
 export default function Home() {

@@ -103,39 +103,61 @@ export default function DiagnosticForm({
     
     if (validateCurrentStep()) {
       setIsSubmitting(true);
+      // Actualizar el formData para reflejar el estado de envío
+      setFormData(prev => ({...prev, isSubmitting: true}));
       
       try {
-        // Enviar datos al webhook
+        // Preparar datos para enviar en un formato más simple
+        const dataToSend = {
+          correo: formData.correo_electronico_usuario,
+          ciudad: formData.ciudad_region_usuario,
+          nichos: formData.nichos_potenciales,
+          tipos_negocio: formData.tipos_negocio_preferidos.join(", "),
+          desafio: formData.mayor_desafio,
+          habilidades: formData.habilidades_actuales,
+          tiempo: formData.compromiso_tiempo,
+          objetivo: formData.objetivo_inicial,
+          comentarios: formData.comentarios_adicionales,
+          fecha: new Date().toISOString()
+        };
+        
+        // Enviar datos al webhook con mayor tolerancia a errores
         const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
+        
+        console.log('Enviando datos:', dataToSend);
         
         const response = await fetch(webhookUrl, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Content-Type': 'application/json'
           },
-          mode: 'cors',
-          body: JSON.stringify({
-            data: formData,
-            timestamp: new Date().toISOString()
-          })
+          body: JSON.stringify(dataToSend)
         });
         
-        if (!response.ok) {
-          throw new Error(`Error de respuesta: ${response.status}`);
-        }
+        // Registrar la respuesta para diagnóstico
+        const responseText = await response.text();
+        console.log('Respuesta del webhook:', responseText, 'Status:', response.status);
         
-        console.log('Respuesta del webhook:', await response.text());
+        // Proceder independientemente del código de estado
         onSubmitSuccess();
       } catch (error) {
         console.error('Error submitting form:', error);
+        
+        // Mostrar mensaje pero permitir continuar
         toast({
-          title: "Error",
-          description: "Hubo un error al enviar el formulario. Por favor intenta de nuevo.",
+          title: "Advertencia",
+          description: "Hubo un problema al enviar los datos, pero puedes continuar con tu diagnóstico.",
           variant: "destructive"
         });
+        
+        // Permitir continuar a pesar del error
+        setTimeout(() => {
+          onSubmitSuccess();
+        }, 2000);
       } finally {
         setIsSubmitting(false);
+        // Actualizar el formData para reflejar el fin del estado de envío
+        setFormData(prev => ({...prev, isSubmitting: false}));
       }
     }
   };

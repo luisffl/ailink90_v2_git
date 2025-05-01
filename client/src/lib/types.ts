@@ -9,6 +9,7 @@ export interface FormData {
   objetivo_inicial: string;
   comentarios_adicionales: string;
   terminos_aceptados: boolean;
+  isSubmitting?: boolean;
 }
 
 export type DesafioOption = 
