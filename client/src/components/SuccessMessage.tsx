@@ -8,6 +8,7 @@ import logoPath from "../assets/logo.png";
 import { useEffect, useState, useRef } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useToast } from "@/hooks/use-toast";
 
 interface SuccessMessageProps {
   onRestart: () => void;
@@ -37,6 +38,7 @@ interface DiagnosticoData {
 }
 
 export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMessageProps) {
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [diagnostico, setDiagnostico] = useState<DiagnosticoData | null>(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
@@ -49,16 +51,65 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
     try {
       setGeneratingPDF(true);
       
+      // Mensaje de carga
+      toast({
+        title: "Generando PDF",
+        description: "Preparando la descarga, esto puede tardar unos segundos...",
+        duration: 3000,
+      });
+      
       // Obtener el elemento DOM a capturar
       const contentElement = contentRef.current;
       
-      // Configurar opciones para html2canvas
+      // Función para manejar posibles imágenes inválidas
+      const handleImageErrors = () => {
+        // Deshabilitamos temporalmente las animaciones para la captura
+        const animations = contentElement.querySelectorAll('.animate-spin, motion-safe:animate-pulse');
+        animations.forEach((element: Element) => {
+          if (element instanceof HTMLElement) {
+            element.style.animation = 'none';
+          }
+        });
+        
+        // Aplicamos un estilo a todas las imágenes para asegurar que cargan correctamente
+        const images = contentElement.querySelectorAll('img');
+        images.forEach((img: HTMLImageElement) => {
+          // Forzamos el completado de carga
+          if (!img.complete) {
+            img.style.display = 'none';
+          }
+        });
+      };
+      
+      // Procesamos las imágenes antes de generar el PDF
+      handleImageErrors();
+      
+      // Esperamos un momento para asegurar que los cambios de estilo se aplican
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Configurar opciones para html2canvas con manejo de errores mejorado
       const canvas = await html2canvas(contentElement, {
         scale: 1.5,
         useCORS: true,
         logging: false,
         backgroundColor: "#000000",
         windowWidth: 1200, // Ancho fijo para mejor calidad
+        allowTaint: true, // Permitir imágenes de otros dominios
+        imageTimeout: 5000, // 5 segundos máximo para cargar imágenes
+        ignoreElements: (element) => {
+          // Ignorar elementos problemáticos
+          return element.classList.contains('ignore-in-pdf');
+        },
+        onclone: (documentClone) => {
+          // Ajustes adicionales al clonar el documento
+          const clone = documentClone.querySelector('[data-pdfcontent]');
+          if (clone) {
+            clone.querySelectorAll('.ignore-in-pdf').forEach(el => {
+              el.remove();
+            });
+          }
+          return documentClone;
+        }
       });
       
       // Determinar las dimensiones del PDF (A4)
@@ -69,18 +120,58 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
         format: 'a4',
       });
       
+      // Añadir metadatos al PDF
+      pdf.setProperties({
+        title: `Diagnóstico Operativo - ${diagnostico.diagnostico_nicho.nicho_sugerido}`,
+        subject: 'AILINK - Diagnóstico Operativo Empresarial',
+        author: 'AILINK Starter',
+        keywords: 'diagnóstico, emprendimiento, nicho de mercado',
+        creator: 'AILINK Diagnostic App'
+      });
+      
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calcular la escala para ajustar correctamente al PDF
+      // Verificar si necesitamos múltiples páginas
       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 10; // Margen superior
+      const scaledHeight = imgHeight * ratio;
       
-      // Añadir imagen al PDF
-      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+      // Si el contenido es muy largo, lo dividimos en múltiples páginas
+      if (scaledHeight > pdfHeight - 20) { // 20mm de margen total
+        const contentPieces = Math.ceil(scaledHeight / (pdfHeight - 20));
+        const pieceHeight = imgHeight / contentPieces;
+        
+        for (let i = 0; i < contentPieces; i++) {
+          // Añadir página nueva después de la primera
+          if (i > 0) {
+            pdf.addPage();
+          }
+          
+          // Coordenadas de la porción a cortar
+          const sy = pieceHeight * i;
+          const sHeight = Math.min(pieceHeight, imgHeight - sy);
+          
+          // Añadir la pieza de la imagen
+          // Usamos solo los parámetros necesarios para evitar errores
+          pdf.addImage(
+            imgData, 
+            'PNG', 
+            10, // Margen X
+            10, // Margen Y
+            pdfWidth - 20, // Ancho con margen
+            (sHeight * ratio) // Alto proporcional de la pieza
+          );
+        }
+      } else {
+        // El contenido cabe en una sola página
+        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+        const imgY = 10; // Margen superior
+        
+        // Añadir imagen al PDF
+        pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+      }
       
       // Nombre personalizado para el archivo
       const fileName = `Diagnóstico_Operativo_${diagnostico.diagnostico_nicho.nicho_sugerido.slice(0, 20).replace(/\s+/g, '_')}.pdf`;
@@ -88,8 +179,23 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
       // Guardar PDF
       pdf.save(fileName);
       
+      // Notificar éxito
+      toast({
+        title: "PDF generado correctamente",
+        description: "El archivo se ha descargado en tu dispositivo.",
+        duration: 3000,
+      });
+      
     } catch (error) {
       console.error('Error al generar el PDF:', error);
+      
+      // Notificar error
+      toast({
+        title: "Error al generar el PDF",
+        description: "No se pudo generar el documento. Intenta de nuevo.",
+        variant: "destructive",
+        duration: 5000,
+      });
     } finally {
       setGeneratingPDF(false);
     }
