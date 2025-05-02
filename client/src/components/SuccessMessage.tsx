@@ -384,8 +384,20 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.7 }}
           >
-            {diagnostico.saludo}, tu diagnóstico está listo
+            {diagnostico.saludo}, tu camino al éxito empieza aquí
           </motion.h1>
+          
+          <motion.div
+            className="max-w-lg mx-auto text-center mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.9 }}
+            transition={{ delay: 0.3, duration: 0.7 }}
+          >
+            <p className="text-gray-300 text-lg">
+              Este diagnóstico personalizado es tu primer paso hacia una vida de libertad financiera y realización personal.
+            </p>
+          </motion.div>
+          
           <motion.p 
             className="text-lg text-blue-400/90 flex items-center justify-center gap-3 mt-6"
             initial={{ opacity: 0 }}

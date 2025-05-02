@@ -266,7 +266,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Función para enviar mensajes a todos los clientes conectados
   const broadcastToClients = (message: any) => {
     wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
+      // La constante WebSocket.OPEN no está disponible aquí, usamos el valor numérico 1
+      if (client.readyState === 1) { // 1 = OPEN en el estándar WebSocket
         client.send(JSON.stringify(message));
       }
     });
@@ -275,7 +276,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Crear un heartbeat para mantener las conexiones activas
   setInterval(() => {
     wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
+      // La constante WebSocket.OPEN no está disponible aquí, usamos el valor numérico 1
+      if (client.readyState === 1) { // 1 = OPEN en el estándar WebSocket
         client.send(JSON.stringify({ type: 'heartbeat', timestamp: new Date().toISOString() }));
       }
     });
