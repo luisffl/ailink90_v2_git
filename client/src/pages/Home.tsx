@@ -4,6 +4,8 @@ import DiagnosticForm from "@/components/DiagnosticForm";
 import SuccessMessage from "@/components/SuccessMessage";
 import logoPath from "../assets/logo.svg";
 import { motion } from "framer-motion";
+import { useWebSocket } from "@/hooks/use-websocket";
+import { useToast } from "@/hooks/use-toast";
 
 const initialFormData: FormData = {
   correo_electronico_usuario: "",
@@ -43,12 +45,51 @@ interface DiagnosticoResponse {
 }
 
 export default function Home() {
+  const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isProcessing, setIsProcessing] = useState(false);
   const [diagnosticoData, setDiagnosticoData] = useState<DiagnosticoResponse | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   
-  // Función para capturar la respuesta del webhook
+  // Usar nuestro hook de WebSocket
+  const { 
+    isConnected, 
+    webhookStatus, 
+    webhookMessage, 
+    lastMessage 
+  } = useWebSocket();
+  
+  // Efecto para mostrar el estado de la conexión WebSocket
+  useEffect(() => {
+    if (isConnected) {
+      console.log('WebSocket conectado correctamente');
+    }
+  }, [isConnected]);
+  
+  // Efecto para actualizar mensajes de estado del webhook
+  useEffect(() => {
+    if (webhookMessage) {
+      setStatusMessage(webhookMessage);
+    }
+  }, [webhookMessage]);
+  
+  // Efecto para procesar mensajes de WebSocket
+  useEffect(() => {
+    if (lastMessage && lastMessage.type === 'webhook_status' && lastMessage.status === 'success') {
+      // Si recibimos un mensaje de éxito con datos de diagnóstico
+      if (isProcessing && !isSubmitted) {
+        // Mostramos una notificación si estamos procesando
+        toast({
+          title: "Procesamiento completado",
+          description: "Tu diagnóstico ha sido generado con éxito",
+          duration: 3000,
+        });
+      }
+    }
+  }, [lastMessage, isProcessing, isSubmitted, toast]);
+  
+  // Función para capturar la respuesta del webhook (método legacy)
   const captureWebhookResponse = (event: MessageEvent) => {
     try {
       if (event.data && typeof event.data === 'string') {
@@ -68,7 +109,7 @@ export default function Home() {
     }
   };
 
-  // Escuchamos mensajes del backend a través del evento 'message'
+  // Escuchamos mensajes del backend a través del evento 'message' (método legacy)
   useEffect(() => {
     window.addEventListener('message', captureWebhookResponse);
     
@@ -84,16 +125,76 @@ export default function Home() {
     if (response) {
       try {
         setDiagnosticoData(response);
+        
+        // Si hay respuesta, avanzamos al siguiente paso rápidamente
+        // Simulamos un tiempo breve de procesamiento antes de mostrar el mensaje final
+        setTimeout(() => {
+          setIsSubmitted(true);
+          setIsProcessing(false);
+        }, 1000);
       } catch (e) {
         console.error("Error al procesar respuesta directa:", e);
       }
+    } else {
+      // Si no recibimos respuesta directamente, esperamos más tiempo
+      // para que el WebSocket pueda completar la comunicación
+      
+      // Establecemos un temporizador largo que solo se ejecutará si no recibimos 
+      // la respuesta a través del WebSocket antes
+      const timeoutTimer = setTimeout(() => {
+        toast({
+          title: "Tiempo de espera agotado",
+          description: "Mostrando resultados con datos predeterminados",
+          variant: "default",
+          duration: 4000,
+        });
+        
+        setIsSubmitted(true);
+        setIsProcessing(false);
+      }, 15000); // 15 segundos máximo de espera
+      
+      // Escuchamos los mensajes de WebSocket para avanzar cuando recibamos la respuesta
+      const checkInterval = setInterval(() => {
+        // Si ya recibimos la respuesta y tenemos datos o si el WebSocket informa de éxito
+        if (webhookStatus === 'success' || diagnosticoData) {
+          // Limpiamos los temporizadores
+          clearTimeout(timeoutTimer);
+          clearInterval(checkInterval);
+          
+          // Esperamos un poco para mostrar el mensaje de éxito
+          setTimeout(() => {
+            setIsSubmitted(true);
+            setIsProcessing(false);
+          }, 1000);
+        }
+        // Si hay un error en el webhook, también avanzamos pero usando datos demo
+        else if (['error', 'timeout', 'processing_error'].includes(webhookStatus || '')) {
+          // Limpiamos los temporizadores
+          clearTimeout(timeoutTimer);
+          clearInterval(checkInterval);
+          
+          // Notificamos al usuario del problema
+          toast({
+            title: "Error en el servicio",
+            description: "Mostrando resultados con datos predeterminados",
+            variant: "destructive",
+            duration: 4000,
+          });
+          
+          // Avanzamos a la pantalla final
+          setTimeout(() => {
+            setIsSubmitted(true);
+            setIsProcessing(false);
+          }, 1000);
+        }
+      }, 1000); // Comprobamos cada segundo
+      
+      // Limpiamos los intervalos cuando el componente se desmonte
+      return () => {
+        clearTimeout(timeoutTimer);
+        clearInterval(checkInterval);
+      };
     }
-    
-    // Simulamos un tiempo de procesamiento antes de mostrar el mensaje final
-    setTimeout(() => {
-      setIsSubmitted(true);
-      setIsProcessing(false);
-    }, 2000);
   };
 
   const handleRestart = () => {
@@ -227,8 +328,30 @@ export default function Home() {
             </h2>
             
             <p className="text-gray-400 mx-auto max-w-md">
-              Estamos analizando tus datos para generar un diagnóstico personalizado
+              {statusMessage || "Estamos analizando tus datos para generar un diagnóstico personalizado"}
             </p>
+            
+            {webhookStatus && (
+              <motion.div 
+                className="mt-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className={`inline-flex items-center px-3 py-1 text-xs rounded-full ${
+                  webhookStatus === 'success' ? 'bg-green-500/20 text-green-300' :
+                  webhookStatus === 'error' || webhookStatus === 'timeout' ? 'bg-red-500/20 text-red-300' :
+                  webhookStatus === 'sending' ? 'bg-yellow-500/20 text-yellow-300' :
+                  'bg-blue-500/20 text-blue-300'
+                }`}>
+                  {webhookStatus === 'success' ? '✓ Completado' :
+                   webhookStatus === 'error' || webhookStatus === 'timeout' ? '✕ Error' :
+                   webhookStatus === 'sending' ? '↗ Enviando' :
+                   webhookStatus === 'receiving' ? '↙ Recibiendo' :
+                   webhookStatus}
+                </div>
+              </motion.div>
+            )}
             
             <div className="flex justify-center items-center space-x-2 mt-6">
               {[...Array(3)].map((_, i) => (
