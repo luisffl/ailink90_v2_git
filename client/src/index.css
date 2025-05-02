@@ -192,31 +192,3 @@
   z-index: 10;
   backdrop-filter: blur(8px);
 }
-
-/* Animación de typing para el asistente de IA */
-.typing-dot {
-  width: 6px;
-  height: 6px;
-  margin: 0 2px;
-  background-color: rgba(59, 130, 246, 0.5);
-  border-radius: 50%;
-  display: inline-block;
-  animation: typing 1.4s infinite ease-in-out both;
-}
-
-.typing-dot:nth-child(1) {
-  animation-delay: -0.32s;
-}
-
-.typing-dot:nth-child(2) {
-  animation-delay: -0.16s;
-}
-
-@keyframes typing {
-  0%, 80%, 100% { 
-    transform: scale(0);
-  }
-  40% { 
-    transform: scale(1);
-  }
-}

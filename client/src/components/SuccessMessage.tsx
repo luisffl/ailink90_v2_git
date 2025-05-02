@@ -1,12 +1,10 @@
 import { motion } from "framer-motion";
 import { 
   CheckCircle, ArrowRight, Lightbulb, MapPin, Target, Trophy, Clock,
-  Activity, BarChart3, Users, LineChart, Rocket, Zap, Shield, Brain,
-  MessagesSquare
+  Activity, BarChart3, Users, LineChart, Rocket, Zap, Shield, Brain
 } from "lucide-react";
 import logoPath from "../assets/logo.png";
 import { useEffect, useState } from "react";
-import AIAssistant from "./AIAssistant";
 
 interface SuccessMessageProps {
   onRestart: () => void;
@@ -548,59 +546,13 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
           </div>
         </motion.div>
 
-        {/* AI Assistant Section */}
-        <motion.div 
-          className="mb-10 pt-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7, duration: 0.8 }}
-        >
-          <div className="section-divider" />
-          <div className="mb-2">
-            <span className="symbolic-marker">⬦ 04</span>
-          </div>
-          <motion.h2 
-            className="text-2xl font-grotesk text-white flex items-center gap-4 mb-8"
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ 
-              delay: 0.75,
-              type: "spring",
-              damping: 20,
-              stiffness: 90
-            }}
-          >
-            <motion.div
-              className="symbolic-icon-container"
-              animate={{ 
-                rotate: [0, 4, 0, -4, 0],
-                scale: [1, 1.05, 1, 1.05, 1],
-                opacity: [0.8, 1, 0.8]
-              }}
-              transition={{ 
-                duration: 3,
-                delay: 1.0,
-                times: [0, 0.25, 0.5, 0.75, 1],
-                repeat: Infinity,
-                repeatType: "reverse",
-                repeatDelay: 8
-              }}
-            >
-              <MessagesSquare className="text-blue-400" size={22} />
-            </motion.div>
-            <span>Asistente IA</span>
-          </motion.h2>
-          
-          <AIAssistant diagnosticoData={diagnostico} />
-        </motion.div>
-        
         {/* Footer and button section */}
         <div className="section-divider mt-16" />
         <motion.div 
           className="text-center mt-16 pt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.9 }}
+          transition={{ delay: 1.2, duration: 0.9 }}
         >
           <div className="mb-8">
             <span className="symbolic-marker">⧫ FINALIZADO ⧫</span>
