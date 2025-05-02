@@ -184,6 +184,13 @@ export default function DiagnosticForm({
           
           // Si tenemos datos válidos, los pasamos al componente padre
           if (hasValidDiagnostico) {
+            // Personalizar el saludo con el nombre del usuario
+            if (data.saludo && formData.nombre_usuario) {
+              // Si la respuesta incluye "Hola" o similar, añadimos el nombre
+              if (data.saludo.includes("Hola")) {
+                data.saludo = `Hola, ${formData.nombre_usuario}`;
+              }
+            }
             onSubmitSuccess(data);
           } else {
             onSubmitSuccess();

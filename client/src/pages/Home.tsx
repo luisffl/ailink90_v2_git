@@ -137,6 +137,10 @@ export default function Home() {
         console.error("Error al procesar respuesta directa:", e);
       }
     } else {
+      // Si vamos a usar los datos de demostración, personalizamos el saludo con el nombre
+      if (formData.nombre_usuario) {
+        demoData.saludo = `Hola, ${formData.nombre_usuario}`;
+      }
       // Si no recibimos respuesta directamente, esperamos más tiempo
       // para que el WebSocket pueda completar la comunicación
       
