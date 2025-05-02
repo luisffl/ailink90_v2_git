@@ -127,18 +127,21 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-[#121212] py-10 px-4">
-      <div className="container mx-auto max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-b from-black to-[#121212] py-10 px-4 relative">
+      <div className="container mx-auto max-w-4xl relative z-10">
         <motion.header 
-          className="text-center mb-12"
+          className="text-center mb-16"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <div className="flex justify-center mb-6">
+          <div className="mb-2 opacity-60">
+            <span className="symbolic-marker">✧ DIAGNÓSTICO OPERATIVO ✧</span>
+          </div>
+          <div className="flex justify-center mb-6 mt-4">
             <img src={logoPath} alt="AILINK Logo" className="h-24 md:h-28" />
           </div>
-          <h1 className="text-3xl md:text-5xl font-medium mb-4 text-white leading-tight">
+          <h1 className="text-3xl md:text-5xl font-medium mb-6 text-white leading-tight tracking-wide">
             Diagnóstico Operativo <span className="text-blue-500">AILINK</span>
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -154,19 +157,97 @@ export default function Home() {
           />
         ) : isProcessing ? (
           <motion.div 
-            className="glass-card p-10 text-center"
+            className="glass-card p-14 text-center max-w-2xl mx-auto relative column-container"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
           >
-            <div className="flex justify-center mb-8">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+            <div className="mb-2 opacity-60">
+              <span className="symbolic-marker">⁜ PROCESANDO ⁜</span>
             </div>
-            <h2 className="text-2xl font-medium mb-4 text-white">
-              Procesando tu información
+            
+            <motion.div 
+              className="w-28 h-28 mx-auto mb-14 mt-8 relative"
+            >
+              <motion.div 
+                className="absolute inset-0 rounded-full border border-blue-500/20"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.3, 0.5, 0.3]
+                }}
+                transition={{ 
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              />
+              <motion.div 
+                className="absolute inset-1 rounded-full border border-blue-500/30"
+                animate={{ 
+                  scale: [1.1, 0.9, 1.1],
+                  opacity: [0.4, 0.6, 0.4]
+                }}
+                transition={{ 
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  delay: 0.5
+                }}
+              />
+              <motion.div
+                className="w-20 h-20 bg-blue-500/5 rounded-full flex items-center justify-center mx-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                animate={{ 
+                  boxShadow: [
+                    "0 0 0 rgba(59, 130, 246, 0.2)",
+                    "0 0 20px rgba(59, 130, 246, 0.4)",
+                    "0 0 5px rgba(59, 130, 246, 0.2)"
+                  ]
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity,
+                  repeatType: "mirror"
+                }}
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ 
+                    duration: 15,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                >
+                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-400/80"></div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+            
+            <h2 className="text-2xl font-grotesk font-medium mb-6 text-white tracking-wide">
+              Procesando Información
             </h2>
-            <p className="text-gray-400">
-              Estamos analizando tus respuestas para preparar tu diagnóstico...
+            
+            <p className="text-gray-400 mx-auto max-w-md">
+              Estamos analizando tus datos para generar un diagnóstico personalizado
             </p>
+            
+            <div className="flex justify-center items-center space-x-2 mt-6">
+              {[...Array(3)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="w-1.5 h-1.5 rounded-full bg-blue-500/60"
+                  animate={{
+                    scale: [1, 1.5, 1],
+                    opacity: [0.3, 0.7, 0.3]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: i * 0.2,
+                    ease: "easeInOut"
+                  }}
+                />
+              ))}
+            </div>
           </motion.div>
         ) : (
           <DiagnosticForm 

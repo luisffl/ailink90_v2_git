@@ -175,9 +175,9 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto py-6 px-6"
+      className="max-w-4xl mx-auto py-10 px-6 relative z-10"
     >
-      <div className="glass-card p-10 mb-8">
+      <div className="glass-card p-10 mb-8 relative column-container">
         {/* Header section */}
         <div className="text-center mb-16 mt-4">
           <div className="mb-2 opacity-60">
