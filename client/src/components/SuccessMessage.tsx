@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
 import { 
   CheckCircle, ArrowRight, Lightbulb, MapPin, Target, Trophy, Clock,
-  Activity, BarChart3, Users, LineChart, Rocket, Zap, Shield, Brain
+  Activity, BarChart3, Users, LineChart, Rocket, Zap, Shield, Brain,
+  Download, FileText
 } from "lucide-react";
 import logoPath from "../assets/logo.png";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 interface SuccessMessageProps {
   onRestart: () => void;
@@ -36,6 +39,61 @@ interface DiagnosticoData {
 export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMessageProps) {
   const [loading, setLoading] = useState(true);
   const [diagnostico, setDiagnostico] = useState<DiagnosticoData | null>(null);
+  const [generatingPDF, setGeneratingPDF] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  
+  // Función para generar el PDF
+  const generatePDF = async () => {
+    if (!contentRef.current || !diagnostico) return;
+    
+    try {
+      setGeneratingPDF(true);
+      
+      // Obtener el elemento DOM a capturar
+      const contentElement = contentRef.current;
+      
+      // Configurar opciones para html2canvas
+      const canvas = await html2canvas(contentElement, {
+        scale: 1.5,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#000000",
+        windowWidth: 1200, // Ancho fijo para mejor calidad
+      });
+      
+      // Determinar las dimensiones del PDF (A4)
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
+      // Calcular la escala para ajustar correctamente al PDF
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = 10; // Margen superior
+      
+      // Añadir imagen al PDF
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+      
+      // Nombre personalizado para el archivo
+      const fileName = `Diagnóstico_Operativo_${diagnostico.diagnostico_nicho.nicho_sugerido.slice(0, 20).replace(/\s+/g, '_')}.pdf`;
+      
+      // Guardar PDF
+      pdf.save(fileName);
+      
+    } catch (error) {
+      console.error('Error al generar el PDF:', error);
+    } finally {
+      setGeneratingPDF(false);
+    }
+  };
 
   useEffect(() => {
     // Si tenemos datos de diagnóstico, los usamos
@@ -184,7 +242,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
       transition={{ duration: 0.5 }}
       className="max-w-4xl mx-auto py-10 px-6 relative z-10"
     >
-      <div className="glass-card p-10 mb-8 relative column-container">
+      <div ref={contentRef} className="glass-card p-10 mb-8 relative column-container">
         {/* Header section */}
         <div className="text-center mb-16 mt-4">
           <div className="mb-2 opacity-60">
@@ -613,27 +671,66 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
           <div className="mb-8">
             <span className="symbolic-marker">⧫ FINALIZADO ⧫</span>
           </div>
-          <div className="relative inline-block overflow-hidden group">
-            <motion.button
-              onClick={onRestart}
-              className="bg-transparent border border-blue-500/40 group-hover:border-blue-500 text-blue-400 group-hover:text-blue-300 py-3 px-12 rounded-md text-lg transition-all duration-500 relative z-10"
-              whileHover={{ 
-                y: -2,
-                transition: { duration: 0.3 }
-              }}
-              whileTap={{ y: 0 }}
-            >
-              <span className="relative z-10">Volver al inicio</span>
-            </motion.button>
-            <motion.div 
-              className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-md bg-gradient-to-r from-blue-800/10 via-blue-700/5 to-blue-800/10"
-              initial={{ scale: 0.5 }}
-              whileHover={{ 
-                scale: 1,
-                boxShadow: "0 5px 20px rgba(59, 130, 246, 0.2)"
-              }}
-              transition={{ duration: 0.4 }}
-            />
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-8">
+            {/* Botón de descarga PDF */}
+            <div className="relative inline-block overflow-hidden group">
+              <motion.button
+                onClick={generatePDF}
+                disabled={generatingPDF}
+                className="bg-blue-600/20 border border-blue-500/40 group-hover:border-blue-500 text-blue-400 group-hover:text-blue-300 py-3 px-8 rounded-md text-lg transition-all duration-500 relative z-10 flex items-center gap-3"
+                whileHover={{ 
+                  y: -2,
+                  transition: { duration: 0.3 }
+                }}
+                whileTap={{ y: 0 }}
+              >
+                {generatingPDF ? (
+                  <>
+                    <div className="animate-spin h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full"></div>
+                    <span className="relative z-10">Generando PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <FileText size={18} />
+                    <span className="relative z-10">Descargar PDF</span>
+                  </>
+                )}
+              </motion.button>
+              <motion.div 
+                className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-md bg-gradient-to-r from-blue-800/20 via-blue-700/10 to-blue-800/20"
+                initial={{ scale: 0.5 }}
+                whileHover={{ 
+                  scale: 1,
+                  boxShadow: "0 5px 20px rgba(59, 130, 246, 0.3)"
+                }}
+                transition={{ duration: 0.4 }}
+              />
+            </div>
+            
+            {/* Botón volver */}
+            <div className="relative inline-block overflow-hidden group">
+              <motion.button
+                onClick={onRestart}
+                className="bg-transparent border border-blue-500/40 group-hover:border-blue-500 text-blue-400 group-hover:text-blue-300 py-3 px-8 rounded-md text-lg transition-all duration-500 relative z-10"
+                whileHover={{ 
+                  y: -2,
+                  transition: { duration: 0.3 }
+                }}
+                whileTap={{ y: 0 }}
+              >
+                <span className="relative z-10">Volver al inicio</span>
+              </motion.button>
+              <motion.div 
+                className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-md bg-gradient-to-r from-blue-800/10 via-blue-700/5 to-blue-800/10"
+                initial={{ scale: 0.5 }}
+                whileHover={{ 
+                  scale: 1,
+                  boxShadow: "0 5px 20px rgba(59, 130, 246, 0.2)"
+                }}
+                transition={{ duration: 0.4 }}
+              />
+            </div>
           </div>
         </motion.div>
         
