@@ -49,11 +49,33 @@
   }
   
   body {
-    @apply font-sans antialiased bg-black text-white relative;
+    @apply font-sans antialiased bg-black text-white relative overflow-x-hidden;
     background-image: url('@assets/column-left.svg'), url('@assets/column-right.svg');
     background-repeat: no-repeat, no-repeat;
     background-position: left center, right center;
     background-attachment: fixed, fixed;
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(30, 64, 175, 0.05) 0%, rgba(0, 0, 0, 0) 50%);
+    z-index: -1;
+    opacity: 0.4;
+    animation: subtleBackgroundAnimation 40s infinite alternate ease-in-out;
+  }
+  
+  @keyframes subtleBackgroundAnimation {
+    0% {
+      transform: translate(-25%, -25%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-30%, -30%) rotate(5deg);
+    }
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -122,11 +144,25 @@
 }
 
 .glass-inner {
-  @apply bg-[#1a1a1a]/50 backdrop-blur-sm border border-[#2a2a2a]/30 rounded-lg transition-all duration-500 hover:border-[#3a3a3a]/50;
+  @apply bg-[#1a1a1a]/50 backdrop-blur-sm border border-[#2a2a2a]/30 rounded-lg transition-all duration-500 hover:border-[#3a3a3a]/50 hover:bg-[#1a1a1a]/60 relative overflow-hidden;
+}
+
+.glass-inner::before {
+  content: '';
+  @apply absolute -inset-px bg-gradient-to-b from-white/[0.08] to-transparent opacity-0 transition-opacity duration-500 rounded-lg pointer-events-none z-[1];
+}
+
+.glass-inner:hover::before {
+  @apply opacity-100;
 }
 
 .highlight-box {
   @apply bg-blue-500/5 border-blue-500/20;
+}
+
+.highlight-box::after {
+  content: '';
+  @apply absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none z-0;
 }
 
 /* Estilos para abstracción y simbolismo */

@@ -142,23 +142,27 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
           </motion.p>
         </motion.div>
         
-        <div className="flex justify-center items-center space-x-1">
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="w-1.5 h-1.5 rounded-full bg-blue-500/60"
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.3, 0.7, 0.3]
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                delay: i * 0.2,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
+        <div className="flex items-center justify-center mt-6">
+          <div className="relative w-20 h-4">
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-blue-500/80"
+                style={{ left: `${i * 25}%` }}
+                animate={{
+                  y: [0, -8, 0],
+                  opacity: [0.4, 1, 0.4],
+                  scale: [0.8, 1.2, 0.8],
+                }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  delay: i * 0.15,
+                  ease: "easeInOut"
+                }}
+              />
+            ))}
+          </div>
         </div>
         
         <motion.div 
@@ -272,8 +276,6 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
             <span>Diagnóstico de Nicho</span>
           </motion.h2>
           
-
-          
           <div className="space-y-6">
             {[
               {
@@ -374,7 +376,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
               },
               {
                 title: "Tu ventaja competitiva:",
-                content: diagnostico.impulso_personal.ventaja_habilidad
+                content: diagnostico.impulso_personal.ventaja_habilidad || "Aprovecha tus conocimientos únicos para diferenciarte en este mercado."
               }
             ].map((item, index) => (
               <motion.div 
@@ -447,8 +449,8 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
           >
-            <div className="relative flex justify-between items-center pt-2 pb-12">
-              {/* Timeline Track */}
+            <div className="relative hidden md:flex justify-between items-center pt-2 pb-12">
+              {/* Timeline Track - Desktop */}
               <div className="absolute h-1 w-full bg-[#222] top-7 rounded-full overflow-hidden">
                 <motion.div 
                   className="absolute h-full bg-gradient-to-r from-blue-500/50 to-blue-400/20 left-0"
@@ -458,7 +460,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
                 />
               </div>
               
-              {/* Timeline Points */}
+              {/* Timeline Points - Desktop */}
               {[
                 { label: "Diagnóstico", icon: <Activity size={16} className="text-blue-400" /> },
                 { label: "Propuesta de valor", icon: <BarChart3 size={16} className="text-blue-400" /> },
@@ -468,7 +470,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
               ].map((point, index) => (
                 <motion.div 
                   key={`timeline-point-${index}`}
-                  className={`relative z-10 flex flex-col items-center gap-1 `}
+                  className={`relative z-10 flex flex-col items-center gap-1`}
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.7 + (index * 0.1), duration: 0.4 }}
@@ -498,6 +500,60 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
                   )}
                 </motion.div>
               ))}
+            </div>
+            
+            {/* Timeline vertical para móviles */}
+            <div className="md:hidden space-y-4 pt-2 pb-8 ml-4">
+              <div className="relative pl-8 border-l-2 border-[#333]">
+                {[
+                  { label: "Diagnóstico", icon: <Activity size={16} className="text-blue-400" />, completed: true },
+                  { label: "Propuesta de valor", icon: <BarChart3 size={16} className="text-blue-400" />, active: true },
+                  { label: "Primer cliente", icon: <Users size={16} className="text-gray-500" /> },
+                  { label: "Optimización", icon: <LineChart size={16} className="text-gray-500" /> },
+                  { label: "Escalabilidad", icon: <Rocket size={16} className="text-gray-500" /> }
+                ].map((point, index) => (
+                  <motion.div 
+                    key={`mobile-timeline-${index}`}
+                    className="mb-5 relative"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + (index * 0.1), duration: 0.5 }}
+                  >
+                    <div className={`absolute -left-[26px] top-0 w-4 h-4 rounded-full 
+                      ${point.completed ? 'bg-blue-500 shadow-md shadow-blue-500/30' : 
+                        point.active ? 'bg-blue-500/80 border border-blue-400/30' : 'bg-[#333]'} 
+                      flex items-center justify-center`}
+                    >
+                      {(point.completed || point.active) && 
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.7 + (index * 0.1), duration: 0.3 }}
+                        >
+                          {point.icon}
+                        </motion.div>
+                      }
+                    </div>
+                    
+                    <div className={`${point.active ? 'text-blue-400 font-medium' : 
+                      point.completed ? 'text-blue-400/80' : 'text-gray-500'}`}
+                    >
+                      {point.label}
+                    </div>
+                    
+                    {point.active && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8 + (index * 0.1), duration: 0.5 }}
+                        className="text-xs text-gray-400 mt-1"
+                      >
+                        Tu punto actual
+                      </motion.div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
           
@@ -557,17 +613,28 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
           <div className="mb-8">
             <span className="symbolic-marker">⧫ FINALIZADO ⧫</span>
           </div>
-          <motion.button
-            onClick={onRestart}
-            className="bg-transparent border border-blue-500/40 hover:border-blue-500 text-blue-400 hover:text-blue-300 py-3 px-10 rounded-md text-lg transition-all duration-500"
-            whileHover={{ 
-              y: -3,
-              boxShadow: "0 6px 20px rgba(59, 130, 246, 0.15)"
-            }}
-            whileTap={{ y: 0 }}
-          >
-            Volver al inicio
-          </motion.button>
+          <div className="relative inline-block overflow-hidden group">
+            <motion.button
+              onClick={onRestart}
+              className="bg-transparent border border-blue-500/40 group-hover:border-blue-500 text-blue-400 group-hover:text-blue-300 py-3 px-12 rounded-md text-lg transition-all duration-500 relative z-10"
+              whileHover={{ 
+                y: -2,
+                transition: { duration: 0.3 }
+              }}
+              whileTap={{ y: 0 }}
+            >
+              <span className="relative z-10">Volver al inicio</span>
+            </motion.button>
+            <motion.div 
+              className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-md bg-gradient-to-r from-blue-800/10 via-blue-700/5 to-blue-800/10"
+              initial={{ scale: 0.5 }}
+              whileHover={{ 
+                scale: 1,
+                boxShadow: "0 5px 20px rgba(59, 130, 246, 0.2)"
+              }}
+              transition={{ duration: 0.4 }}
+            />
+          </div>
         </motion.div>
         
         <motion.div 
