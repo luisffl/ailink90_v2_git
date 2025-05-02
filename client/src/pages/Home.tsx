@@ -207,7 +207,7 @@ export default function Home() {
   // Ejemplo de datos para test sin dependencia del webhook
   // Esto se usa solo como fallback si no recibimos datos del webhook
   const demoData = {
-    "saludo": "Hola",
+    "saludo": "Hola, Emprendedor",
     "ciudad_region": "Barcelona",
     "diagnostico_nicho": {
       "nicho_sugerido": "Proveedores de Servicios Gestionados de TI (MSPs)",

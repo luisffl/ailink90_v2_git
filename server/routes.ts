@@ -27,6 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Preparar los datos limpiando posibles caracteres problemáticos
       const cleanData = {
+        nombre: String(req.body.nombre || '').trim(),
         correo: String(req.body.correo || '').trim(),
         ciudad: String(req.body.ciudad || '').trim(),
         nichos: String(req.body.nichos || '').trim(),
