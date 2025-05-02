@@ -51,92 +51,120 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
   if (loading || !diagnostico) {
     return (
       <motion.div 
-        className="glass-card p-10 text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        className="glass-card p-14 text-center max-w-2xl mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
       >
-        <motion.div 
-          className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-8 accent-glow"
-          animate={{ 
-            boxShadow: [
-              "0 0 0 rgba(59, 130, 246, 0.4)",
-              "0 0 25px rgba(59, 130, 246, 0.6)",
-              "0 0 5px rgba(59, 130, 246, 0.4)"
-            ],
-            scale: [1, 1.05, 1]
-          }}
-          transition={{ 
-            duration: 2, 
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ 
-              duration: 10,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          >
-            <Clock className="h-10 w-10 text-blue-500" />
-          </motion.div>
-        </motion.div>
-        
-        <motion.h2 
-          className="text-3xl font-grotesk font-medium mb-4 text-white"
-          animate={{ opacity: [0.7, 1, 0.7] }}
-          transition={{ 
-            duration: 2.5, 
-            repeat: Infinity 
-          }}
-        >
-          ESTAMOS REALIZANDO EL DIAGNÓSTICO OPERATIVO
-        </motion.h2>
-        
-        <p className="text-gray-400 mb-8 text-lg">
-          Gracias por completar el formulario. Estamos procesando tu información 
-          para crear un diagnóstico personalizado para tu negocio.
-        </p>
-        
-        <div className="flex justify-center mt-6">
-          <div className="relative w-16 h-16">
-            <motion.div 
-              className="absolute inset-0 rounded-full border-2 border-blue-500/30"
-              animate={{ 
-                scale: [1, 1.3, 1],
-                opacity: [1, 0, 1]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "loop"
-              }}
-            />
-            <motion.div 
-              className="absolute inset-0 rounded-full border-t-2 border-blue-500"
-              animate={{ rotate: 360 }}
-              transition={{ 
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
-          </div>
+        <div className="mb-2 opacity-60">
+          <span className="symbolic-marker">⁜ PROCESANDO ⁜</span>
         </div>
         
         <motion.div 
-          className="mt-10"
-          initial={{ opacity: 0.5 }}
-          animate={{ opacity: [0.5, 0.7, 0.5] }}
-          transition={{ 
-            duration: 3, 
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
+          className="w-28 h-28 mx-auto mb-14 mt-8 relative"
         >
-          <img src={logoPath} alt="AILINK Logo" className="h-12 mx-auto" />
+          <motion.div 
+            className="absolute inset-0 rounded-full border border-blue-500/20"
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3]
+            }}
+            transition={{ 
+              duration: 4,
+              repeat: Infinity,
+              repeatType: "reverse"
+            }}
+          />
+          <motion.div 
+            className="absolute inset-1 rounded-full border border-blue-500/30"
+            animate={{ 
+              scale: [1.1, 0.9, 1.1],
+              opacity: [0.4, 0.6, 0.4]
+            }}
+            transition={{ 
+              duration: 3,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: 0.5
+            }}
+          />
+          <motion.div
+            className="w-20 h-20 bg-blue-500/5 rounded-full flex items-center justify-center mx-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            animate={{ 
+              boxShadow: [
+                "0 0 0 rgba(59, 130, 246, 0.2)",
+                "0 0 20px rgba(59, 130, 246, 0.4)",
+                "0 0 5px rgba(59, 130, 246, 0.2)"
+              ]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              repeatType: "mirror"
+            }}
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ 
+                duration: 15,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            >
+              <Clock className="h-8 w-8 text-blue-400/80" />
+            </motion.div>
+          </motion.div>
+        </motion.div>
+        
+        <motion.div className="space-y-1 mb-12">
+          <motion.h2 
+            className="text-2xl font-grotesk font-medium mb-6 text-white tracking-wide"
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity 
+            }}
+          >
+            PROCESANDO DIAGNÓSTICO
+          </motion.h2>
+          
+          <motion.p 
+            className="text-gray-400 mx-auto max-w-md text-center text-base leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.8 }}
+            transition={{ duration: 1, delay: 0.5 }}
+          >
+            Estamos analizando tus datos para generar un diagnóstico personalizado.
+            <br />Este proceso puede tardar unos segundos.
+          </motion.p>
+        </motion.div>
+        
+        <div className="flex justify-center items-center space-x-1">
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-1.5 h-1.5 rounded-full bg-blue-500/60"
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.3, 0.7, 0.3]
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                delay: i * 0.2,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+        
+        <motion.div 
+          className="mt-14"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ duration: 2, delay: 1 }}
+        >
+          <img src={logoPath} alt="AILINK Logo" className="h-10 mx-auto" />
         </motion.div>
       </motion.div>
     );
@@ -151,15 +179,19 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
     >
       <div className="glass-card p-10 mb-8">
         {/* Header section */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-16 mt-4">
+          <div className="mb-2 opacity-60">
+            <span className="symbolic-marker">✧ DIAGNÓSTICO OPERATIVO ✧</span>
+          </div>
           <motion.div 
-            className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 accent-glow"
+            className="w-20 h-20 bg-blue-500/5 rounded-full flex items-center justify-center mx-auto mb-8 accent-glow"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ 
-              duration: 0.6,
+              duration: 0.8,
               type: "spring",
-              stiffness: 200
+              stiffness: 100,
+              damping: 12
             }}
           >
             <motion.div
@@ -167,52 +199,72 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
               animate={{ scale: 1 }}
               transition={{ 
                 delay: 0.3,
-                duration: 0.4,
+                duration: 0.6,
                 type: "spring",
-                stiffness: 300
+                stiffness: 150
               }}
             >
               <CheckCircle className="h-10 w-10 text-blue-500" />
             </motion.div>
           </motion.div>
-          <h1 className="text-3xl font-grotesk font-medium text-white mb-2">
+          <motion.h1 
+            className="text-3xl font-grotesk font-medium text-white mb-6 tracking-wide"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.7 }}
+          >
             {diagnostico.saludo}, tu diagnóstico está listo
-          </h1>
-          <p className="text-lg text-blue-400 flex items-center justify-center gap-2 mt-4">
-            <MapPin size={18} />
+          </motion.h1>
+          <motion.p 
+            className="text-lg text-blue-400/90 flex items-center justify-center gap-3 mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.7 }}
+          >
+            <MapPin size={16} />
             <span>Localización: {diagnostico.ciudad_region}</span>
-          </p>
+          </motion.p>
         </div>
 
         {/* Diagnostic Section */}
         <motion.div 
-          className="mb-10 border-t border-[#333] pt-8"
+          className="mb-10 pt-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
+          transition={{ delay: 0.1, duration: 0.8 }}
         >
+          <div className="section-divider" />
+          <div className="mb-2">
+            <span className="symbolic-marker">◇ 01</span>
+          </div>
           <motion.h2 
-            className="text-2xl font-grotesk text-white flex items-center gap-3 mb-6"
-            initial={{ x: -20, opacity: 0 }}
+            className="text-2xl font-grotesk text-white flex items-center gap-4 mb-8"
+            initial={{ x: -10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ 
               delay: 0.15,
               type: "spring",
-              stiffness: 150
+              damping: 20,
+              stiffness: 90
             }}
           >
             <motion.div
+              className="symbolic-icon-container"
               animate={{ 
-                rotate: [0, 15, 0, -15, 0],
-                scale: [1, 1.1, 1, 1.1, 1]
+                rotate: [0, 8, 0, -8, 0],
+                scale: [1, 1.05, 1, 1.05, 1],
+                opacity: [0.8, 1, 0.8]
               }}
               transition={{ 
-                duration: 2,
+                duration: 3,
                 delay: 0.6,
-                times: [0, 0.2, 0.5, 0.8, 1]
+                times: [0, 0.25, 0.5, 0.75, 1],
+                repeat: Infinity,
+                repeatType: "reverse",
+                repeatDelay: 5
               }}
             >
-              <Target className="text-blue-400" size={24} />
+              <Target className="text-blue-400" size={22} />
             </motion.div>
             <span>Diagnóstico de Nicho</span>
           </motion.h2>
@@ -259,33 +311,43 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
 
         {/* Personal Impulse Section */}
         <motion.div 
-          className="mb-10 border-t border-[#333] pt-8"
+          className="mb-10 pt-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
         >
+          <div className="section-divider" />
+          <div className="mb-2">
+            <span className="symbolic-marker">△ 02</span>
+          </div>
           <motion.h2 
-            className="text-2xl font-grotesk text-white flex items-center gap-3 mb-6"
-            initial={{ x: -20, opacity: 0 }}
+            className="text-2xl font-grotesk text-white flex items-center gap-4 mb-8"
+            initial={{ x: -10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ 
               delay: 0.35,
               type: "spring",
-              stiffness: 150
+              damping: 20,
+              stiffness: 90
             }}
           >
             <motion.div
+              className="symbolic-icon-container"
               animate={{ 
-                rotate: [0, 15, 0, -15, 0],
-                scale: [1, 1.1, 1, 1.1, 1]
+                rotate: [0, 5, 0, -5, 0],
+                scale: [1, 1.05, 1, 1.05, 1],
+                opacity: [0.8, 1, 0.8]
               }}
               transition={{ 
-                duration: 2,
+                duration: 3,
                 delay: 0.8,
-                times: [0, 0.2, 0.5, 0.8, 1]
+                times: [0, 0.25, 0.5, 0.75, 1],
+                repeat: Infinity,
+                repeatType: "reverse",
+                repeatDelay: 6
               }}
             >
-              <Trophy className="text-blue-400" size={24} />
+              <Trophy className="text-blue-400" size={22} />
             </motion.div>
             <span>Impulso Personal</span>
           </motion.h2>
@@ -332,33 +394,43 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
 
         {/* Next Steps Section */}
         <motion.div 
-          className="mb-10 border-t border-[#333] pt-8"
+          className="mb-10 pt-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
         >
+          <div className="section-divider" />
+          <div className="mb-2">
+            <span className="symbolic-marker">□ 03</span>
+          </div>
           <motion.h2 
-            className="text-2xl font-grotesk text-white flex items-center gap-3 mb-6"
-            initial={{ x: -20, opacity: 0 }}
+            className="text-2xl font-grotesk text-white flex items-center gap-4 mb-8"
+            initial={{ x: -10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ 
               delay: 0.55,
               type: "spring",
-              stiffness: 150
+              damping: 20,
+              stiffness: 90
             }}
           >
             <motion.div
+              className="symbolic-icon-container"
               animate={{ 
-                rotate: [0, 15, 0, -15, 0],
-                scale: [1, 1.1, 1, 1.1, 1]
+                rotate: [0, 6, 0, -6, 0],
+                scale: [1, 1.05, 1, 1.05, 1],
+                opacity: [0.8, 1, 0.8]
               }}
               transition={{ 
-                duration: 2,
+                duration: 3,
                 delay: 1.0,
-                times: [0, 0.2, 0.5, 0.8, 1]
+                times: [0, 0.25, 0.5, 0.75, 1],
+                repeat: Infinity,
+                repeatType: "reverse",
+                repeatDelay: 7
               }}
             >
-              <Lightbulb className="text-blue-400" size={24} />
+              <Lightbulb className="text-blue-400" size={22} />
             </motion.div>
             <span>Próximos Pasos</span>
           </motion.h2>
@@ -409,31 +481,42 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
         </motion.div>
 
         {/* Footer and button section */}
+        <div className="section-divider mt-16" />
         <motion.div 
-          className="text-center mt-10 pt-6 border-t border-[#333]"
+          className="text-center mt-16 pt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.7 }}
+          transition={{ delay: 1.2, duration: 0.9 }}
         >
+          <div className="mb-8">
+            <span className="symbolic-marker">⧫ FINALIZADO ⧫</span>
+          </div>
           <motion.button
             onClick={onRestart}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-8 rounded-lg text-lg transition-all shadow-lg hover:shadow-blue-500/20"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="bg-transparent border border-blue-500/40 hover:border-blue-500 text-blue-400 hover:text-blue-300 py-3 px-10 rounded-md text-lg transition-all duration-500"
+            whileHover={{ 
+              y: -3,
+              boxShadow: "0 6px 20px rgba(59, 130, 246, 0.15)"
+            }}
+            whileTap={{ y: 0 }}
           >
             Volver al inicio
           </motion.button>
         </motion.div>
         
         <motion.div 
-          className="mt-10 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.5 }}
+          className="mt-16 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4, duration: 0.8 }}
         >
-          <img src={logoPath} alt="AILINK Logo" className="h-12 mx-auto opacity-70 hover:opacity-100 transition-opacity duration-300" />
-          <p className="text-gray-500 mt-3">
-            © 2025 - Todos los derechos reservados
+          <img 
+            src={logoPath} 
+            alt="AILINK Logo" 
+            className="h-10 mx-auto opacity-40 hover:opacity-80 transition-opacity duration-700" 
+          />
+          <p className="text-gray-600 mt-5 text-sm tracking-wide opacity-60">
+            © 2025 — Todos los derechos reservados
           </p>
         </motion.div>
       </div>
