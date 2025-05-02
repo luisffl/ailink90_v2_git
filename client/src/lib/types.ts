@@ -1,4 +1,5 @@
 export interface FormData {
+  nombre_usuario: string;
   correo_electronico_usuario: string;
   ciudad_region_usuario: string;
   nichos_potenciales: string;

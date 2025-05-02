@@ -8,6 +8,7 @@ import { useWebSocket } from "@/hooks/use-websocket";
 import { useToast } from "@/hooks/use-toast";
 
 const initialFormData: FormData = {
+  nombre_usuario: "",
   correo_electronico_usuario: "",
   ciudad_region_usuario: "",
   nichos_potenciales: "",

@@ -41,6 +41,10 @@ export default function DiagnosticForm({
     
     // Validation rules for each step
     if (currentStep === 1) {
+      if (!formData.nombre_usuario) {
+        newErrors.nombre_usuario = "Tu nombre es requerido";
+      }
+      
       if (!formData.correo_electronico_usuario) {
         newErrors.correo_electronico_usuario = "El correo electrónico es requerido";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo_electronico_usuario)) {
@@ -114,6 +118,7 @@ export default function DiagnosticForm({
       
       // Preparar datos para enviar
       const dataToSend = {
+        nombre: formData.nombre_usuario,
         correo: formData.correo_electronico_usuario,
         ciudad: formData.ciudad_region_usuario,
         nichos: formData.nichos_potenciales,

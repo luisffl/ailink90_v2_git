@@ -56,6 +56,22 @@ export default function FormStep({
           <h2 className="form-heading">Información básica</h2>
           
           <div className="mb-6">
+            <Label htmlFor="nombre_usuario" className="text-sm font-medium mb-2 block text-gray-300">
+              Tu Nombre <span className="text-blue-500">*</span>
+            </Label>
+            <Input
+              id="nombre_usuario"
+              value={formData.nombre_usuario}
+              onChange={(e) => updateFormData("nombre_usuario", e.target.value)}
+              placeholder="Juan, María, etc."
+              className="form-control-focus w-full px-4 py-3 rounded-lg"
+            />
+            {errors.nombre_usuario && (
+              <p className="text-red-500 text-sm mt-1">{errors.nombre_usuario}</p>
+            )}
+          </div>
+
+          <div className="mb-6">
             <Label htmlFor="correo_electronico_usuario" className="text-sm font-medium mb-2 block text-gray-300">
               Tu Correo Electrónico <span className="text-blue-500">*</span>
             </Label>
