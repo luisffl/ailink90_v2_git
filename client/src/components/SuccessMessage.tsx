@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
-import { CheckCircle, ArrowRight, Lightbulb, MapPin, Target, Trophy, Clock } from "lucide-react";
+import { 
+  CheckCircle, ArrowRight, Lightbulb, MapPin, Target, Trophy, Clock,
+  Activity, BarChart3, Users, LineChart, Rocket, Zap, Shield, Brain
+} from "lucide-react";
 import logoPath from "../assets/logo.png";
 import { useEffect, useState } from "react";
 
@@ -269,6 +272,134 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
             <span>Diagnóstico de Nicho</span>
           </motion.h2>
           
+          {/* Radar Chart for Niche Potential */}
+          <motion.div 
+            className="mb-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25, duration: 0.6 }}
+          >
+            <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-blue-400 mb-6">Análisis de potencial</h3>
+                <motion.p className="text-gray-400 mb-4 text-sm">
+                  Este radar muestra las distintas dimensiones de tu nicho recomendado:
+                </motion.p>
+                <ul className="space-y-2">
+                  {[
+                    { label: "Rentabilidad", value: 78, icon: <Zap size={16} className="text-blue-400" /> },
+                    { label: "Demanda de mercado", value: 85, icon: <Users size={16} className="text-blue-400" /> },
+                    { label: "Facilidad de implementación", value: 65, icon: <CheckCircle size={16} className="text-blue-400" /> },
+                    { label: "Competencia", value: 55, icon: <Shield size={16} className="text-blue-400" /> },
+                    { label: "Potencial de automatización", value: 72, icon: <Brain size={16} className="text-blue-400" /> }
+                  ].map((stat, idx) => (
+                    <motion.li 
+                      key={`stat-${idx}`}
+                      className="flex items-center gap-3"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + (idx * 0.1), duration: 0.4 }}
+                    >
+                      <div className="flex-shrink-0">{stat.icon}</div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm text-gray-300">{stat.label}</span>
+                          <span className="text-sm text-blue-400">{stat.value}%</span>
+                        </div>
+                        <div className="h-1 w-full bg-[#333] rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-blue-500/60"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${stat.value}%` }}
+                            transition={{ delay: 0.4 + (idx * 0.1), duration: 0.6, ease: "easeOut" }}
+                          />
+                        </div>
+                      </div>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="flex-shrink-0 w-72 h-72 relative">
+                <motion.div 
+                  className="w-full h-full"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4, duration: 0.7 }}
+                >
+                  {/* Radar Chart Background */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-full h-full relative">
+                      {/* Circles */}
+                      {[...Array(4)].map((_, i) => (
+                        <div 
+                          key={`circle-${i}`}
+                          className="absolute rounded-full border border-[#333] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                          style={{ 
+                            width: `${25 * (i+1)}%`, 
+                            height: `${25 * (i+1)}%`,
+                            opacity: 0.2 + (i * 0.1)
+                          }}
+                        />
+                      ))}
+                      
+                      {/* Axes */}
+                      {[...Array(5)].map((_, i) => (
+                        <motion.div 
+                          key={`axis-${i}`}
+                          className="absolute top-1/2 left-1/2 w-[50%] h-[1px] bg-[#444] origin-left"
+                          style={{ 
+                            transform: `rotate(${72 * i}deg) translateY(-50%)` 
+                          }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 0.6 }}
+                          transition={{ delay: 0.5 + (i * 0.1), duration: 0.3 }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Radar Data Polygon */}
+                  <svg 
+                    viewBox="0 0 100 100" 
+                    className="absolute inset-0 w-full h-full"
+                    style={{ transform: "rotate(-18deg)" }}
+                  >
+                    <motion.polygon
+                      points="50,10 78,30 68,70 32,70 22,30"
+                      fill="rgba(59, 130, 246, 0.15)"
+                      stroke="rgba(59, 130, 246, 0.6)"
+                      strokeWidth="1"
+                      strokeLinejoin="round"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.7, duration: 0.8 }}
+                    />
+                    {/* Data Points */}
+                    {[
+                      { x: 50, y: 10 },
+                      { x: 78, y: 30 },
+                      { x: 68, y: 70 },
+                      { x: 32, y: 70 },
+                      { x: 22, y: 30 }
+                    ].map((point, idx) => (
+                      <motion.circle 
+                        key={`point-${idx}`}
+                        cx={point.x} 
+                        cy={point.y} 
+                        r="2"
+                        fill="#3b82f6"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.9 + (idx * 0.1), duration: 0.3 }}
+                      />
+                    ))}
+                  </svg>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+          
           <div className="space-y-6">
             {[
               {
@@ -435,6 +566,67 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
             <span>Próximos Pasos</span>
           </motion.h2>
           
+          {/* Timeline visualizer */}
+          <motion.div 
+            className="mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <div className="relative flex justify-between items-center pt-2 pb-12">
+              {/* Timeline Track */}
+              <div className="absolute h-1 w-full bg-[#222] top-7 rounded-full overflow-hidden">
+                <motion.div 
+                  className="absolute h-full bg-gradient-to-r from-blue-500/50 to-blue-400/20 left-0"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ delay: 0.9, duration: 1.5, ease: "easeOut" }}
+                />
+              </div>
+              
+              {/* Timeline Points */}
+              {[
+                { label: "Diagnóstico", icon: <Activity size={16} className="text-blue-400" /> },
+                { label: "Propuesta de valor", icon: <BarChart3 size={16} className="text-blue-400" /> },
+                { label: "Primer cliente", icon: <Users size={16} className="text-blue-400" /> },
+                { label: "Optimización", icon: <LineChart size={16} className="text-blue-400" /> },
+                { label: "Escalabilidad", icon: <Rocket size={16} className="text-blue-400" /> }
+              ].map((point, index) => (
+                <motion.div 
+                  key={`timeline-point-${index}`}
+                  className={`relative z-10 flex flex-col items-center gap-1 `}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.7 + (index * 0.1), duration: 0.4 }}
+                >
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center 
+                    ${index === 0 ? 'bg-blue-500 shadow-lg shadow-blue-500/30' : 
+                      index === 1 ? 'bg-blue-500/80 shadow-md shadow-blue-500/20' : 'bg-[#333]'} 
+                    transition-all duration-500`}
+                  >
+                    {index <= 1 && point.icon}
+                  </div>
+                  <div className={`text-xs mt-2 ${index <= 1 ? 'text-blue-400/90' : 'text-gray-500'}`}>
+                    {point.label}
+                  </div>
+                  {index === 1 && (
+                    <motion.div 
+                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-full"
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 1.3, duration: 0.4 }}
+                    >
+                      <div className="text-blue-400 text-xs whitespace-nowrap px-2 py-1 rounded-sm bg-blue-500/10 backdrop-blur-sm">
+                        Tu punto actual
+                      </div>
+                      <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-blue-500/10 mx-auto" />
+                    </motion.div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+          
           <div className="space-y-6">
             {[
               {
@@ -461,7 +653,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ 
-                  delay: 0.6 + (index * 0.1), 
+                  delay: 0.7 + (index * 0.1), 
                   duration: 0.5,
                   ease: "easeOut"
                 }}
