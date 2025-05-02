@@ -99,9 +99,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Enviar los datos
       proxyReq.write(formData.toString());
       proxyReq.end();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al procesar la solicitud:", error);
-      res.status(500).json({ error: 'Error al procesar la solicitud' });
+      res.status(500).json({ 
+        error: 'Error al procesar la solicitud',
+        message: error?.message || 'Se produjo un error desconocido',
+        timestamp: new Date().toISOString()
+      });
     }
   });
 
