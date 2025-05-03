@@ -10,6 +10,7 @@ export interface FormData {
   objetivo_inicial: string;
   comentarios_adicionales: string;
   terminos_aceptados: boolean;
+  honeypot?: string; // Campo trampa para bots
   isSubmitting?: boolean;
 }
 

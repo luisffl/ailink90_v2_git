@@ -1,10 +1,38 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import rateLimit from "express-rate-limit";
+
+// Rate limiting middleware para protección contra DDoS
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // Limitar cada IP a 100 solicitudes por ventana
+  standardHeaders: true, // Devolver información de límite de velocidad en los encabezados `RateLimit-*`
+  legacyHeaders: false, // Deshabilitar los encabezados `X-RateLimit-*`
+  message: {
+    status: 429,
+    message: "Demasiadas solicitudes, por favor intenta nuevamente más tarde."
+  }
+});
+
+// Limiter específico para el endpoint del webhook (más restrictivo)
+export const webhookLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutos
+  max: 10, // Limitar cada IP a 10 solicitudes por ventana
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    message: "Demasiadas solicitudes al webhook, por favor intenta nuevamente más tarde."
+  }
+});
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Aplicar el rate limiter global a todas las solicitudes
+app.use(limiter);
 
 app.use((req, res, next) => {
   const start = Date.now();

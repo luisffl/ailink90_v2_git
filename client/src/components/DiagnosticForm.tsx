@@ -117,6 +117,23 @@ export default function DiagnosticForm({
       setFormData(prev => ({ ...prev, isSubmitting: true }));
       
       // Preparar datos para enviar
+      // Validación de honeypot - Si el campo está relleno, es probablemente un bot
+      if (formData.honeypot) {
+        console.log("Detectado posible bot por el honeypot");
+        // Simulamos éxito pero no enviamos nada realmente
+        toast({
+          title: "Enviando datos...",
+          description: "Procesando tu diagnóstico",
+          duration: 3000
+        });
+        // Esperamos un tiempo aleatorio para simular el envío
+        setTimeout(() => {
+          setFormData(prev => ({ ...prev, isSubmitting: false }));
+          onSubmitSuccess(); // Llamamos al callback con datos vacíos
+        }, 3000 + Math.random() * 2000);
+        return;
+      }
+      
       const dataToSend = {
         nombre: formData.nombre_usuario,
         correo: formData.correo_electronico_usuario,

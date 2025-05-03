@@ -3,13 +3,14 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import https from "https";
 import { WebSocketServer } from 'ws';
+import { webhookLimiter } from "./index";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
   // prefix all routes with /api
 
-  // Proxy para el webhook de n8n
-  app.post("/api/n8n-webhook", (req: Request, res: Response) => {
+  // Proxy para el webhook de n8n con protección específica contra DDoS
+  app.post("/api/n8n-webhook", webhookLimiter, (req: Request, res: Response) => {
     console.log("Recibiendo solicitud de proxy para webhook n8n");
     
     // Generar un ID único para esta solicitud
