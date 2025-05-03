@@ -433,6 +433,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
           >
             <motion.div
               className="symbolic-icon-container"
+              initial={{ scale: 0.6, opacity: 0 }}
               animate={{ 
                 rotate: [0, 8, 0, -8, 0],
                 scale: [1, 1.05, 1, 1.05, 1],
@@ -823,7 +824,20 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
                   boxShadow: "0 5px 20px rgba(59, 130, 246, 0.3)"
                 }}
                 transition={{ duration: 0.4 }}
-              />
+              >
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/20 to-blue-500/0"
+                  animate={{ 
+                    x: ['-100%', '100%'],
+                  }}
+                  transition={{ 
+                    duration: 1.5, 
+                    ease: "easeInOut",
+                    repeat: Infinity,
+                    repeatDelay: 0.5
+                  }}
+                />
+              </motion.div>
             </div>
             
             {/* Botón volver */}
@@ -847,7 +861,21 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
                   boxShadow: "0 5px 20px rgba(59, 130, 246, 0.2)"
                 }}
                 transition={{ duration: 0.4 }}
-              />
+              >
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"
+                  animate={{ 
+                    x: ['-100%', '100%'],
+                  }}
+                  transition={{ 
+                    duration: 1.5, 
+                    ease: "easeInOut",
+                    repeat: Infinity,
+                    repeatDelay: 0.5,
+                    delay: 0.3
+                  }}
+                />
+              </motion.div>
             </div>
           </div>
         </motion.div>
