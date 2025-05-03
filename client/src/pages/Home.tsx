@@ -233,13 +233,44 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-[#121212] py-10 px-4 relative">
+    <div className="min-h-screen bg-gradient-to-b from-black to-[#121212] py-10 px-4 relative overflow-hidden">
+      {/* Sutiles elementos de fondo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          className="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-blue-500/5 blur-[120px]"
+          animate={{
+            x: [0, 20, 0],
+            y: [0, 15, 0],
+            opacity: [0.03, 0.05, 0.03]
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+        <motion.div 
+          className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-indigo-500/5 blur-[100px]"
+          animate={{
+            x: [0, -15, 0],
+            y: [0, -10, 0],
+            opacity: [0.03, 0.04, 0.03]
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            repeatType: "reverse",
+            delay: 2
+          }}
+        />
+      </div>
+      
       <div className="container mx-auto max-w-4xl relative z-10">
         <motion.header 
           className="text-center mb-16"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
         >
           <div className="mb-2 opacity-60">
             <span className="symbolic-marker">✧ DIAGNÓSTICO OPERATIVO ✧</span>

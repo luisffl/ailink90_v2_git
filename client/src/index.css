@@ -110,17 +110,21 @@
 
 /* Custom Animation Classes */
 .form-step {
-  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+  transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 500ms cubic-bezier(0.4, 0, 0.2, 1),
+              filter 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-step.active {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) scale(1);
+  filter: blur(0px);
 }
 
 .form-step.inactive {
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateX(20px) scale(0.98);
+  filter: blur(4px);
   position: absolute;
   pointer-events: none;
 }
@@ -140,11 +144,32 @@
 
 /* Modern glassmorphism styles */
 .glass-card {
-  @apply bg-[#111111]/80 backdrop-blur-md border border-[#2a2a2a]/40 rounded-xl shadow-xl;
+  @apply relative bg-[#111111]/80 backdrop-blur-md rounded-xl shadow-xl;
+  border: 1px solid rgba(42, 42, 42, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    to bottom right,
+    rgba(80, 80, 80, 0.1),
+    rgba(30, 30, 30, 0),
+    rgba(60, 60, 60, 0.1)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 .glass-inner {
-  @apply bg-[#1a1a1a]/50 backdrop-blur-sm border border-[#2a2a2a]/30 rounded-lg transition-all duration-500 hover:border-[#3a3a3a]/50 hover:bg-[#1a1a1a]/60 relative overflow-hidden;
+  @apply bg-[#1a1a1a]/50 backdrop-blur-sm rounded-lg transition-all duration-500 hover:border-[#3a3a3a]/50 hover:bg-[#1a1a1a]/60 relative overflow-hidden;
+  border: 1px solid rgba(42, 42, 42, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .glass-inner::before {
