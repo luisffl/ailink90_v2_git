@@ -273,7 +273,7 @@ export default function Home() {
           transition={{ duration: 0.7, delay: 0.1 }}
         >
           <div className="mb-2 opacity-60">
-            <span className="symbolic-marker">✧ DIAGNÓSTICO OPERATIVO ✧</span>
+            <span className="symbolic-marker">✧ ANÁLISIS ESTRATÉGICO ✧</span>
           </div>
           <div className="flex justify-center mb-6 mt-4">
             <img src={logoPath} alt="AILINK Logo" className="h-24 md:h-28" />
@@ -281,10 +281,17 @@ export default function Home() {
           <h1 className="text-3xl md:text-5xl font-medium mb-6 text-white leading-tight tracking-wide">
             Diagnóstico Operativo <span className="text-blue-500">AILINK</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Completa este breve cuestionario para recibir un diagnóstico personalizado 
-            de tu negocio con inteligencia artificial.
-          </p>
+          <motion.p 
+            className="text-gray-400 text-lg max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+          >
+            Descubre tu camino emprendedor ideal con nuestro diagnóstico personalizado.
+            <span className="block mt-2 text-gray-500 text-base">
+              Responde con sinceridad para obtener la mayor precisión en el análisis.
+            </span>
+          </motion.p>
         </motion.header>
 
         {isSubmitted ? (
@@ -359,12 +366,13 @@ export default function Home() {
               </motion.div>
             </motion.div>
             
-            <h2 className="text-2xl font-grotesk font-medium mb-6 text-white tracking-wide">
-              Procesando Información
+            <h2 className="text-2xl font-grotesk font-medium mb-4 text-white tracking-wide">
+              Creando Tu Diagnóstico
             </h2>
             
-            <p className="text-gray-400 mx-auto max-w-md">
-              {statusMessage || "Estamos analizando tus datos para generar un diagnóstico personalizado"}
+            <p className="text-gray-400 mx-auto max-w-md relative">
+              <span className="block mb-1 text-sm text-blue-400/80 font-mono">◇ ANÁLISIS EN PROGRESO</span>
+              {statusMessage || "Nuestro sistema está interpretando tus respuestas para ofrecer recomendaciones personalizadas para tu negocio ideal."}
             </p>
             
             {webhookStatus && (
