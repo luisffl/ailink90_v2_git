@@ -138,26 +138,6 @@
   @apply transform transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/20 active:translate-y-0;
 }
 
-/* Mejora en accesibilidad para navegación por teclado */
-:focus-visible {
-  @apply outline-none ring-2 ring-blue-500 ring-opacity-70;
-}
-
-.keyboard-focus {
-  @apply transition-all duration-200;
-}
-
-button:focus-visible, 
-a:focus-visible {
-  @apply outline-none ring-2 ring-offset-2 ring-offset-black ring-blue-500 ring-opacity-90;
-}
-
-select:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  @apply outline-none ring-2 ring-blue-500 ring-opacity-70;
-}
-
 .form-control-focus {
   @apply transform transition-all duration-300 bg-[#111] border-[#333] focus:bg-[#181818] focus:border-blue-500 focus:scale-[1.01] focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30 focus:outline-none;
 }

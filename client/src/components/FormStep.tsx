@@ -26,10 +26,22 @@ export default function FormStep({
   
   if (!isActive) return null;
   
-  // Animaciones de entrada para los pasos del formulario
   const stepVariants = {
     hidden: { opacity: 0, x: 20 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeInOut" } }
+  };
+
+  const handleCheckboxChange = (option: TipoNegocioOption) => {
+    const currentSelections = [...formData.tipos_negocio_preferidos];
+    const index = currentSelections.indexOf(option);
+    
+    if (index > -1) {
+      currentSelections.splice(index, 1);
+    } else {
+      currentSelections.push(option);
+    }
+    
+    updateFormData("tipos_negocio_preferidos", currentSelections);
   };
 
   return (
@@ -137,156 +149,30 @@ export default function FormStep({
               Prefiero trabajar con: (marca todas las que apliquen) <span className="text-blue-500">*</span>
             </Label>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-              <button 
-                type="button"
-                className={`text-left px-4 py-3 rounded-lg border ${
-                  formData.tipos_negocio_preferidos.includes("Negocios que venden a otros negocios (B2B)") 
-                    ? 'bg-blue-900/30 border-blue-500 text-white' 
-                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
-                }`}
-                onClick={() => {
-                  let updatedSelections;
-                  if (formData.tipos_negocio_preferidos.includes("Negocios que venden a otros negocios (B2B)")) {
-                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
-                      item !== "Negocios que venden a otros negocios (B2B)"
-                    );
-                  } else {
-                    updatedSelections = [
-                      ...formData.tipos_negocio_preferidos,
-                      "Negocios que venden a otros negocios (B2B)"
-                    ];
-                  }
-                  updateFormData("tipos_negocio_preferidos", updatedSelections);
-                }}
-              >
-                Negocios que venden a otros negocios (B2B)
-              </button>
-              
-              <button 
-                type="button"
-                className={`text-left px-4 py-3 rounded-lg border ${
-                  formData.tipos_negocio_preferidos.includes("Negocios que venden al consumidor final (B2C)") 
-                    ? 'bg-blue-900/30 border-blue-500 text-white' 
-                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
-                }`}
-                onClick={() => {
-                  let updatedSelections;
-                  if (formData.tipos_negocio_preferidos.includes("Negocios que venden al consumidor final (B2C)")) {
-                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
-                      item !== "Negocios que venden al consumidor final (B2C)"
-                    );
-                  } else {
-                    updatedSelections = [
-                      ...formData.tipos_negocio_preferidos,
-                      "Negocios que venden al consumidor final (B2C)"
-                    ];
-                  }
-                  updateFormData("tipos_negocio_preferidos", updatedSelections);
-                }}
-              >
-                Negocios que venden al consumidor final (B2C)
-              </button>
-              
-              <button 
-                type="button"
-                className={`text-left px-4 py-3 rounded-lg border ${
-                  formData.tipos_negocio_preferidos.includes("Servicios profesionales (abogados, consultores...)") 
-                    ? 'bg-blue-900/30 border-blue-500 text-white' 
-                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
-                }`}
-                onClick={() => {
-                  let updatedSelections;
-                  if (formData.tipos_negocio_preferidos.includes("Servicios profesionales (abogados, consultores...)")) {
-                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
-                      item !== "Servicios profesionales (abogados, consultores...)"
-                    );
-                  } else {
-                    updatedSelections = [
-                      ...formData.tipos_negocio_preferidos,
-                      "Servicios profesionales (abogados, consultores...)"
-                    ];
-                  }
-                  updateFormData("tipos_negocio_preferidos", updatedSelections);
-                }}
-              >
-                Servicios profesionales (abogados, consultores...)
-              </button>
-              
-              <button 
-                type="button"
-                className={`text-left px-4 py-3 rounded-lg border ${
-                  formData.tipos_negocio_preferidos.includes("Oficios y servicios a domicilio (fontaneros, electricistas...)") 
-                    ? 'bg-blue-900/30 border-blue-500 text-white' 
-                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
-                }`}
-                onClick={() => {
-                  let updatedSelections;
-                  if (formData.tipos_negocio_preferidos.includes("Oficios y servicios a domicilio (fontaneros, electricistas...)")) {
-                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
-                      item !== "Oficios y servicios a domicilio (fontaneros, electricistas...)"
-                    );
-                  } else {
-                    updatedSelections = [
-                      ...formData.tipos_negocio_preferidos,
-                      "Oficios y servicios a domicilio (fontaneros, electricistas...)"
-                    ];
-                  }
-                  updateFormData("tipos_negocio_preferidos", updatedSelections);
-                }}
-              >
-                Oficios y servicios a domicilio (fontaneros, electricistas...)
-              </button>
-              
-              <button 
-                type="button"
-                className={`text-left px-4 py-3 rounded-lg border ${
-                  formData.tipos_negocio_preferidos.includes("Tiendas físicas / Comercios") 
-                    ? 'bg-blue-900/30 border-blue-500 text-white' 
-                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
-                }`}
-                onClick={() => {
-                  let updatedSelections;
-                  if (formData.tipos_negocio_preferidos.includes("Tiendas físicas / Comercios")) {
-                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
-                      item !== "Tiendas físicas / Comercios"
-                    );
-                  } else {
-                    updatedSelections = [
-                      ...formData.tipos_negocio_preferidos,
-                      "Tiendas físicas / Comercios"
-                    ];
-                  }
-                  updateFormData("tipos_negocio_preferidos", updatedSelections);
-                }}
-              >
-                Tiendas físicas / Comercios
-              </button>
-              
-              <button 
-                type="button"
-                className={`text-left px-4 py-3 rounded-lg border ${
-                  formData.tipos_negocio_preferidos.includes("Negocios online") 
-                    ? 'bg-blue-900/30 border-blue-500 text-white' 
-                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
-                }`}
-                onClick={() => {
-                  let updatedSelections;
-                  if (formData.tipos_negocio_preferidos.includes("Negocios online")) {
-                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
-                      item !== "Negocios online"
-                    );
-                  } else {
-                    updatedSelections = [
-                      ...formData.tipos_negocio_preferidos,
-                      "Negocios online"
-                    ];
-                  }
-                  updateFormData("tipos_negocio_preferidos", updatedSelections);
-                }}
-              >
-                Negocios online
-              </button>
+            <div className="space-y-3 mt-2">
+              {[
+                "Negocios que venden a otros negocios (B2B)",
+                "Negocios que venden al consumidor final (B2C)",
+                "Servicios profesionales (abogados, consultores...)",
+                "Oficios y servicios a domicilio (fontaneros, electricistas...)",
+                "Tiendas físicas / Comercios",
+                "Negocios online"
+              ].map((option) => (
+                <div key={option} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={option.replace(/[^a-zA-Z0-9]/g, '_')}
+                    checked={formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption)}
+                    onCheckedChange={() => handleCheckboxChange(option as TipoNegocioOption)}
+                    className="custom-checkbox"
+                  />
+                  <Label 
+                    htmlFor={option.replace(/[^a-zA-Z0-9]/g, '_')} 
+                    className="text-sm text-gray-300 cursor-pointer"
+                  >
+                    {option}
+                  </Label>
+                </div>
+              ))}
             </div>
             {errors.tipos_negocio_preferidos && (
               <p className="text-red-500 text-sm mt-1">{errors.tipos_negocio_preferidos}</p>
@@ -465,21 +351,22 @@ export default function FormStep({
           </div>
           
           <div className="mb-6">
-            <button
-              type="button"
-              className={`w-full text-left px-4 py-3 rounded-lg border ${
-                formData.terminos_aceptados 
-                  ? 'bg-blue-900/30 border-blue-500 text-white' 
-                  : 'border-gray-700 text-gray-400 hover:border-gray-600'
-              }`}
-              onClick={() => {
-                const newValue = !formData.terminos_aceptados;
-                updateFormData("terminos_aceptados", newValue);
-                console.log("Términos aceptados: ", newValue);
-              }}
-            >
-              Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK <span className="text-blue-500">*</span>
-            </button>
+            <div className="flex items-start space-x-3">
+              <Checkbox
+                id="terminos_aceptados"
+                checked={formData.terminos_aceptados}
+                onCheckedChange={(checked) => 
+                  updateFormData("terminos_aceptados", checked === true)
+                }
+                className="custom-checkbox mt-1"
+              />
+              <Label 
+                htmlFor="terminos_aceptados" 
+                className="text-sm text-gray-400"
+              >
+                Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK <span className="text-blue-500">*</span>
+              </Label>
+            </div>
             {errors.terminos_aceptados && (
               <p className="text-red-500 text-sm mt-1">{errors.terminos_aceptados}</p>
             )}

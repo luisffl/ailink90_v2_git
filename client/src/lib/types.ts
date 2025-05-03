@@ -43,12 +43,6 @@ export type TipoNegocioOption =
   | "Tiendas físicas / Comercios"
   | "Negocios online";
 
-export interface TipoNegocioWithId {
-  id: string;
-  label: TipoNegocioOption;
-  checked: boolean;
-}
-
 export interface FormStepProps {
   step: number;
   currentStep: number;
