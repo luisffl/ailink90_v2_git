@@ -137,59 +137,156 @@ export default function FormStep({
               Prefiero trabajar con: (marca todas las que apliquen) <span className="text-blue-500">*</span>
             </Label>
             
-            <div className="space-y-3 mt-2">
-              {[
-                "Negocios que venden a otros negocios (B2B)",
-                "Negocios que venden al consumidor final (B2C)",
-                "Servicios profesionales (abogados, consultores...)",
-                "Oficios y servicios a domicilio (fontaneros, electricistas...)",
-                "Tiendas físicas / Comercios",
-                "Negocios online"
-              ].map((option) => (
-                <div 
-                  key={option} 
-                  className="flex items-center space-x-3 p-1 rounded-md hover:bg-blue-900/10 cursor-pointer transition-colors"
-                  onClick={() => {
-                    // Simplificar el manejo del checkbox y usar un toggle basado en si ya está incluido
-                    const currentSelections = [...formData.tipos_negocio_preferidos];
-                    const isSelected = currentSelections.includes(option as TipoNegocioOption);
-                    
-                    if (isSelected) {
-                      // Si ya está seleccionado, lo quitamos
-                      const index = currentSelections.indexOf(option as TipoNegocioOption);
-                      if (index > -1) {
-                        currentSelections.splice(index, 1);
-                      }
-                    } else {
-                      // Si no está seleccionado, lo añadimos
-                      currentSelections.push(option as TipoNegocioOption);
-                    }
-                    
-                    // Actualizar el estado directamente
-                    updateFormData("tipos_negocio_preferidos", currentSelections);
-                    console.log(`${option} toggle:`, !isSelected, currentSelections);
-                  }}
-                >
-                  <div 
-                    className={`h-4 w-4 rounded-sm flex items-center justify-center ${
-                      formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption) 
-                        ? 'bg-blue-500 text-white' 
-                        : 'border border-gray-500'
-                    }`}
-                  >
-                    {formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption) && (
-                      <svg width="10" height="10" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                      </svg>
-                    )}
-                  </div>
-                  <Label 
-                    className="text-sm text-gray-300 cursor-pointer select-none"
-                  >
-                    {option}
-                  </Label>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+              <button 
+                type="button"
+                className={`text-left px-4 py-3 rounded-lg border ${
+                  formData.tipos_negocio_preferidos.includes("Negocios que venden a otros negocios (B2B)") 
+                    ? 'bg-blue-900/30 border-blue-500 text-white' 
+                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
+                }`}
+                onClick={() => {
+                  let updatedSelections;
+                  if (formData.tipos_negocio_preferidos.includes("Negocios que venden a otros negocios (B2B)")) {
+                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
+                      item !== "Negocios que venden a otros negocios (B2B)"
+                    );
+                  } else {
+                    updatedSelections = [
+                      ...formData.tipos_negocio_preferidos,
+                      "Negocios que venden a otros negocios (B2B)"
+                    ];
+                  }
+                  updateFormData("tipos_negocio_preferidos", updatedSelections);
+                }}
+              >
+                Negocios que venden a otros negocios (B2B)
+              </button>
+              
+              <button 
+                type="button"
+                className={`text-left px-4 py-3 rounded-lg border ${
+                  formData.tipos_negocio_preferidos.includes("Negocios que venden al consumidor final (B2C)") 
+                    ? 'bg-blue-900/30 border-blue-500 text-white' 
+                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
+                }`}
+                onClick={() => {
+                  let updatedSelections;
+                  if (formData.tipos_negocio_preferidos.includes("Negocios que venden al consumidor final (B2C)")) {
+                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
+                      item !== "Negocios que venden al consumidor final (B2C)"
+                    );
+                  } else {
+                    updatedSelections = [
+                      ...formData.tipos_negocio_preferidos,
+                      "Negocios que venden al consumidor final (B2C)"
+                    ];
+                  }
+                  updateFormData("tipos_negocio_preferidos", updatedSelections);
+                }}
+              >
+                Negocios que venden al consumidor final (B2C)
+              </button>
+              
+              <button 
+                type="button"
+                className={`text-left px-4 py-3 rounded-lg border ${
+                  formData.tipos_negocio_preferidos.includes("Servicios profesionales (abogados, consultores...)") 
+                    ? 'bg-blue-900/30 border-blue-500 text-white' 
+                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
+                }`}
+                onClick={() => {
+                  let updatedSelections;
+                  if (formData.tipos_negocio_preferidos.includes("Servicios profesionales (abogados, consultores...)")) {
+                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
+                      item !== "Servicios profesionales (abogados, consultores...)"
+                    );
+                  } else {
+                    updatedSelections = [
+                      ...formData.tipos_negocio_preferidos,
+                      "Servicios profesionales (abogados, consultores...)"
+                    ];
+                  }
+                  updateFormData("tipos_negocio_preferidos", updatedSelections);
+                }}
+              >
+                Servicios profesionales (abogados, consultores...)
+              </button>
+              
+              <button 
+                type="button"
+                className={`text-left px-4 py-3 rounded-lg border ${
+                  formData.tipos_negocio_preferidos.includes("Oficios y servicios a domicilio (fontaneros, electricistas...)") 
+                    ? 'bg-blue-900/30 border-blue-500 text-white' 
+                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
+                }`}
+                onClick={() => {
+                  let updatedSelections;
+                  if (formData.tipos_negocio_preferidos.includes("Oficios y servicios a domicilio (fontaneros, electricistas...)")) {
+                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
+                      item !== "Oficios y servicios a domicilio (fontaneros, electricistas...)"
+                    );
+                  } else {
+                    updatedSelections = [
+                      ...formData.tipos_negocio_preferidos,
+                      "Oficios y servicios a domicilio (fontaneros, electricistas...)"
+                    ];
+                  }
+                  updateFormData("tipos_negocio_preferidos", updatedSelections);
+                }}
+              >
+                Oficios y servicios a domicilio (fontaneros, electricistas...)
+              </button>
+              
+              <button 
+                type="button"
+                className={`text-left px-4 py-3 rounded-lg border ${
+                  formData.tipos_negocio_preferidos.includes("Tiendas físicas / Comercios") 
+                    ? 'bg-blue-900/30 border-blue-500 text-white' 
+                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
+                }`}
+                onClick={() => {
+                  let updatedSelections;
+                  if (formData.tipos_negocio_preferidos.includes("Tiendas físicas / Comercios")) {
+                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
+                      item !== "Tiendas físicas / Comercios"
+                    );
+                  } else {
+                    updatedSelections = [
+                      ...formData.tipos_negocio_preferidos,
+                      "Tiendas físicas / Comercios"
+                    ];
+                  }
+                  updateFormData("tipos_negocio_preferidos", updatedSelections);
+                }}
+              >
+                Tiendas físicas / Comercios
+              </button>
+              
+              <button 
+                type="button"
+                className={`text-left px-4 py-3 rounded-lg border ${
+                  formData.tipos_negocio_preferidos.includes("Negocios online") 
+                    ? 'bg-blue-900/30 border-blue-500 text-white' 
+                    : 'border-gray-700 text-gray-300 hover:border-gray-600'
+                }`}
+                onClick={() => {
+                  let updatedSelections;
+                  if (formData.tipos_negocio_preferidos.includes("Negocios online")) {
+                    updatedSelections = formData.tipos_negocio_preferidos.filter(item => 
+                      item !== "Negocios online"
+                    );
+                  } else {
+                    updatedSelections = [
+                      ...formData.tipos_negocio_preferidos,
+                      "Negocios online"
+                    ];
+                  }
+                  updateFormData("tipos_negocio_preferidos", updatedSelections);
+                }}
+              >
+                Negocios online
+              </button>
             </div>
             {errors.tipos_negocio_preferidos && (
               <p className="text-red-500 text-sm mt-1">{errors.tipos_negocio_preferidos}</p>
@@ -368,34 +465,21 @@ export default function FormStep({
           </div>
           
           <div className="mb-6">
-            <div 
-              className="flex items-start space-x-3 p-2 rounded-md hover:bg-blue-900/10 cursor-pointer transition-colors"
+            <button
+              type="button"
+              className={`w-full text-left px-4 py-3 rounded-lg border ${
+                formData.terminos_aceptados 
+                  ? 'bg-blue-900/30 border-blue-500 text-white' 
+                  : 'border-gray-700 text-gray-400 hover:border-gray-600'
+              }`}
               onClick={() => {
-                // Toggle directo del valor actual
                 const newValue = !formData.terminos_aceptados;
                 updateFormData("terminos_aceptados", newValue);
                 console.log("Términos aceptados: ", newValue);
               }}
             >
-              <div 
-                className={`h-4 w-4 rounded-sm flex items-center justify-center mt-1 ${
-                  formData.terminos_aceptados 
-                    ? 'bg-blue-500 text-white' 
-                    : 'border border-gray-500'
-                }`}
-              >
-                {formData.terminos_aceptados && (
-                  <svg width="10" height="10" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                  </svg>
-                )}
-              </div>
-              <Label 
-                className="text-sm text-gray-400 cursor-pointer select-none"
-              >
-                Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK <span className="text-blue-500">*</span>
-              </Label>
-            </div>
+              Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK <span className="text-blue-500">*</span>
+            </button>
             {errors.terminos_aceptados && (
               <p className="text-red-500 text-sm mt-1">{errors.terminos_aceptados}</p>
             )}
