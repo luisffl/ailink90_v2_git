@@ -31,17 +31,28 @@ export default function FormStep({
     visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeInOut" } }
   };
 
-  const handleCheckboxChange = (option: TipoNegocioOption) => {
+  const handleCheckboxChange = (option: TipoNegocioOption, checked: boolean) => {
+    // Creamos una nueva copia del array actual
     const currentSelections = [...formData.tipos_negocio_preferidos];
-    const index = currentSelections.indexOf(option);
     
-    if (index > -1) {
-      currentSelections.splice(index, 1);
+    if (checked) {
+      // Si se activó el checkbox y no está ya en la selección, añadirlo
+      if (!currentSelections.includes(option)) {
+        currentSelections.push(option);
+      }
     } else {
-      currentSelections.push(option);
+      // Si se desactivó el checkbox, eliminar de la selección
+      const index = currentSelections.indexOf(option);
+      if (index > -1) {
+        currentSelections.splice(index, 1);
+      }
     }
     
+    // Actualizar el estado con la nueva selección
     updateFormData("tipos_negocio_preferidos", currentSelections);
+    
+    // Para debugging
+    console.log(`Checkbox ${option} changed to ${checked}`, currentSelections);
   };
 
   return (
@@ -162,7 +173,7 @@ export default function FormStep({
                   <Checkbox
                     id={option.replace(/[^a-zA-Z0-9]/g, '_')}
                     checked={formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption)}
-                    onCheckedChange={() => handleCheckboxChange(option as TipoNegocioOption)}
+                    onCheckedChange={(checked) => handleCheckboxChange(option as TipoNegocioOption, checked === true)}
                     className="custom-checkbox"
                   />
                   <Label 
@@ -355,9 +366,10 @@ export default function FormStep({
               <Checkbox
                 id="terminos_aceptados"
                 checked={formData.terminos_aceptados}
-                onCheckedChange={(checked) => 
-                  updateFormData("terminos_aceptados", checked === true)
-                }
+                onCheckedChange={(checked) => {
+                  console.log("Términos aceptados: ", checked);
+                  updateFormData("terminos_aceptados", checked === true);
+                }}
                 className="custom-checkbox mt-1"
               />
               <Label 
