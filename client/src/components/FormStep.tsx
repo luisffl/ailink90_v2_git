@@ -26,33 +26,10 @@ export default function FormStep({
   
   if (!isActive) return null;
   
+  // Animaciones de entrada para los pasos del formulario
   const stepVariants = {
     hidden: { opacity: 0, x: 20 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeInOut" } }
-  };
-
-  const handleCheckboxChange = (option: TipoNegocioOption, checked: boolean) => {
-    // Creamos una nueva copia del array actual
-    const currentSelections = [...formData.tipos_negocio_preferidos];
-    
-    if (checked) {
-      // Si se activó el checkbox y no está ya en la selección, añadirlo
-      if (!currentSelections.includes(option)) {
-        currentSelections.push(option);
-      }
-    } else {
-      // Si se desactivó el checkbox, eliminar de la selección
-      const index = currentSelections.indexOf(option);
-      if (index > -1) {
-        currentSelections.splice(index, 1);
-      }
-    }
-    
-    // Actualizar el estado con la nueva selección
-    updateFormData("tipos_negocio_preferidos", currentSelections);
-    
-    // Para debugging
-    console.log(`Checkbox ${option} changed to ${checked}`, currentSelections);
   };
 
   return (
@@ -169,16 +146,45 @@ export default function FormStep({
                 "Tiendas físicas / Comercios",
                 "Negocios online"
               ].map((option) => (
-                <div key={option} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={option.replace(/[^a-zA-Z0-9]/g, '_')}
-                    checked={formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption)}
-                    onCheckedChange={(checked) => handleCheckboxChange(option as TipoNegocioOption, checked === true)}
-                    className="custom-checkbox"
-                  />
+                <div 
+                  key={option} 
+                  className="flex items-center space-x-3 p-1 rounded-md hover:bg-blue-900/10 cursor-pointer transition-colors"
+                  onClick={() => {
+                    // Simplificar el manejo del checkbox y usar un toggle basado en si ya está incluido
+                    const currentSelections = [...formData.tipos_negocio_preferidos];
+                    const isSelected = currentSelections.includes(option as TipoNegocioOption);
+                    
+                    if (isSelected) {
+                      // Si ya está seleccionado, lo quitamos
+                      const index = currentSelections.indexOf(option as TipoNegocioOption);
+                      if (index > -1) {
+                        currentSelections.splice(index, 1);
+                      }
+                    } else {
+                      // Si no está seleccionado, lo añadimos
+                      currentSelections.push(option as TipoNegocioOption);
+                    }
+                    
+                    // Actualizar el estado directamente
+                    updateFormData("tipos_negocio_preferidos", currentSelections);
+                    console.log(`${option} toggle:`, !isSelected, currentSelections);
+                  }}
+                >
+                  <div 
+                    className={`h-4 w-4 rounded-sm flex items-center justify-center ${
+                      formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption) 
+                        ? 'bg-blue-500 text-white' 
+                        : 'border border-gray-500'
+                    }`}
+                  >
+                    {formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption) && (
+                      <svg width="10" height="10" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                      </svg>
+                    )}
+                  </div>
                   <Label 
-                    htmlFor={option.replace(/[^a-zA-Z0-9]/g, '_')} 
-                    className="text-sm text-gray-300 cursor-pointer"
+                    className="text-sm text-gray-300 cursor-pointer select-none"
                   >
                     {option}
                   </Label>
@@ -362,19 +368,30 @@ export default function FormStep({
           </div>
           
           <div className="mb-6">
-            <div className="flex items-start space-x-3">
-              <Checkbox
-                id="terminos_aceptados"
-                checked={formData.terminos_aceptados}
-                onCheckedChange={(checked) => {
-                  console.log("Términos aceptados: ", checked);
-                  updateFormData("terminos_aceptados", checked === true);
-                }}
-                className="custom-checkbox mt-1"
-              />
+            <div 
+              className="flex items-start space-x-3 p-2 rounded-md hover:bg-blue-900/10 cursor-pointer transition-colors"
+              onClick={() => {
+                // Toggle directo del valor actual
+                const newValue = !formData.terminos_aceptados;
+                updateFormData("terminos_aceptados", newValue);
+                console.log("Términos aceptados: ", newValue);
+              }}
+            >
+              <div 
+                className={`h-4 w-4 rounded-sm flex items-center justify-center mt-1 ${
+                  formData.terminos_aceptados 
+                    ? 'bg-blue-500 text-white' 
+                    : 'border border-gray-500'
+                }`}
+              >
+                {formData.terminos_aceptados && (
+                  <svg width="10" height="10" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                  </svg>
+                )}
+              </div>
               <Label 
-                htmlFor="terminos_aceptados" 
-                className="text-sm text-gray-400"
+                className="text-sm text-gray-400 cursor-pointer select-none"
               >
                 Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK <span className="text-blue-500">*</span>
               </Label>
