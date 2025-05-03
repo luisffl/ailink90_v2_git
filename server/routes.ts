@@ -9,6 +9,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
   // prefix all routes with /api
 
+  // Ruta para obtener el token CSRF
+  app.get("/api/csrf-token", (req: Request, res: Response) => {
+    if (!req.csrfToken) {
+      return res.status(500).json({ error: "Protección CSRF no está habilitada" });
+    }
+    
+    // Envía el token CSRF al cliente
+    return res.json({ csrfToken: req.csrfToken() });
+  });
+
   // Proxy para el webhook de n8n con protección específica contra DDoS
   app.post("/api/n8n-webhook", webhookLimiter, (req: Request, res: Response) => {
     console.log("Recibiendo solicitud de proxy para webhook n8n");
