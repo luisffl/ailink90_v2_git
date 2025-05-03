@@ -16,6 +16,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Generar un ID único para esta solicitud
     const requestId = Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
     
+    // Verificar si hay un campo honeypot - Protección adicional contra bots
+    if (req.body.honeypot) {
+      console.log("Detectado bot por honeypot en el servidor");
+      // Simular respuesta exitosa pero no procesar realmente
+      return res.status(200).json({
+        saludo: "Hola",
+        ciudad_region: "Tu ciudad",
+        diagnostico_nicho: {
+          nicho_sugerido: "Nicho personalizado",
+          razon_clave: "Basado en tus respuestas",
+          problema_principal: "Identificado según tus datos",
+          solucion_mvp: "Solución personalizada para tu caso"
+        },
+        impulso_personal: {
+          desafio_usuario: "Tu desafío",
+          consejo_reto: "Consejo personalizado",
+          habilidades_usuario: "Tus habilidades",
+          ventaja_habilidad: "Ventaja competitiva"
+        },
+        proximo_paso: {
+          modulo: "Siguiente módulo recomendado",
+          accion_concreta: "Acción recomendada",
+          compromiso_comunidad: "Compromiso sugerido"
+        }
+      });
+    }
+    
     try {
       // Notificar por WebSocket que se inició el proceso
       broadcastToClients({

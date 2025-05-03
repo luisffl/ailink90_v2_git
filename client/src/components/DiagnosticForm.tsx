@@ -244,6 +244,20 @@ export default function DiagnosticForm({
       />
       
       <form onSubmit={handleSubmit} className="relative">
+        {/* Campo honeypot invisible para humanos pero visible para bots */}
+        <div style={{ opacity: 0, position: 'absolute', top: '-9999px', left: '-9999px', height: 0, width: 0, zIndex: -1 }}>
+          <label htmlFor="honeypot">Déjalo en blanco:</label>
+          <input 
+            type="text" 
+            id="honeypot" 
+            name="honeypot" 
+            value={formData.honeypot || ''}
+            onChange={(e) => updateFormData('honeypot', e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
+
         <FormStep
           step={1}
           currentStep={currentStep}

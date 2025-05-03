@@ -28,6 +28,11 @@ export const webhookLimiter = rateLimit({
 });
 
 const app = express();
+
+// Configurar trust proxy para que funcione correctamente con X-Forwarded-For
+// Esto es necesario cuando la aplicación se ejecuta detrás de un proxy, como en Replit
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
