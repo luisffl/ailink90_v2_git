@@ -120,9 +120,12 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
         format: 'a4',
       });
       
+      // Comprobar que tenemos datos de diagnóstico válidos para los metadatos
+      const nichoSugerido = diagnostico?.diagnostico_nicho?.nicho_sugerido || 'Personalizado';
+      
       // Añadir metadatos al PDF
       pdf.setProperties({
-        title: `Diagnóstico Operativo - ${diagnostico.diagnostico_nicho.nicho_sugerido}`,
+        title: `Diagnóstico Operativo - ${nichoSugerido}`,
         subject: 'AILINK - Diagnóstico Operativo Empresarial',
         author: 'AILINK Starter',
         keywords: 'diagnóstico, emprendimiento, nicho de mercado',
@@ -173,10 +176,24 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
         pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
       }
       
-      // Nombre personalizado para el archivo
-      const fileName = `Diagnóstico_Operativo_${diagnostico.diagnostico_nicho.nicho_sugerido.slice(0, 20).replace(/\s+/g, '_')}.pdf`;
+      // Nombre personalizado para el archivo con validación
+      let fileName = "Diagnóstico_Operativo";
       
-      // Guardar PDF
+      // Solo agregamos el nicho si existe y es válido
+      if (diagnostico?.diagnostico_nicho?.nicho_sugerido) {
+        // Obtenemos solo los primeros 20 caracteres y reemplazamos espacios con guiones bajos
+        const nichoParaArchivo = diagnostico.diagnostico_nicho.nicho_sugerido
+          .slice(0, 20)
+          .replace(/\s+/g, '_')
+          .replace(/[^\w-]/g, ''); // Eliminar caracteres no alfanuméricos
+          
+        if (nichoParaArchivo) {
+          fileName += `_${nichoParaArchivo}`;
+        }
+      }
+      
+      // Añadir extensión y guardar
+      fileName += ".pdf";
       pdf.save(fileName);
       
       // Notificar éxito
