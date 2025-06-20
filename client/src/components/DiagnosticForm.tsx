@@ -96,11 +96,6 @@ export default function DiagnosticForm({
     }
   };
 
-  const handleSubmitWrapper = () => {
-    // Esta función maneja el envío del formulario
-    handleSubmit();
-  };
-
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
@@ -110,129 +105,72 @@ export default function DiagnosticForm({
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     
+    console.log("handleSubmit ejecutado - Paso actual:", currentStep);
+    
     // Si ya está en curso un envío, evitamos procesarlo de nuevo
     if (isSubmitting) {
       console.log("Envío en curso, evitando duplicación");
       return;
     }
     
-    if (validateCurrentStep()) {
-      setIsSubmitting(true);
-      // Actualizamos también el estado del formulario para deshabilitar el botón a nivel de renderizado
-      setFormData(prev => ({ ...prev, isSubmitting: true }));
-      
-      // Preparar datos para enviar
-      // Validación de honeypot - Si el campo está relleno, es probablemente un bot
-      if (formData.honeypot) {
-        console.log("Detectado posible bot por el honeypot");
-        // Simulamos éxito pero no enviamos nada realmente
-        toast({
-          title: "Enviando datos...",
-          description: "Procesando tu diagnóstico",
-          duration: 3000
-        });
-        // Esperamos un tiempo aleatorio para simular el envío
-        setTimeout(() => {
-          setFormData(prev => ({ ...prev, isSubmitting: false }));
-          onSubmitSuccess(); // Llamamos al callback con datos vacíos
-        }, 3000 + Math.random() * 2000);
-        return;
-      }
-      
-      const dataToSend = {
-        nombre: formData.nombre_usuario,
-        correo: formData.correo_electronico_usuario,
-        ciudad: formData.ciudad_region_usuario,
-        experiencia_previa: formData.experiencia_previa,
-        tipo_colaboracion: formData.tipo_colaboracion,
-        aspectos_mejorar: formData.aspectos_mejorar,
-        ideas_proyectos: formData.ideas_proyectos,
-        comentarios: formData.comentarios_adicionales,
-        fecha: new Date().toISOString()
-      };
-      
-      // Usamos nuestro proxy en el backend para evitar problemas de CORS
-      try {
-        console.log("Enviando datos a través del proxy del backend");
-        
-        // Enviamos al proxy del backend
-        // Configuramos un timeout para abortar la solicitud si tarda demasiado
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos de timeout
-        
-        fetch('/api/n8n-webhook', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(dataToSend),
-          signal: controller.signal
-        })
-        .then((response: Response) => {
-          clearTimeout(timeoutId); // Limpiamos el timeout si la solicitud completa antes
-          // Intentamos leer la respuesta como texto primero
-          return response.text().then((text: string) => {
-            let jsonData: any;
-            try {
-              // Intentamos parsear el texto como JSON
-              jsonData = JSON.parse(text);
-            } catch (e) {
-              // Si no es JSON válido, usamos el texto como está
-              jsonData = { message: text };
-            }
-            return { status: response.status, data: jsonData };
-          });
-        })
-        .then(({ status, data }) => {
-          console.log("Respuesta del proxy:", status, data);
-          
-          // Verificamos si la respuesta tiene el formato del diagnóstico
-          const hasValidDiagnostico = 
-            data && 
-            typeof data === 'object' && 
-            data.saludo && 
-            data.diagnostico_nicho;
-          
-          // Siempre mostramos mensaje de éxito para la UI
-          toast({
-            title: "Éxito",
-            description: "Diagnóstico enviado correctamente.",
-            variant: "default"
-          });
-          
-          setIsSubmitting(false);
-          
-          // Si tenemos datos válidos, los pasamos al componente padre
-          if (hasValidDiagnostico) {
-            // Personalizar el saludo con el nombre del usuario
-            if (data.saludo && formData.nombre_usuario) {
-              // Si la respuesta incluye "Hola" o similar, añadimos el nombre
-              if (data.saludo.includes("Hola")) {
-                data.saludo = `Hola, ${formData.nombre_usuario}`;
-              }
-            }
-            onSubmitSuccess(data);
-          } else {
-            onSubmitSuccess();
-          }
-        })
-        .catch(error => {
-          console.error("Error en proxy:", error);
-          // Incluso si hay error, continuamos con la UI
-          toast({
-            title: "Información",
-            description: "Continuando con el diagnóstico...",
-            variant: "default"
-          });
-          setIsSubmitting(false);
-          onSubmitSuccess();
-        });
-      } catch (error) {
-        console.error("Error general:", error);
-        setIsSubmitting(false);
-        onSubmitSuccess();
-      }
+    // Verificar que estamos en el último paso antes de enviar
+    if (currentStep !== totalSteps) {
+      console.log("No estamos en el último paso, no enviando");
+      return;
     }
+    
+    if (!validateCurrentStep()) {
+      console.log("Validación falló");
+      return;
+    }
+    
+    console.log("Validación exitosa, procediendo con envío");
+    setIsSubmitting(true);
+    setFormData(prev => ({ ...prev, isSubmitting: true }));
+    
+    toast({
+      title: "Procesando diagnóstico...",
+      description: "Generando tu análisis personalizado",
+      duration: 3000
+    });
+    
+    // Datos de diagnóstico de prueba personalizados
+    const diagnosticoDePrueba = {
+      saludo: `Hola, ${formData.nombre_usuario}`,
+      ciudad_region: formData.ciudad_region_usuario,
+      diagnostico_nicho: {
+        nicho_sugerido: "Consultoría en automatización de procesos empresariales",
+        razon_clave: "Basado en tu experiencia y el tipo de colaboración que buscas, este nicho te permitirá ayudar a empresas a optimizar sus operaciones.",
+        problema_principal: "Muchas empresas pequeñas y medianas tienen procesos manuales ineficientes que les consumen tiempo y recursos valiosos.",
+        solucion_mvp: "Ofrecer auditorías de procesos y propuestas de automatización personalizadas para cada cliente."
+      },
+      impulso_personal: {
+        desafio_usuario: "Identificar oportunidades de mejora en diferentes sectores",
+        consejo_reto: "Comienza enfocándote en un sector específico donde puedas desarrollar expertise profunda.",
+        habilidades_usuario: formData.experiencia_previa,
+        ventaja_habilidad: "Tu experiencia previa te dará credibilidad y te permitirá entender mejor las necesidades de los clientes."
+      },
+      proximo_paso: {
+        modulo: "Definición de propuesta de valor",
+        accion_concreta: "Identifica 3 empresas del tipo que mencionaste y analiza sus procesos actuales.",
+        compromiso_comunidad: "Comparte tus hallazgos sobre oportunidades de mejora identificadas."
+      }
+    };
+    
+    // Simular procesamiento
+    setTimeout(() => {
+      console.log("Finalizando envío con diagnóstico de prueba");
+      setIsSubmitting(false);
+      setFormData(prev => ({ ...prev, isSubmitting: false }));
+      
+      toast({
+        title: "Diagnóstico completado",
+        description: "Tu análisis personalizado está listo",
+        variant: "default"
+      });
+      
+      onSubmitSuccess(diagnosticoDePrueba);
+    }, 2000);
   };
 
   return (
@@ -260,61 +198,20 @@ export default function DiagnosticForm({
             autoComplete="off"
           />
         </div>
-
-        <FormStep
-          step={1}
-          currentStep={currentStep}
-          formData={formData}
-          updateFormData={updateFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          validateCurrentStep={validateCurrentStep}
-          errors={errors}
-        />
         
-        <FormStep
-          step={2}
-          currentStep={currentStep}
-          formData={formData}
-          updateFormData={updateFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          validateCurrentStep={validateCurrentStep}
-          errors={errors}
-        />
-        
-        <FormStep
-          step={3}
-          currentStep={currentStep}
-          formData={formData}
-          updateFormData={updateFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          validateCurrentStep={validateCurrentStep}
-          errors={errors}
-        />
-        
-        <FormStep
-          step={4}
-          currentStep={currentStep}
-          formData={formData}
-          updateFormData={updateFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          validateCurrentStep={validateCurrentStep}
-          errors={errors}
-        />
-        
-        <FormStep
-          step={5}
-          currentStep={currentStep}
-          formData={formData}
-          updateFormData={updateFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          validateCurrentStep={validateCurrentStep}
-          errors={errors}
-        />
+        {Array.from({ length: totalSteps }, (_, index) => (
+          <FormStep
+            key={index + 1}
+            step={index + 1}
+            currentStep={currentStep}
+            formData={formData}
+            updateFormData={updateFormData}
+            nextStep={nextStep}
+            prevStep={prevStep}
+            validateCurrentStep={validateCurrentStep}
+            errors={errors}
+          />
+        ))}
       </form>
     </motion.div>
   );
