@@ -18,7 +18,7 @@ interface DiagnosticoData {
   nsvp: string;
   oferta: string;
   idea_automatizacion: string;
-  pdf_url?: string; // URL del PDF generado
+  url_pdf?: string; // URL del PDF generado (viene del webhook como url_pdf)
 }
 
 export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMessageProps) {
@@ -27,9 +27,9 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
   console.log("SuccessMessage renderizado con datos:", diagnosticoData);
 
   const handleDownloadPDF = () => {
-    if (datos.pdf_url) {
+    if (datos.url_pdf) {
       // Abrir el PDF en una nueva pestaña
-      window.open(datos.pdf_url, '_blank');
+      window.open(datos.url_pdf, '_blank');
       toast({
         title: "Descargando PDF",
         description: "El diagnóstico se está abriendo en una nueva pestaña",
@@ -199,10 +199,10 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
           <Button 
             onClick={handleDownloadPDF}
             className="btn-primary px-8 py-3"
-            disabled={!datos.pdf_url}
+            disabled={!datos.url_pdf}
           >
             <Download className="w-4 h-4 mr-2" />
-            {datos.pdf_url ? 'Descargar Diagnóstico PDF' : 'Generando PDF...'}
+            {datos.url_pdf ? 'Descargar Diagnóstico PDF' : 'Generando PDF...'}
           </Button>
           <Button 
             onClick={onRestart}
