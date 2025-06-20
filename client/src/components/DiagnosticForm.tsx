@@ -89,8 +89,16 @@ export default function DiagnosticForm({
     if (validateCurrentStep()) {
       if (currentStep < totalSteps) {
         setCurrentStep(prev => prev + 1);
+      } else if (currentStep === totalSteps) {
+        // En el último paso, ejecutar el envío
+        handleSubmit();
       }
     }
+  };
+
+  const handleSubmitWrapper = () => {
+    // Esta función maneja el envío del formulario
+    handleSubmit();
   };
 
   const prevStep = () => {
@@ -99,8 +107,8 @@ export default function DiagnosticForm({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     
     // Si ya está en curso un envío, evitamos procesarlo de nuevo
     if (isSubmitting) {

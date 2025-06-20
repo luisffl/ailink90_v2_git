@@ -308,7 +308,8 @@ export default function FormStep({
               Atrás
             </Button>
             <Button
-              type="submit"
+              type="button"
+              onClick={nextStep}
               disabled={formData.isSubmitting}
               className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
