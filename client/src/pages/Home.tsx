@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { FormData } from "@/lib/types";
+import { motion } from "framer-motion";
 import DiagnosticForm from "@/components/DiagnosticForm";
 import SuccessMessage from "@/components/SuccessMessage";
-import logoPath from "../assets/logo.svg";
-import { motion } from "framer-motion";
-import { useWebSocket } from "@/hooks/use-websocket";
+import ProgressIndicator from "@/components/ProgressIndicator";
+import { FormData } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import { useWebSocket } from "@/hooks/use-websocket";
+import logoPath from "@assets/Copia de ICONO.png";
 
 const initialFormData: FormData = {
   nombre_usuario: "",
@@ -17,99 +18,69 @@ const initialFormData: FormData = {
   ideas_proyectos: "",
   comentarios_adicionales: "",
   terminos_aceptados: false,
-  isSubmitting: false
+  honeypot: "",
+  isSubmitting: false,
 };
 
-// Interfaz para la respuesta del webhook
-interface DiagnosticoResponse {
-  saludo: string;
-  ciudad_region: string;
-  diagnostico_nicho: {
-    nicho_sugerido: string;
-    razon_clave: string;
-    problema_principal: string;
-    solucion_mvp: string;
-  };
-  impulso_personal: {
-    desafio_usuario: string;
-    consejo_reto: string;
-    habilidades_usuario: string;
-    ventaja_habilidad: string;
-  };
-  proximo_paso: {
-    modulo: string;
-    accion_concreta: string;
-    compromiso_comunidad: string;
-  };
-}
-
 export default function Home() {
-  const { toast } = useToast();
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [diagnosticoData, setDiagnosticoData] = useState<DiagnosticoResponse | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  
-  // Usar nuestro hook de WebSocket
-  const { 
-    isConnected, 
-    webhookStatus, 
-    webhookMessage, 
-    lastMessage 
-  } = useWebSocket();
-  
-  // Efecto para mostrar el estado de la conexión WebSocket
+  const [diagnosticoData, setDiagnosticoData] = useState<any>(null);
+  const [statusMessage, setStatusMessage] = useState<string>("");
+  const [webhookStatus, setWebhookStatus] = useState<string>("");
+  const { toast } = useToast();
+
+  // Configurar WebSocket para recibir actualizaciones del webhook
+  const { isConnected, history } = useWebSocket();
+
   useEffect(() => {
-    if (isConnected) {
-      console.log('WebSocket conectado correctamente');
-    }
-  }, [isConnected]);
-  
-  // Efecto para actualizar mensajes de estado del webhook
-  useEffect(() => {
-    if (webhookMessage) {
-      setStatusMessage(webhookMessage);
-    }
-  }, [webhookMessage]);
-  
-  // Efecto para procesar mensajes de WebSocket
-  useEffect(() => {
-    if (lastMessage && lastMessage.type === 'webhook_status' && lastMessage.status === 'success') {
-      // Si recibimos un mensaje de éxito con datos de diagnóstico
-      if (isProcessing && !isSubmitted) {
-        // Mostramos una notificación si estamos procesando
-        toast({
-          title: "Procesamiento completado",
-          description: "Tu diagnóstico ha sido generado con éxito",
-          duration: 3000,
-        });
-      }
-    }
-  }, [lastMessage, isProcessing, isSubmitted, toast]);
-  
-  // Función para capturar la respuesta del webhook (método legacy)
-  const captureWebhookResponse = (event: MessageEvent) => {
-    try {
-      if (event.data && typeof event.data === 'string') {
-        // Intentamos parsear como JSON
-        try {
-          const data = JSON.parse(event.data);
-          if (data.saludo && data.diagnostico_nicho) {
-            console.log("Recibida respuesta de diagnóstico:", data);
-            setDiagnosticoData(data);
-          }
-        } catch (e) {
-          // No es JSON válido, ignoramos
+    if (history && history.length > 0) {
+      const lastMessage = history[history.length - 1];
+      console.log("Último mensaje WebSocket:", lastMessage);
+      
+      if (lastMessage.type === 'webhook_status') {
+        setWebhookStatus(lastMessage.status || '');
+        
+        switch (lastMessage.status) {
+          case 'starting':
+            setStatusMessage("Iniciando análisis de datos...");
+            break;
+          case 'data_prepared':
+            setStatusMessage("Datos preparados correctamente");
+            break;
+          case 'sending':
+            setStatusMessage("Enviando información al sistema de análisis...");
+            break;
+          case 'success':
+            setStatusMessage("Análisis completado exitosamente");
+            // Aquí deberíamos recibir los datos del webhook
+            break;
+          case 'error':
+            setStatusMessage("Error en el procesamiento");
+            break;
+          default:
+            setStatusMessage(lastMessage.message || "Procesando...");
         }
       }
-    } catch (error) {
-      console.error("Error al procesar mensaje:", error);
     }
-  };
+  }, [history]);
 
-  // Escuchamos mensajes del backend a través del evento 'message' (método legacy)
+  // Escuchar mensajes del webhook a través de postMessage
   useEffect(() => {
+    const captureWebhookResponse = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'webhook_response') {
+        console.log("Respuesta del webhook recibida:", event.data.response);
+        setDiagnosticoData(event.data.response);
+        
+        // Avanzamos directamente al resultado
+        setTimeout(() => {
+          setIsSubmitted(true);
+          setIsProcessing(false);
+        }, 1000);
+      }
+    };
+
     window.addEventListener('message', captureWebhookResponse);
     
     return () => {
@@ -119,91 +90,22 @@ export default function Home() {
 
   const handleSubmitSuccess = (response?: any) => {
     console.log("handleSubmitSuccess llamado con:", response);
-    setIsProcessing(true);
     
-    // Si recibimos respuesta directamente del formulario
     if (response) {
       try {
         console.log("Procesando respuesta directa:", response);
         setDiagnosticoData(response);
-        
-        // Si hay respuesta, avanzamos al siguiente paso rápidamente
-        setTimeout(() => {
-          console.log("Mostrando pantalla de éxito");
-          setIsSubmitted(true);
-          setIsProcessing(false);
-        }, 1000);
-      } catch (e) {
-        console.error("Error al procesar respuesta directa:", e);
-        // En caso de error, seguimos con datos de demo
-        setTimeout(() => {
-          setIsSubmitted(true);
-          setIsProcessing(false);
-        }, 2000);
-      }
-    } else {
-      // Si vamos a usar los datos de demostración, personalizamos el saludo con el nombre
-      if (formData.nombre_usuario) {
-        demoData.saludo = `Hola, ${formData.nombre_usuario}`;
-      }
-      // Si no recibimos respuesta directamente, esperamos más tiempo
-      // para que el WebSocket pueda completar la comunicación
-      
-      // Establecemos un temporizador largo que solo se ejecutará si no recibimos 
-      // la respuesta a través del WebSocket antes
-      const timeoutTimer = setTimeout(() => {
-        toast({
-          title: "Tiempo de espera agotado",
-          description: "Mostrando resultados con datos predeterminados",
-          variant: "default",
-          duration: 4000,
-        });
-        
         setIsSubmitted(true);
         setIsProcessing(false);
-      }, 15000); // 15 segundos máximo de espera
-      
-      // Escuchamos los mensajes de WebSocket para avanzar cuando recibamos la respuesta
-      const checkInterval = setInterval(() => {
-        // Si ya recibimos la respuesta y tenemos datos o si el WebSocket informa de éxito
-        if (webhookStatus === 'success' || diagnosticoData) {
-          // Limpiamos los temporizadores
-          clearTimeout(timeoutTimer);
-          clearInterval(checkInterval);
-          
-          // Esperamos un poco para mostrar el mensaje de éxito
-          setTimeout(() => {
-            setIsSubmitted(true);
-            setIsProcessing(false);
-          }, 1000);
-        }
-        // Si hay un error en el webhook, también avanzamos pero usando datos demo
-        else if (['error', 'timeout', 'processing_error'].includes(webhookStatus || '')) {
-          // Limpiamos los temporizadores
-          clearTimeout(timeoutTimer);
-          clearInterval(checkInterval);
-          
-          // Notificamos al usuario del problema
-          toast({
-            title: "Error en el servicio",
-            description: "Mostrando resultados con datos predeterminados",
-            variant: "destructive",
-            duration: 4000,
-          });
-          
-          // Avanzamos a la pantalla final
-          setTimeout(() => {
-            setIsSubmitted(true);
-            setIsProcessing(false);
-          }, 1000);
-        }
-      }, 1000); // Comprobamos cada segundo
-      
-      // Limpiamos los intervalos cuando el componente se desmonte
-      return () => {
-        clearTimeout(timeoutTimer);
-        clearInterval(checkInterval);
-      };
+      } catch (e) {
+        console.error("Error al procesar respuesta directa:", e);
+        setIsSubmitted(true);
+        setIsProcessing(false);
+      }
+    } else {
+      console.log("No hay respuesta, avanzando con datos por defecto");
+      setIsSubmitted(true);
+      setIsProcessing(false);
     }
   };
 
@@ -211,30 +113,9 @@ export default function Home() {
     setFormData(initialFormData);
     setIsSubmitted(false);
     setDiagnosticoData(null);
-  };
-
-  // Ejemplo de datos para test sin dependencia del webhook
-  // Esto se usa solo como fallback si no recibimos datos del webhook
-  const demoData = {
-    "saludo": "Hola, Emprendedor",
-    "ciudad_region": "Barcelona",
-    "diagnostico_nicho": {
-      "nicho_sugerido": "Proveedores de Servicios Gestionados de TI (MSPs)",
-      "razon_clave": "Encaja con B2B y suelen necesitar optimizar la captación de clientes recurrentes en Barcelona.",
-      "problema_principal": "Generación inconsistente de leads cualificados y seguimiento manual de propuestas.",
-      "solucion_mvp": "Sistema automatizado para capturar leads B2B (web/LinkedIn), nutrirlos y facilitar agendamiento de consulta inicial."
-    },
-    "impulso_personal": {
-      "desafio_usuario": "Me falta tiempo / Cómo organizarme",
-      "consejo_reto": "Con 5-10h/sem, enfócate solo en las acciones clave de AILINK; bloquea tiempo fijo.",
-      "habilidades_usuario": "He trabajado en muchos sectores pero me siento inconforme con mi vida",
-      "ventaja_habilidad": "Tu experiencia diversa te da perspectiva; ¡usa esa motivación de cambio como tu motor ahora!"
-    },
-    "proximo_paso": {
-      "modulo": "Módulo 3, Clase 3.1 ('Escribir tu Propuesta de Valor')",
-      "accion_concreta": "Define tu Oferta MVP específica para el nicho recomendado.",
-      "compromiso_comunidad": "Comparte tu nicho elegido en el hilo semanal de avances de Skool."
-    }
+    setIsProcessing(false);
+    setStatusMessage("");
+    setWebhookStatus("");
   };
 
   return (
@@ -264,7 +145,7 @@ export default function Home() {
         {isSubmitted ? (
           <SuccessMessage 
             onRestart={handleRestart} 
-            diagnosticoData={diagnosticoData || demoData} 
+            diagnosticoData={diagnosticoData} 
           />
         ) : isProcessing ? (
           <motion.div 
