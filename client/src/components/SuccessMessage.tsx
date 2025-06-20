@@ -208,20 +208,36 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
   };
 
   useEffect(() => {
+    console.log("SuccessMessage useEffect - diagnosticoData:", diagnosticoData);
     // Si tenemos datos de diagnóstico, los usamos
     if (diagnosticoData) {
+      console.log("Estableciendo diagnóstico:", diagnosticoData);
       setDiagnostico(diagnosticoData);
       setLoading(false);
     } else {
+      console.log("No hay datos de diagnóstico, usando timeout");
       // Simulamos un tiempo de carga si no hay datos
       const timer = setTimeout(() => {
+        console.log("Timeout completado, cargando datos de demo");
+        // Datos de demo para cuando no hay respuesta del webhook
+        const datosDemo = {
+          nombre: "Usuario",
+          resumen_personal: "Profesional motivado en búsqueda de oportunidades de crecimiento.",
+          nicho: "Consultoría digital personalizada",
+          icp: "Profesionales que buscan optimizar sus procesos de trabajo",
+          dolor: "Falta de claridad en la estrategia digital y automatización",
+          nsvp: "Te ayudo a crear sistemas digitales eficientes que te permiten escalar tu negocio",
+          oferta: "Consultoría inicial gratuita de 30 minutos para definir tu estrategia digital",
+          idea_automatizacion: "Sistema de automatización personalizado que se adapta a tus necesidades específicas"
+        };
+        setDiagnostico(datosDemo);
         setLoading(false);
       }, 3000);
       return () => clearTimeout(timer);
     }
   }, [diagnosticoData]);
 
-  if (loading || !diagnostico) {
+  if (loading) {
     return (
       <motion.div 
         className="glass-card p-14 text-center max-w-2xl mx-auto"

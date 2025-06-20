@@ -118,21 +118,28 @@ export default function Home() {
   }, []);
 
   const handleSubmitSuccess = (response?: any) => {
+    console.log("handleSubmitSuccess llamado con:", response);
     setIsProcessing(true);
     
     // Si recibimos respuesta directamente del formulario
     if (response) {
       try {
+        console.log("Procesando respuesta directa:", response);
         setDiagnosticoData(response);
         
         // Si hay respuesta, avanzamos al siguiente paso rápidamente
-        // Simulamos un tiempo breve de procesamiento antes de mostrar el mensaje final
         setTimeout(() => {
+          console.log("Mostrando pantalla de éxito");
           setIsSubmitted(true);
           setIsProcessing(false);
         }, 1000);
       } catch (e) {
         console.error("Error al procesar respuesta directa:", e);
+        // En caso de error, seguimos con datos de demo
+        setTimeout(() => {
+          setIsSubmitted(true);
+          setIsProcessing(false);
+        }, 2000);
       }
     } else {
       // Si vamos a usar los datos de demostración, personalizamos el saludo con el nombre
