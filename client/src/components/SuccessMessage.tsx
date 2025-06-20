@@ -16,25 +16,14 @@ interface SuccessMessageProps {
 }
 
 interface DiagnosticoData {
-  saludo: string;
-  ciudad_region: string;
-  diagnostico_nicho: {
-    nicho_sugerido: string;
-    razon_clave: string;
-    problema_principal: string;
-    solucion_mvp: string;
-  };
-  impulso_personal: {
-    desafio_usuario: string;
-    consejo_reto: string;
-    habilidades_usuario: string;
-    ventaja_habilidad: string;
-  };
-  proximo_paso: {
-    modulo: string;
-    accion_concreta: string;
-    compromiso_comunidad: string;
-  };
+  nombre: string;
+  resumen_personal: string;
+  nicho: string;
+  icp: string;
+  dolor: string;
+  nsvp: string;
+  oferta: string;
+  idea_automatizacion: string;
 }
 
 export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMessageProps) {
