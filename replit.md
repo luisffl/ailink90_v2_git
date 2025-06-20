@@ -117,4 +117,6 @@ Changelog:
 
 ```
 Preferred communication style: Simple, everyday language.
+Design philosophy: Minimalismo elegante funcional, estilo Apple, pulcritud y coherencia con el diseño existente del proyecto.
+UI/UX: Priorizar minimalismo y elegancia por encima de elementos decorativos excesivos.
 ```

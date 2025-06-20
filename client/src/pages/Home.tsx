@@ -32,11 +32,10 @@ export default function Home() {
   const { toast } = useToast();
 
   // Configurar WebSocket para recibir actualizaciones del webhook
-  const { isConnected, history } = useWebSocket();
+  const { isConnected, lastMessage, webhookStatus: wsWebhookStatus } = useWebSocket();
 
   useEffect(() => {
-    if (history && history.length > 0) {
-      const lastMessage = history[history.length - 1];
+    if (lastMessage) {
       console.log("Último mensaje WebSocket:", lastMessage);
       
       if (lastMessage.type === 'webhook_status') {
@@ -54,7 +53,6 @@ export default function Home() {
             break;
           case 'success':
             setStatusMessage("Análisis completado exitosamente");
-            // Aquí deberíamos recibir los datos del webhook
             break;
           case 'error':
             setStatusMessage("Error en el procesamiento");
@@ -64,7 +62,7 @@ export default function Home() {
         }
       }
     }
-  }, [history]);
+  }, [lastMessage]);
 
   // Escuchar mensajes del webhook a través de postMessage
   useEffect(() => {
