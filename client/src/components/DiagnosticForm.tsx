@@ -146,8 +146,8 @@ export default function DiagnosticForm({
     
     console.log("Enviando payload al webhook:", webhookPayload);
     
-    // Enviar al webhook de n8n
-    fetch('https://ailink.app.n8n.cloud/webhook-test/67bdb302-d71e-4eb4-9ced-6a23b74fb7e7', {
+    // Enviar al webhook de n8n a través del proxy del backend
+    fetch('/api/n8n-webhook', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -155,7 +155,10 @@ export default function DiagnosticForm({
       body: JSON.stringify(webhookPayload)
     })
     .then(response => {
-      console.log("Respuesta del webhook - Status:", response.status);
+      console.log("Respuesta del proxy - Status:", response.status);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       return response.json();
     })
     .then(data => {

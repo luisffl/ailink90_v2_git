@@ -63,17 +63,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString()
       });
       
-      // Preparar los datos limpiando posibles caracteres problemáticos
+      // Preparar payload en el formato específico requerido
       const cleanData = {
         nombre: String(req.body.nombre || '').trim(),
-        correo: String(req.body.correo || '').trim(),
-        ciudad: String(req.body.ciudad || '').trim(),
         experiencia_previa: String(req.body.experiencia_previa || '').trim(),
-        tipo_colaboracion: String(req.body.tipo_colaboracion || '').trim(),
-        aspectos_mejorar: String(req.body.aspectos_mejorar || '').trim(),
-        ideas_proyectos: String(req.body.ideas_proyectos || '').trim(),
-        comentarios: String(req.body.comentarios || '').trim(),
-        fecha: new Date().toISOString()
+        publico_interes: String(req.body.publico_interes || '').trim(),
+        mejora_deseada: String(req.body.mejora_deseada || '').trim(),
+        idea_libre: String(req.body.idea_libre || '').trim(),
+        horas_semana: String(req.body.horas_semana || '5-10').trim()
       };
       
       console.log("Datos limpios preparados para envío:", cleanData);
@@ -87,27 +84,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString()
       });
       
-      // Convertir a form-urlencoded (formato que sabemos que funciona con curl)
-      const formData = new URLSearchParams();
-      Object.entries(cleanData).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
+      // Usar JSON como formato de envío
+      const jsonPayload = JSON.stringify(cleanData);
       
-      // Preparar la solicitud a n8n
-      const webhookUrl = "https://ailink.app.n8n.cloud/webhook/3f5e399a-5c46-4b10-8220-8ccdf0388a3b";
+      // Preparar la solicitud a n8n con la nueva URL
+      const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/67bdb302-d71e-4eb4-9ced-6a23b74fb7e7";
       
-      // Opciones para la solicitud
-      const options = {
+      // Usar fetch en lugar de https.request para simplificar
+      console.log("Enviando datos a n8n:", cleanData);
+      
+      fetch(webhookUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Content-Length': formData.toString().length,
+          'Content-Type': 'application/json',
           'User-Agent': 'AILINK-Diagnostic-App/1.0',
           'Accept': 'application/json',
-          'Connection': 'close' // Para evitar problemas con keep-alive
         },
-        timeout: 15000 // 15 segundos de timeout
-      };
+        body: jsonPayload
+      })
       
       // Notificar por WebSocket que se está enviando la solicitud
       broadcastToClients({
