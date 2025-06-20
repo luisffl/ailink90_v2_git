@@ -1,14 +1,6 @@
-import { FormStepProps, TipoNegocioOption } from "@/lib/types";
+import { FormStepProps } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -29,19 +21,6 @@ export default function FormStep({
   const stepVariants = {
     hidden: { opacity: 0, x: 20 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeInOut" } }
-  };
-
-  const handleCheckboxChange = (option: TipoNegocioOption) => {
-    const currentSelections = [...formData.tipos_negocio_preferidos];
-    const index = currentSelections.indexOf(option);
-    
-    if (index > -1) {
-      currentSelections.splice(index, 1);
-    } else {
-      currentSelections.push(option);
-    }
-    
-    updateFormData("tipos_negocio_preferidos", currentSelections);
   };
 
   return (
@@ -117,65 +96,26 @@ export default function FormStep({
 
       {step === 2 && (
         <div>
-          <h2 className="form-heading">Tu perfil profesional</h2>
+          <h2 className="form-heading">Tu experiencia previa</h2>
           
           <div className="mb-6">
-            <Label htmlFor="mayor_desafio" className="text-sm font-medium mb-2 block text-gray-300">
-              Mi mayor dificultad ahora mismo es: <span className="text-blue-500">*</span>
+            <Label htmlFor="experiencia_previa" className="text-sm font-medium mb-2 block text-gray-300">
+              ¿Cuál es tu experiencia previa? <span className="text-blue-500">*</span>
+              <br />
+              <span className="text-xs text-gray-400 font-normal">
+                (Trabajos, estudios, habilidades o actividades en las que tengas práctica)
+              </span>
             </Label>
-            <Select
-              value={formData.mayor_desafio}
-              onValueChange={(value) => updateFormData("mayor_desafio", value)}
-            >
-              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg">
-                <SelectValue placeholder="Selecciona una opción..." />
-              </SelectTrigger>
-              <SelectContent className="bg-[#1a1a1a] border-[#333] text-white">
-                <SelectItem value="No sé qué nicho elegir">No sé qué nicho elegir</SelectItem>
-                <SelectItem value="No sé qué servicio ofrecer">No sé qué servicio ofrecer</SelectItem>
-                <SelectItem value="Miedo a empezar / Síndrome del impostor">Miedo a empezar / Síndrome del impostor</SelectItem>
-                <SelectItem value="Me falta tiempo / Cómo organizarme">Me falta tiempo / Cómo organizarme</SelectItem>
-                <SelectItem value="Dudas sobre la parte técnica">Dudas sobre la parte técnica</SelectItem>
-                <SelectItem value="Otro">Otro</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.mayor_desafio && (
-              <p className="text-red-500 text-sm mt-1">{errors.mayor_desafio}</p>
-            )}
-          </div>
-          
-          <div className="mb-6">
-            <Label className="text-sm font-medium mb-3 block text-gray-300">
-              Prefiero trabajar con: (marca todas las que apliquen) <span className="text-blue-500">*</span>
-            </Label>
-            
-            <div className="space-y-3 mt-2">
-              {[
-                "Negocios que venden a otros negocios (B2B)",
-                "Negocios que venden al consumidor final (B2C)",
-                "Servicios profesionales (abogados, consultores...)",
-                "Oficios y servicios a domicilio (fontaneros, electricistas...)",
-                "Tiendas físicas / Comercios",
-                "Negocios online"
-              ].map((option) => (
-                <div key={option} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={option.replace(/[^a-zA-Z0-9]/g, '_')}
-                    checked={formData.tipos_negocio_preferidos.includes(option as TipoNegocioOption)}
-                    onCheckedChange={() => handleCheckboxChange(option as TipoNegocioOption)}
-                    className="custom-checkbox"
-                  />
-                  <Label 
-                    htmlFor={option.replace(/[^a-zA-Z0-9]/g, '_')} 
-                    className="text-sm text-gray-300 cursor-pointer"
-                  >
-                    {option}
-                  </Label>
-                </div>
-              ))}
-            </div>
-            {errors.tipos_negocio_preferidos && (
-              <p className="text-red-500 text-sm mt-1">{errors.tipos_negocio_preferidos}</p>
+            <Textarea
+              id="experiencia_previa"
+              value={formData.experiencia_previa}
+              onChange={(e) => updateFormData("experiencia_previa", e.target.value)}
+              placeholder="Describe tu experiencia laboral, estudios, habilidades técnicas, hobbies profesionales, etc. Por ejemplo: 'Trabajé 5 años en ventas, estudié marketing digital, tengo experiencia con Excel y redes sociales...'"
+              className="form-control-focus w-full px-4 py-3 rounded-lg min-h-[120px] resize-none"
+              rows={5}
+            />
+            {errors.experiencia_previa && (
+              <p className="text-red-500 text-sm mt-1">{errors.experiencia_previa}</p>
             )}
           </div>
           
@@ -201,37 +141,23 @@ export default function FormStep({
 
       {step === 3 && (
         <div>
-          <h2 className="form-heading">Nichos y preferencias</h2>
+          <h2 className="form-heading">Tipo de colaboración</h2>
           
           <div className="mb-6">
-            <Label htmlFor="habilidades_actuales" className="text-sm font-medium mb-2 block text-gray-300">
-              ¿Qué habilidades o experiencia tienes actualmente? <span className="text-blue-500">*</span>
+            <Label htmlFor="tipo_colaboracion" className="text-sm font-medium mb-2 block text-gray-300">
+              ¿Con qué tipo de personas o empresas te interesaría trabajar o colaborar? <span className="text-blue-500">*</span>
             </Label>
             <Textarea
-              id="habilidades_actuales"
-              value={formData.habilidades_actuales}
-              onChange={(e) => updateFormData("habilidades_actuales", e.target.value)}
-              placeholder="Ej: ventas, diseño, marketing, experiencia en algún sector..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
-              rows={4}
+              id="tipo_colaboracion"
+              value={formData.tipo_colaboracion}
+              onChange={(e) => updateFormData("tipo_colaboracion", e.target.value)}
+              placeholder="Describe el tipo de personas, empresas o sectores con los que te gustaría colaborar. Por ejemplo: 'Pequeñas empresas familiares', 'Startups tecnológicas', 'Profesionales independientes', 'Empresas del sector salud', etc."
+              className="form-control-focus w-full px-4 py-3 rounded-lg min-h-[120px] resize-none"
+              rows={5}
             />
-            {errors.habilidades_actuales && (
-              <p className="text-red-500 text-sm mt-1">{errors.habilidades_actuales}</p>
+            {errors.tipo_colaboracion && (
+              <p className="text-red-500 text-sm mt-1">{errors.tipo_colaboracion}</p>
             )}
-          </div>
-          
-          <div className="mb-6">
-            <Label htmlFor="nichos_potenciales" className="text-sm font-medium mb-2 block text-gray-300">
-              Si ya tienes alguna idea de nicho en mente, escríbela aquí
-            </Label>
-            <Textarea
-              id="nichos_potenciales"
-              value={formData.nichos_potenciales}
-              onChange={(e) => updateFormData("nichos_potenciales", e.target.value)}
-              placeholder="Ej: Restaurantes locales, Gimnasios, Consultoría..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
-              rows={3}
-            />
           </div>
           
           <div className="flex justify-between mt-10">
@@ -256,52 +182,22 @@ export default function FormStep({
 
       {step === 4 && (
         <div>
-          <h2 className="form-heading">Recursos y objetivos</h2>
+          <h2 className="form-heading">Oportunidades de mejora</h2>
           
           <div className="mb-6">
-            <Label htmlFor="compromiso_tiempo" className="text-sm font-medium mb-2 block text-gray-300">
-              ¿Cuánto tiempo puedes dedicarle a esto semanalmente? <span className="text-blue-500">*</span>
+            <Label htmlFor="aspectos_mejorar" className="text-sm font-medium mb-2 block text-gray-300">
+              ¿Qué aspectos te gustaría mejorar o crees que podrían optimizarse en el trabajo de ese tipo de personas o empresas? <span className="text-blue-500">*</span>
             </Label>
-            <Select
-              value={formData.compromiso_tiempo}
-              onValueChange={(value) => updateFormData("compromiso_tiempo", value)}
-            >
-              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg">
-                <SelectValue placeholder="Selecciona una opción..." />
-              </SelectTrigger>
-              <SelectContent className="bg-[#1a1a1a] border-[#333] text-white">
-                <SelectItem value="Menos de 5 horas">Menos de 5 horas</SelectItem>
-                <SelectItem value="5-10 horas">5-10 horas</SelectItem>
-                <SelectItem value="10-20 horas">10-20 horas</SelectItem>
-                <SelectItem value="Más de 20 horas (Tiempo completo)">Más de 20 horas (Tiempo completo)</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.compromiso_tiempo && (
-              <p className="text-red-500 text-sm mt-1">{errors.compromiso_tiempo}</p>
-            )}
-          </div>
-          
-          <div className="mb-6">
-            <Label htmlFor="objetivo_inicial" className="text-sm font-medium mb-2 block text-gray-300">
-              Mi meta principal al empezar es: <span className="text-blue-500">*</span>
-            </Label>
-            <Select
-              value={formData.objetivo_inicial}
-              onValueChange={(value) => updateFormData("objetivo_inicial", value)}
-            >
-              <SelectTrigger className="form-control-focus w-full px-4 py-3 rounded-lg">
-                <SelectValue placeholder="Selecciona una opción..." />
-              </SelectTrigger>
-              <SelectContent className="bg-[#1a1a1a] border-[#333] text-white">
-                <SelectItem value="Conseguir mi primer cliente rápido">Conseguir mi primer cliente rápido</SelectItem>
-                <SelectItem value="Generar un ingreso extra">Generar un ingreso extra</SelectItem>
-                <SelectItem value="Aprender sobre automatización e IA">Aprender sobre automatización e IA</SelectItem>
-                <SelectItem value="Construir un negocio escalable">Construir un negocio escalable</SelectItem>
-                <SelectItem value="Validar la idea">Validar la idea</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.objetivo_inicial && (
-              <p className="text-red-500 text-sm mt-1">{errors.objetivo_inicial}</p>
+            <Textarea
+              id="aspectos_mejorar"
+              value={formData.aspectos_mejorar}
+              onChange={(e) => updateFormData("aspectos_mejorar", e.target.value)}
+              placeholder="Describe los problemas, ineficiencias o áreas de mejora que has observado. Por ejemplo: 'Falta de presencia digital', 'Procesos manuales que se podrían automatizar', 'Falta de seguimiento a clientes', etc."
+              className="form-control-focus w-full px-4 py-3 rounded-lg min-h-[120px] resize-none"
+              rows={5}
+            />
+            {errors.aspectos_mejorar && (
+              <p className="text-red-500 text-sm mt-1">{errors.aspectos_mejorar}</p>
             )}
           </div>
           
@@ -327,44 +223,74 @@ export default function FormStep({
 
       {step === 5 && (
         <div>
-          <h2 className="form-heading">Finalizar diagnóstico</h2>
+          <h2 className="form-heading">Ideas y proyectos</h2>
           
-          <div className="bg-blue-950/30 border border-blue-900/50 p-5 rounded-lg mb-6">
-            <p className="text-sm text-gray-300">
-              Estás a punto de completar tu diagnóstico inicial. Al enviar tus respuestas,
-              nuestro sistema analizará tu información para crear un diagnóstico personalizado.
-            </p>
+          <div className="mb-6">
+            <Label htmlFor="ideas_proyectos" className="text-sm font-medium mb-2 block text-gray-300">
+              ¿Tienes alguna idea, proyecto o solución que se te haya ocurrido recientemente, relacionada o no con la inteligencia artificial? <span className="text-blue-500">*</span>
+            </Label>
+            <Textarea
+              id="ideas_proyectos"
+              value={formData.ideas_proyectos}
+              onChange={(e) => updateFormData("ideas_proyectos", e.target.value)}
+              placeholder="Comparte cualquier idea de negocio, proyecto, aplicación, servicio o solución que tengas en mente. No importa si está relacionada con IA o no. Por ejemplo: 'Una app para gestionar citas médicas', 'Un servicio de automatización de tareas', 'Una idea para mejorar la comunicación en equipos', etc."
+              className="form-control-focus w-full px-4 py-3 rounded-lg min-h-[120px] resize-none"
+              rows={5}
+            />
+            {errors.ideas_proyectos && (
+              <p className="text-red-500 text-sm mt-1">{errors.ideas_proyectos}</p>
+            )}
           </div>
+          
+          <div className="flex justify-between mt-10">
+            <Button
+              type="button"
+              onClick={prevStep}
+              variant="ghost"
+              className="text-gray-400 font-medium transition-colors hover:text-white"
+            >
+              Atrás
+            </Button>
+            <Button
+              type="button"
+              onClick={nextStep}
+              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium"
+            >
+              Continuar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {step === 6 && (
+        <div>
+          <h2 className="form-heading">Comentarios finales</h2>
           
           <div className="mb-6">
             <Label htmlFor="comentarios_adicionales" className="text-sm font-medium mb-2 block text-gray-300">
-              ¿Algo más que quieras contarnos?
+              ¿Hay algo más que te gustaría agregar o comentar?
             </Label>
             <Textarea
               id="comentarios_adicionales"
               value={formData.comentarios_adicionales}
               onChange={(e) => updateFormData("comentarios_adicionales", e.target.value)}
-              placeholder="Cualquier detalle adicional que nos ayude a personalizar tu diagnóstico..."
-              className="form-control-focus w-full px-4 py-3 rounded-lg resize-none"
-              rows={3}
+              placeholder="Cualquier información adicional que consideres relevante..."
+              className="form-control-focus w-full px-4 py-3 rounded-lg min-h-[100px] resize-none"
+              rows={4}
             />
           </div>
-          
-          <div className="mb-6">
+
+          <div className="mb-8">
             <div className="flex items-start space-x-3">
-              <Checkbox
+              <input
+                type="checkbox"
                 id="terminos_aceptados"
                 checked={formData.terminos_aceptados}
-                onCheckedChange={(checked) => 
-                  updateFormData("terminos_aceptados", checked === true)
-                }
-                className="custom-checkbox mt-1"
+                onChange={(e) => updateFormData("terminos_aceptados", e.target.checked)}
+                className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
               />
-              <Label 
-                htmlFor="terminos_aceptados" 
-                className="text-sm text-gray-400"
-              >
-                Acepto recibir el diagnóstico y comunicaciones relacionadas con AILINK <span className="text-blue-500">*</span>
+              <Label htmlFor="terminos_aceptados" className="text-sm text-gray-300 cursor-pointer">
+                Acepto que mis datos sean utilizados para generar un diagnóstico personalizado y acepto recibir información relevante sobre el programa. <span className="text-blue-500">*</span>
               </Label>
             </div>
             {errors.terminos_aceptados && (
@@ -383,18 +309,10 @@ export default function FormStep({
             </Button>
             <Button
               type="submit"
-              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium"
               disabled={formData.isSubmitting}
+              className="btn-primary-hover bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {formData.isSubmitting ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Enviando...
-                </span>
-              ) : "Obtener Mi Diagnóstico"}
+              {formData.isSubmitting ? "Procesando..." : "Enviar Diagnóstico"}
             </Button>
           </div>
         </div>

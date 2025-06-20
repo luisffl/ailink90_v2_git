@@ -21,7 +21,7 @@ export default function DiagnosticForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   const updateFormData = <T extends string | boolean | string[]>(field: keyof FormData, value: T) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -56,29 +56,26 @@ export default function DiagnosticForm({
       }
     } 
     else if (currentStep === 2) {
-      if (!formData.mayor_desafio) {
-        newErrors.mayor_desafio = "Por favor, selecciona una opción";
-      }
-      
-      if (formData.tipos_negocio_preferidos.length === 0) {
-        newErrors.tipos_negocio_preferidos = "Selecciona al menos un tipo de negocio";
+      if (!formData.experiencia_previa) {
+        newErrors.experiencia_previa = "Por favor, describe tu experiencia previa";
       }
     }
     else if (currentStep === 3) {
-      if (!formData.habilidades_actuales) {
-        newErrors.habilidades_actuales = "Por favor, completa este campo";
+      if (!formData.tipo_colaboracion) {
+        newErrors.tipo_colaboracion = "Por favor, describe el tipo de colaboración que buscas";
       }
     }
     else if (currentStep === 4) {
-      if (!formData.compromiso_tiempo) {
-        newErrors.compromiso_tiempo = "Por favor, selecciona una opción";
-      }
-      
-      if (!formData.objetivo_inicial) {
-        newErrors.objetivo_inicial = "Por favor, selecciona un objetivo";
+      if (!formData.aspectos_mejorar) {
+        newErrors.aspectos_mejorar = "Por favor, describe qué aspectos te gustaría mejorar";
       }
     }
     else if (currentStep === 5) {
+      if (!formData.ideas_proyectos) {
+        newErrors.ideas_proyectos = "Por favor, comparte tus ideas o proyectos";
+      }
+    }
+    else if (currentStep === 6) {
       if (!formData.terminos_aceptados) {
         newErrors.terminos_aceptados = "Debes aceptar para continuar";
       }
@@ -138,12 +135,10 @@ export default function DiagnosticForm({
         nombre: formData.nombre_usuario,
         correo: formData.correo_electronico_usuario,
         ciudad: formData.ciudad_region_usuario,
-        nichos: formData.nichos_potenciales,
-        tipos_negocio: formData.tipos_negocio_preferidos.join(", "),
-        desafio: formData.mayor_desafio,
-        habilidades: formData.habilidades_actuales,
-        tiempo: formData.compromiso_tiempo,
-        objetivo: formData.objetivo_inicial,
+        experiencia_previa: formData.experiencia_previa,
+        tipo_colaboracion: formData.tipo_colaboracion,
+        aspectos_mejorar: formData.aspectos_mejorar,
+        ideas_proyectos: formData.ideas_proyectos,
         comentarios: formData.comentarios_adicionales,
         fecha: new Date().toISOString()
       };

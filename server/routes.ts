@@ -68,12 +68,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         nombre: String(req.body.nombre || '').trim(),
         correo: String(req.body.correo || '').trim(),
         ciudad: String(req.body.ciudad || '').trim(),
-        nichos: String(req.body.nichos || '').trim(),
-        tipos_negocio: String(req.body.tipos_negocio || '').trim(),
-        desafio: String(req.body.desafio || '').trim(),
-        habilidades: String(req.body.habilidades || '').trim(),
-        tiempo: String(req.body.tiempo || '').trim(),
-        objetivo: String(req.body.objetivo || '').trim(),
+        experiencia_previa: String(req.body.experiencia_previa || '').trim(),
+        tipo_colaboracion: String(req.body.tipo_colaboracion || '').trim(),
+        aspectos_mejorar: String(req.body.aspectos_mejorar || '').trim(),
+        ideas_proyectos: String(req.body.ideas_proyectos || '').trim(),
         comentarios: String(req.body.comentarios || '').trim(),
         fecha: new Date().toISOString()
       };
