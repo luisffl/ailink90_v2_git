@@ -18,6 +18,7 @@ interface DiagnosticoData {
   nsvp: string;
   oferta: string;
   idea_automatizacion: string;
+  pdf_url?: string; // URL del PDF generado
 }
 
 export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMessageProps) {
@@ -26,11 +27,21 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
   console.log("SuccessMessage renderizado con datos:", diagnosticoData);
 
   const handleDownloadPDF = () => {
-    toast({
-      title: "PDF en desarrollo",
-      description: "La funcionalidad de descarga PDF estará disponible pronto",
-      duration: 3000,
-    });
+    if (datos.pdf_url) {
+      // Abrir el PDF en una nueva pestaña
+      window.open(datos.pdf_url, '_blank');
+      toast({
+        title: "Descargando PDF",
+        description: "El diagnóstico se está abriendo en una nueva pestaña",
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "PDF no disponible",
+        description: "El PDF aún se está generando, inténtalo en unos momentos",
+        duration: 3000,
+      });
+    }
   };
 
   // Datos por defecto si no hay diagnosticoData
@@ -188,9 +199,10 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
           <Button 
             onClick={handleDownloadPDF}
             className="btn-primary px-8 py-3"
+            disabled={!datos.pdf_url}
           >
             <Download className="w-4 h-4 mr-2" />
-            Descargar Diagnóstico PDF
+            {datos.pdf_url ? 'Descargar Diagnóstico PDF' : 'Generando PDF...'}
           </Button>
           <Button 
             onClick={onRestart}
