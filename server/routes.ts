@@ -1,7 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import https from "https";
 import { WebSocketServer } from 'ws';
 import { webhookLimiter } from "./index";
 
@@ -90,18 +89,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Preparar la solicitud a n8n con la nueva URL
       const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/67bdb302-d71e-4eb4-9ced-6a23b74fb7e7";
       
-      // Usar fetch en lugar de https.request para simplificar
       console.log("Enviando datos a n8n:", cleanData);
-      
-      fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'AILINK-Diagnostic-App/1.0',
-          'Accept': 'application/json',
-        },
-        body: jsonPayload
-      })
       
       // Notificar por WebSocket que se está enviando la solicitud
       broadcastToClients({
@@ -112,207 +100,134 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString()
       });
       
-      // Realizar la solicitud a n8n
-      const proxyReq = https.request(webhookUrl, options, (proxyRes) => {
-        let responseData = '';
+      // Realizar la solicitud a n8n usando fetch
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'AILINK-Diagnostic-App/1.0',
+          'Accept': 'application/json',
+        },
+        body: jsonPayload
+      });
+
+      console.log("Respuesta de n8n - Status:", response.status);
+      const responseText = await response.text();
+      console.log("Respuesta de n8n - Texto:", responseText);
+
+      let jsonResponse;
+      try {
+        jsonResponse = JSON.parse(responseText);
         
-        // Notificar que hemos recibido headers
         broadcastToClients({
           type: 'webhook_status',
-          status: 'receiving',
-          message: `Recibiendo respuesta (HTTP ${proxyRes.statusCode})...`,
-          statusCode: proxyRes.statusCode,
+          status: 'success',
+          message: 'Respuesta procesada exitosamente',
           requestId,
           timestamp: new Date().toISOString()
         });
         
-        proxyRes.on('data', (chunk) => {
-          responseData += chunk;
-        });
+        res.status(200).json(jsonResponse);
+      } catch (parseError) {
+        console.log("La respuesta no es JSON válido:", parseError);
         
-        proxyRes.on('end', () => {
-          console.log("Respuesta de n8n:", responseData);
-          
-          // Intentamos parsear la respuesta para ver si es un JSON válido
-          let jsonResponse;
-          try {
-            jsonResponse = JSON.parse(responseData);
-            
-            // Notificar que hemos procesado la respuesta exitosamente
-            broadcastToClients({
-              type: 'webhook_status',
-              status: 'success',
-              message: 'Respuesta recibida y procesada correctamente',
-              statusCode: proxyRes.statusCode,
-              requestId,
-              timestamp: new Date().toISOString()
-            });
-            
-          } catch (e) {
-            console.error("Error al parsear la respuesta JSON:", e);
-            
-            // Si no es un JSON válido, preparamos una respuesta alternativa
-            jsonResponse = { 
-              message: responseData, 
-              error: 'Error al parsear la respuesta como JSON' 
-            };
-            
-            // Notificar que hubo un problema con el formato de la respuesta
-            broadcastToClients({
-              type: 'webhook_status',
-              status: 'format_error',
-              message: 'La respuesta no tiene un formato JSON válido',
-              statusCode: proxyRes.statusCode,
-              requestId,
-              timestamp: new Date().toISOString()
-            });
-          }
-          
-          // Enviar la respuesta al cliente
-          res.status(proxyRes.statusCode || 200).json(jsonResponse);
-        });
-      });
-      
-      // Configurar un timeout para la solicitud al webhook
-      const timeout = setTimeout(() => {
-        console.log("Timeout alcanzado en la solicitud al webhook");
-        proxyReq.destroy();
-        
-        // Notificar timeout por WebSocket
         broadcastToClients({
           type: 'webhook_status',
-          status: 'timeout',
-          message: 'La solicitud al webhook ha tardado demasiado tiempo',
+          status: 'warning',
+          message: 'Respuesta recibida pero no es JSON válido',
           requestId,
           timestamp: new Date().toISOString()
         });
         
-        res.status(504).json({ 
-          error: 'Timeout en la solicitud al webhook',
-          message: 'La solicitud al webhook ha tardado demasiado tiempo en responder',
-          requestId
+        res.status(200).json({
+          message: responseText,
+          raw_response: responseText
         });
-      }, 12000); // 12 segundos de timeout
-      
-      proxyReq.on('error', (error) => {
-        clearTimeout(timeout);
-        console.error("Error en proxy de n8n:", error);
-        
-        // Notificar error por WebSocket
-        broadcastToClients({
-          type: 'webhook_status',
-          status: 'error',
-          message: `Error al contactar con el webhook: ${error.message}`,
-          requestId,
-          timestamp: new Date().toISOString()
-        });
-        
-        res.status(500).json({ 
-          error: 'Error al contactar con el webhook',
-          message: error.message,
-          requestId
-        });
-      });
-      
-      // Limpiar timeout cuando finalice la solicitud
-      proxyReq.on('response', (proxyRes) => {
-        proxyRes.on('end', () => {
-          clearTimeout(timeout);
-        });
-      });
-      
-      // Enviar los datos
-      proxyReq.write(formData.toString());
-      proxyReq.end();
-      
-    } catch (error: any) {
+      }
+    } catch (error) {
       console.error("Error al procesar la solicitud:", error);
       
       // Notificar error por WebSocket
       broadcastToClients({
         type: 'webhook_status',
         status: 'processing_error',
-        message: `Error interno al procesar la solicitud: ${error?.message || 'Error desconocido'}`,
+        message: `Error interno al procesar la solicitud: ${error.message}`,
         requestId,
         timestamp: new Date().toISOString()
       });
       
       res.status(500).json({ 
-        error: 'Error al procesar la solicitud',
-        message: error?.message || 'Se produjo un error desconocido',
-        timestamp: new Date().toISOString(),
-        requestId
+        error: "Error al procesar la solicitud",
+        message: error.message
       });
     }
   });
 
-  // use storage to perform CRUD operations on the storage interface
-  // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
-
   const httpServer = createServer(app);
   
-  // Configurar WebSocket en un path distinto del que usa Vite para HMR
+  // Configure WebSocket server
   const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
-  // Manejador de conexiones WebSocket
+  const clients = new Set();
+
+  // Function to broadcast messages to all connected clients
+  function broadcastToClients(message: any) {
+    const messageStr = JSON.stringify(message);
+    clients.forEach((client: any) => {
+      if (client.readyState === client.OPEN) {
+        client.send(messageStr);
+      }
+    });
+  }
+
+  // Make broadcastToClients globally available for the webhook route
+  (global as any).broadcastToClients = broadcastToClients;
+
   wss.on('connection', (ws) => {
     console.log('Nueva conexión WebSocket establecida');
-    
-    // Enviar mensaje de bienvenida
-    ws.send(JSON.stringify({ 
-      type: 'connection', 
+    clients.add(ws);
+
+    // Send welcome message
+    ws.send(JSON.stringify({
+      type: 'connection',
       message: 'Conexión WebSocket establecida correctamente',
       timestamp: new Date().toISOString()
     }));
-    
-    // Manejador de mensajes recibidos
-    ws.on('message', (message) => {
+
+    // Handle incoming messages
+    ws.on('message', (data) => {
       try {
-        const data = JSON.parse(message.toString());
-        console.log('Mensaje WebSocket recibido:', data);
+        const message = JSON.parse(data.toString());
+        console.log('Mensaje WebSocket recibido:', message);
         
-        // Responder según el tipo de mensaje
-        if (data.type === 'ping') {
-          ws.send(JSON.stringify({ 
-            type: 'pong', 
-            timestamp: new Date().toISOString() 
+        // Echo back pong for ping messages
+        if (message.type === 'ping') {
+          ws.send(JSON.stringify({
+            type: 'pong',
+            timestamp: new Date().toISOString()
           }));
         }
       } catch (error) {
         console.error('Error al procesar mensaje WebSocket:', error);
       }
     });
-    
-    // Manejador de desconexión
+
+    // Handle connection close
     ws.on('close', () => {
       console.log('Conexión WebSocket cerrada');
+      clients.delete(ws);
     });
-    
-    // Manejador de errores
+
+    // Handle errors
     ws.on('error', (error) => {
-      console.error('Error en conexión WebSocket:', error);
+      console.error('Error en WebSocket:', error);
+      clients.delete(ws);
     });
   });
-  
-  // Función para enviar mensajes a todos los clientes conectados
-  const broadcastToClients = (message: any) => {
-    wss.clients.forEach((client) => {
-      // La constante WebSocket.OPEN no está disponible aquí, usamos el valor numérico 1
-      if (client.readyState === 1) { // 1 = OPEN en el estándar WebSocket
-        client.send(JSON.stringify(message));
-      }
-    });
-  };
-  
-  // Crear un heartbeat para mantener las conexiones activas
-  setInterval(() => {
-    wss.clients.forEach((client) => {
-      // La constante WebSocket.OPEN no está disponible aquí, usamos el valor numérico 1
-      if (client.readyState === 1) { // 1 = OPEN en el estándar WebSocket
-        client.send(JSON.stringify({ type: 'heartbeat', timestamp: new Date().toISOString() }));
-      }
-    });
-  }, 30000); // Cada 30 segundos
 
   return httpServer;
+}
+
+// Make broadcastToClients available globally so it can be used in the webhook route
+declare global {
+  var broadcastToClients: (message: any) => void;
 }
