@@ -20,7 +20,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Proxy para el webhook de n8n con protección específica contra DDoS
-  app.post("/api/n8n-webhook", webhookLimiter, (req: Request, res: Response) => {
+  app.post("/api/n8n-webhook", webhookLimiter, async (req: Request, res: Response) => {
     console.log("Recibiendo solicitud de proxy para webhook n8n");
     
     // Generar un ID único para esta solicitud
