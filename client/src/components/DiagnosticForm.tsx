@@ -130,36 +130,37 @@ export default function DiagnosticForm({
     
     toast({
       title: "Procesando diagnóstico...",
-      description: "Generando tu análisis personalizado",
-      duration: 3000
+      description: "Enviando datos al sistema de análisis",
+      duration: 5000
     });
     
-    // Datos de diagnóstico de prueba personalizados
-    const diagnosticoDePrueba = {
-      saludo: `Hola, ${formData.nombre_usuario}`,
-      ciudad_region: formData.ciudad_region_usuario,
-      diagnostico_nicho: {
-        nicho_sugerido: "Consultoría en automatización de procesos empresariales",
-        razon_clave: "Basado en tu experiencia y el tipo de colaboración que buscas, este nicho te permitirá ayudar a empresas a optimizar sus operaciones.",
-        problema_principal: "Muchas empresas pequeñas y medianas tienen procesos manuales ineficientes que les consumen tiempo y recursos valiosos.",
-        solucion_mvp: "Ofrecer auditorías de procesos y propuestas de automatización personalizadas para cada cliente."
-      },
-      impulso_personal: {
-        desafio_usuario: "Identificar oportunidades de mejora en diferentes sectores",
-        consejo_reto: "Comienza enfocándote en un sector específico donde puedas desarrollar expertise profunda.",
-        habilidades_usuario: formData.experiencia_previa,
-        ventaja_habilidad: "Tu experiencia previa te dará credibilidad y te permitirá entender mejor las necesidades de los clientes."
-      },
-      proximo_paso: {
-        modulo: "Definición de propuesta de valor",
-        accion_concreta: "Identifica 3 empresas del tipo que mencionaste y analiza sus procesos actuales.",
-        compromiso_comunidad: "Comparte tus hallazgos sobre oportunidades de mejora identificadas."
-      }
+    // Preparar payload para el webhook de n8n
+    const webhookPayload = {
+      nombre: formData.nombre_usuario,
+      experiencia_previa: formData.experiencia_previa,
+      publico_interes: formData.tipo_colaboracion,
+      mejora_deseada: formData.aspectos_mejorar,
+      idea_libre: formData.ideas_proyectos,
+      horas_semana: "5-10" // Por ahora fijo, podemos hacer una pregunta específica después
     };
     
-    // Simular procesamiento
-    setTimeout(() => {
-      console.log("Finalizando envío con diagnóstico de prueba");
+    console.log("Enviando payload al webhook:", webhookPayload);
+    
+    // Enviar al webhook de n8n
+    fetch('https://ailink.app.n8n.cloud/webhook-test/67bdb302-d71e-4eb4-9ced-6a23b74fb7e7', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(webhookPayload)
+    })
+    .then(response => {
+      console.log("Respuesta del webhook - Status:", response.status);
+      return response.json();
+    })
+    .then(data => {
+      console.log("Datos recibidos del webhook:", data);
+      
       setIsSubmitting(false);
       setFormData(prev => ({ ...prev, isSubmitting: false }));
       
@@ -169,8 +170,21 @@ export default function DiagnosticForm({
         variant: "default"
       });
       
-      onSubmitSuccess(diagnosticoDePrueba);
-    }, 2000);
+      // Pasar los datos procesados del webhook al componente padre
+      onSubmitSuccess(data);
+    })
+    .catch(error => {
+      console.error("Error al enviar al webhook:", error);
+      
+      setIsSubmitting(false);
+      setFormData(prev => ({ ...prev, isSubmitting: false }));
+      
+      toast({
+        title: "Error en el procesamiento",
+        description: "Hubo un problema al procesar tu diagnóstico. Intenta nuevamente.",
+        variant: "destructive"
+      });
+    });
   };
 
   return (
