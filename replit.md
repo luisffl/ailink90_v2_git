@@ -112,6 +112,7 @@ This is a full-stack web application built with React/TypeScript frontend and Ex
 Changelog:
 - June 20, 2025. Initial setup
 - June 20, 2025. Agregado soporte para URL de PDF en respuesta del webhook
+- June 21, 2025. Mejorada interfaz del diagnóstico con diseño más elegante y legible
 ```
 
 ## User Preferences
