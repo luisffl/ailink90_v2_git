@@ -6,7 +6,7 @@ import ProgressIndicator from "@/components/ProgressIndicator";
 import { FormData } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { useWebSocket } from "@/hooks/use-websocket";
-import logoPath from "@assets/Copia de ICONO.png";
+import logoPath from "@assets/WhatsApp Image 2025-06-21 at 10.11.41_1750494039124.jpeg";
 
 const initialFormData: FormData = {
   nombre_usuario: "",
