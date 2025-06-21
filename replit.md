@@ -113,6 +113,7 @@ Changelog:
 - June 20, 2025. Initial setup
 - June 20, 2025. Agregado soporte para URL de PDF en respuesta del webhook
 - June 21, 2025. Mejorada interfaz del diagnóstico con diseño más elegante y legible
+- June 21, 2025. Actualizado logo y solucionados problemas de deployment
 ```
 
 ## User Preferences
