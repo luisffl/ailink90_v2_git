@@ -50,6 +50,10 @@
   
   body {
     @apply font-sans antialiased bg-black text-white relative overflow-x-hidden;
+    background-image: url('@assets/column-left.svg'), url('@assets/column-right.svg');
+    background-repeat: no-repeat, no-repeat;
+    background-position: left center, right center;
+    background-attachment: fixed, fixed;
   }
   
   body::before {
