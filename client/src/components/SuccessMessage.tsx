@@ -82,7 +82,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
       icono: "💎",
       color: "from-emerald-500/10 to-green-500/5",
       delay: 1.2,
-      destacado: true
+      destacado: false
     },
     {
       titulo: "Tu Oferta Específica",
@@ -177,7 +177,7 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
         </motion.div>
 
         {/* Grid de secciones mejorado */}
-        <div className="grid gap-8 lg:gap-10 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 mb-16">
           {secciones.map((seccion, index) => (
             <motion.div
               key={seccion.titulo}
@@ -188,44 +188,44 @@ export default function SuccessMessage({ onRestart, diagnosticoData }: SuccessMe
                 duration: 0.8,
                 ease: "easeOut"
               }}
-              className={`relative group ${seccion.destacado ? 'lg:col-span-2' : ''}`}
+              className="relative group h-full"
             >
               <div className={`
-                glass-card p-8 md:p-10 relative overflow-hidden transition-all duration-500
-                ${seccion.destacado ? 'border-blue-500/30 shadow-blue-500/20 shadow-2xl' : ''}
+                glass-card p-8 md:p-10 relative overflow-hidden transition-all duration-500 h-full flex flex-col
+                ${seccion.destacado ? 'border-blue-500/30 shadow-blue-500/20 shadow-2xl lg:col-span-2' : ''}
                 hover:border-white/20 hover:shadow-xl hover:scale-[1.02]
               `}>
                 {/* Fondo gradiente sutil */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${seccion.color} opacity-50`}></div>
                 
                 {/* Contenido */}
-                <div className="relative z-10">
+                <div className="relative z-10 flex flex-col h-full">
                   <div className="flex items-start gap-4 mb-6">
                     <div className={`
-                      text-3xl p-3 rounded-xl backdrop-blur-sm border border-white/10
+                      text-2xl md:text-3xl p-3 rounded-xl backdrop-blur-sm border border-white/10 flex-shrink-0
                       ${seccion.destacado ? 'bg-blue-500/20' : 'bg-white/5'}
                     `}>
                       {seccion.icono}
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <h2 className={`
-                        text-xl md:text-2xl font-medium mb-4 tracking-wide
+                        text-lg md:text-xl font-medium mb-4 tracking-wide leading-tight
                         ${seccion.destacado ? 'text-blue-200' : 'text-white'}
                       `}>
                         {seccion.titulo}
                         {seccion.destacado && (
-                          <Sparkles className="inline-block ml-2 h-5 w-5 text-blue-400" />
+                          <Sparkles className="inline-block ml-2 h-4 w-4 text-blue-400" />
                         )}
                       </h2>
                     </div>
                   </div>
                   
                   <div className={`
-                    p-6 rounded-xl backdrop-blur-sm border border-white/5
+                    p-6 rounded-xl backdrop-blur-sm border border-white/5 flex-grow flex items-center
                     ${seccion.destacado ? 'bg-blue-500/10' : 'bg-white/5'}
                   `}>
                     <p className={`
-                      text-lg leading-relaxed font-light
+                      text-base md:text-lg leading-relaxed font-light w-full
                       ${seccion.destacado ? 'text-blue-100' : 'text-gray-200'}
                     `}>
                       {seccion.contenido}
