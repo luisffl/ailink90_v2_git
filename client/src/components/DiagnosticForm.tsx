@@ -9,6 +9,7 @@ interface DiagnosticFormProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   onSubmitSuccess: (response?: any) => void;
+  userSessionId?: string;
 }
 
 export default function DiagnosticForm({

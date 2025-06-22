@@ -29,10 +29,11 @@ export default function Home() {
   const [diagnosticoData, setDiagnosticoData] = useState<any>(null);
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [webhookStatus, setWebhookStatus] = useState<string>("");
+  const [userSessionId] = useState(() => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
   const { toast } = useToast();
 
-  // Configurar WebSocket para recibir actualizaciones del webhook
-  const { isConnected, lastMessage, webhookStatus: wsWebhookStatus } = useWebSocket();
+  // Configurar WebSocket para recibir actualizaciones del webhook con filtrado por sesión
+  const { isConnected, lastMessage, webhookStatus: wsWebhookStatus } = useWebSocket(userSessionId);
 
   useEffect(() => {
     if (lastMessage) {

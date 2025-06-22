@@ -18,6 +18,7 @@ export interface WebSocketMessage {
   status?: string;
   statusCode?: number;
   requestId?: string;
+  userSessionId?: string; // ID único del usuario para filtrar mensajes
   timestamp: string;
   [key: string]: any; // Para permitir propiedades adicionales
 }

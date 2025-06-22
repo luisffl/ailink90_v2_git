@@ -81,12 +81,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         console.log("Datos limpios preparados para envío:", cleanData);
 
-        // Notificar por WebSocket que los datos se han preparado
+        // Notificar por WebSocket que los datos se han preparado SOLO para este usuario
         broadcastToClients({
           type: "webhook_status",
           status: "data_prepared",
           message: "Datos preparados correctamente",
           requestId,
+          userSessionId,
           timestamp: new Date().toISOString(),
         });
 
@@ -100,12 +101,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         console.log("Enviando datos a n8n:", cleanData);
 
-        // Notificar por WebSocket que se está enviando la solicitud
+        // Notificar por WebSocket que se está enviando la solicitud SOLO para este usuario
         broadcastToClients({
           type: "webhook_status",
           status: "sending",
           message: "Enviando solicitud a webhook externo...",
           requestId,
+          userSessionId,
           timestamp: new Date().toISOString(),
         });
 
@@ -133,6 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             status: "success",
             message: "Respuesta procesada exitosamente",
             requestId,
+            userSessionId,
             timestamp: new Date().toISOString(),
           });
 
@@ -145,6 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             status: "warning",
             message: "Respuesta recibida pero no es JSON válido",
             requestId,
+            userSessionId,
             timestamp: new Date().toISOString(),
           });
 
