@@ -110,8 +110,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: new Date().toISOString(),
         });
 
-        // Temporalmente removiendo autenticación para probar si el webhook funciona
-        console.log("Probando webhook sin autenticación para diagnosticar el problema");
+        // TEMPORAL: Removiendo autenticación hasta verificar la clave correcta
+        console.log("AVISO: Webhook sin autenticación - verificar clave en n8n");
 
         // Realizar la solicitud a n8n sin autenticación temporalmente
         const response = await fetch(webhookUrl, {

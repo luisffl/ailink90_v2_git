@@ -118,6 +118,7 @@ Changelog:
 - June 22, 2025. Implementado sistema de sesiones únicas para evitar respuestas cruzadas entre usuarios
 - June 22, 2025. Añadida autenticación por header x-lambda-key para webhook
 - June 22, 2025. Movida clave de autenticación a variable de entorno WEBHOOK_AUTH_KEY por seguridad
+- June 22, 2025. Autenticación webhook temporalmente deshabilitada - clave proporcionada es rechazada por n8n
 ```
 
 ## User Preferences
