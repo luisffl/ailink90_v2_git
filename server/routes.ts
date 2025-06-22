@@ -111,13 +111,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: new Date().toISOString(),
         });
 
-        // Realizar la solicitud a n8n usando fetch
+        // Realizar la solicitud a n8n usando fetch con autenticación
         const response = await fetch(webhookUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "User-Agent": "AILINK-Diagnostic-App/1.0",
-            Accept: "application/json",
+            "Accept": "application/json",
+            "x-lambda-key": "CNUdwjUN-rBulo%l8NzJSl%D-cyEn5Kx$jS4BnUk$CEZhfLiWtvhWgM$sDzP__lX",
           },
           body: jsonPayload,
         });

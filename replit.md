@@ -115,6 +115,8 @@ Changelog:
 - June 21, 2025. Mejorada interfaz del diagnóstico con diseño más elegante y legible
 - June 21, 2025. Actualizado logo y solucionados problemas de deployment
 - June 22, 2025. Añadido SEO completo: meta tags, Open Graph, Twitter Cards, robots.txt y sitemap.xml
+- June 22, 2025. Implementado sistema de sesiones únicas para evitar respuestas cruzadas entre usuarios
+- June 22, 2025. Añadida autenticación por header x-lambda-key para webhook
 ```
 
 ## User Preferences
