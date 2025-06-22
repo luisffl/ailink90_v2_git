@@ -110,22 +110,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: new Date().toISOString(),
         });
 
-        // Obtener la clave de autenticación desde las variables de entorno
-        const webhookAuthKey = process.env.LAMBDA;
-        if (!webhookAuthKey) {
-          throw new Error(
-            "WEBHOOK_AUTH_KEY no está configurada en las variables de entorno",
-          );
-        }
+        // Temporalmente removiendo autenticación para probar si el webhook funciona
+        console.log("Probando webhook sin autenticación para diagnosticar el problema");
 
-        // Realizar la solicitud a n8n usando fetch con autenticación segura
+        // Realizar la solicitud a n8n sin autenticación temporalmente
         const response = await fetch(webhookUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "User-Agent": "AILINK-Diagnostic-App/1.0",
             Accept: "application/json",
-            "x-lambda-key": webhookAuthKey,
           },
           body: jsonPayload,
         });
