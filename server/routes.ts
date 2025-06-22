@@ -28,9 +28,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Recibiendo solicitud de proxy para webhook n8n");
 
       try {
+        console.log("=== INICIO DE SOLICITUD ===");
         // Generar un ID único para esta solicitud específica del usuario
         const userSessionId = req.body.userSessionId || Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         const requestId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        console.log("userSessionId:", userSessionId);
+        console.log("requestId:", requestId);
 
         // Verificar si hay un campo honeypot - Protección adicional contra bots
         if (req.body.honeypot) {
@@ -112,11 +115,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Obtener la clave de autenticación desde las variables de entorno
         const webhookAuthKey = process.env.LAMBDA;
+        console.log("PROBLEMA IDENTIFICADO: La clave LAMBDA actual es incorrecta");
+        console.log("Clave actual longitud:", webhookAuthKey ? webhookAuthKey.length : "N/A");
+        console.log("Se necesita la clave correcta del webhook n8n");
+        
         if (!webhookAuthKey) {
           throw new Error("LAMBDA key no está configurada en las variables de entorno");
         }
-
-        console.log("Usando clave LAMBDA para autenticación webhook");
 
         // Realizar la solicitud a n8n con autenticación x-lambda-key
         const response = await fetch(webhookUrl, {
