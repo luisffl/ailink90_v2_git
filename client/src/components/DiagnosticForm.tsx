@@ -9,6 +9,7 @@ interface DiagnosticFormProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   onSubmitSuccess: (response?: any) => void;
+  onSubmitError?: (error: any, type?: 'processing' | 'validation' | 'network' | 'unknown') => void;
   userSessionId?: string;
 }
 
@@ -16,6 +17,7 @@ export default function DiagnosticForm({
   formData,
   setFormData,
   onSubmitSuccess,
+  onSubmitError,
   userSessionId,
 }: DiagnosticFormProps) {
   const { toast } = useToast();
@@ -166,7 +168,13 @@ export default function DiagnosticForm({
       .then((response) => {
         console.log("Respuesta del proxy - Status:", response.status);
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          if (response.status >= 500) {
+            throw new Error(`Error del servidor (${response.status})`);
+          } else if (response.status === 403) {
+            throw new Error("Error de autenticación del webhook");
+          } else {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
         }
         return response.json();
       })
@@ -175,6 +183,12 @@ export default function DiagnosticForm({
 
         setIsSubmitting(false);
         setFormData((prev) => ({ ...prev, isSubmitting: false }));
+
+        // Verificar si la respuesta contiene un error
+        if (data.error || data.message === "Authorization data is wrong!") {
+          const errorMsg = data.error || data.message || "Error en la respuesta del servidor";
+          throw new Error(errorMsg);
+        }
 
         toast({
           title: "Diagnóstico completado",
@@ -191,12 +205,27 @@ export default function DiagnosticForm({
         setIsSubmitting(false);
         setFormData((prev) => ({ ...prev, isSubmitting: false }));
 
+        // Determinar el tipo de error
+        let errorType: 'processing' | 'validation' | 'network' | 'unknown' = 'unknown';
+        
+        if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+          errorType = 'network';
+        } else if (error.message.includes("autenticación") || error.message.includes("Authorization")) {
+          errorType = 'processing';
+        } else if (error.message.includes("HTTP error")) {
+          errorType = 'network';
+        }
+
         toast({
           title: "Error en el procesamiento",
-          description:
-            "Hubo un problema al procesar tu diagnóstico. Intenta nuevamente.",
+          description: "Hubo un problema al procesar tu diagnóstico. Intenta nuevamente.",
           variant: "destructive",
         });
+
+        // Llamar al manejador de errores si está disponible
+        if (onSubmitError) {
+          onSubmitError(error, errorType);
+        }
       });
   };
 

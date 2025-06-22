@@ -29,6 +29,9 @@ export default function Home() {
   const [diagnosticoData, setDiagnosticoData] = useState<any>(null);
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [webhookStatus, setWebhookStatus] = useState<string>("");
+  const [hasError, setHasError] = useState(false);
+  const [errorType, setErrorType] = useState<'processing' | 'validation' | 'network' | 'unknown'>('unknown');
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [userSessionId] = useState(() => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
   const { toast } = useToast();
 
@@ -87,25 +90,69 @@ export default function Home() {
     };
   }, []);
 
+  const validateResponseData = (data: any): boolean => {
+    if (!data || typeof data !== 'object') {
+      return false;
+    }
+
+    const requiredFields = ['nombre', 'nicho', 'icp', 'dolor', 'nsvp', 'oferta', 'idea_automatizacion'];
+    
+    for (const field of requiredFields) {
+      if (!data[field] || typeof data[field] !== 'string' || data[field].trim().length < 10) {
+        console.log(`Campo inválido o muy corto: ${field}`, data[field]);
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmitSuccess = (response?: any) => {
     console.log("handleSubmitSuccess llamado con:", response);
     
     if (response) {
       try {
         console.log("Procesando respuesta directa:", response);
-        setDiagnosticoData(response);
-        setIsSubmitted(true);
-        setIsProcessing(false);
+        
+        // Validar que la respuesta contiene datos válidos
+        if (validateResponseData(response)) {
+          setDiagnosticoData(response);
+          setIsSubmitted(true);
+          setIsProcessing(false);
+          setHasError(false);
+        } else {
+          console.error("Datos de respuesta inválidos o incompletos");
+          setHasError(true);
+          setErrorType('validation');
+          setErrorMessage("Los datos recibidos están incompletos o no cumplen con los requisitos mínimos");
+          setIsSubmitted(false);
+          setIsProcessing(false);
+        }
       } catch (e) {
         console.error("Error al procesar respuesta directa:", e);
-        setIsSubmitted(true);
+        setHasError(true);
+        setErrorType('processing');
+        setErrorMessage(e instanceof Error ? e.message : "Error desconocido al procesar la respuesta");
+        setIsSubmitted(false);
         setIsProcessing(false);
       }
     } else {
-      console.log("No hay respuesta, avanzando con datos por defecto");
-      setIsSubmitted(true);
+      console.log("No hay respuesta del servidor");
+      setHasError(true);
+      setErrorType('network');
+      setErrorMessage("No se recibió respuesta del servidor");
+      setIsSubmitted(false);
       setIsProcessing(false);
     }
+  };
+
+  const handleSubmitError = (error: any, type: 'processing' | 'validation' | 'network' | 'unknown' = 'unknown') => {
+    console.error("Error en el formulario:", error);
+    setHasError(true);
+    setErrorType(type);
+    setErrorMessage(error instanceof Error ? error.message : "Error desconocido");
+    setIsSubmitted(false);
+    setIsProcessing(false);
   };
 
   const handleRestart = () => {
@@ -115,6 +162,9 @@ export default function Home() {
     setIsProcessing(false);
     setStatusMessage("");
     setWebhookStatus("");
+    setHasError(false);
+    setErrorType('unknown');
+    setErrorMessage("");
   };
 
   return (
@@ -267,6 +317,7 @@ export default function Home() {
             formData={formData} 
             setFormData={setFormData}
             onSubmitSuccess={handleSubmitSuccess}
+            onSubmitError={handleSubmitError}
             userSessionId={userSessionId}
           />
         )}

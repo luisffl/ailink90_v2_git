@@ -119,6 +119,7 @@ Changelog:
 - June 22, 2025. Añadida autenticación por header x-lambda-key para webhook
 - June 22, 2025. Movida clave de autenticación a variable de entorno WEBHOOK_AUTH_KEY por seguridad
 - June 22, 2025. Restaurada autenticación webhook usando secreto LAMBDA con header x-lambda-key - FUNCIONANDO
+- June 22, 2025. Implementado manejo de errores con pantalla dedicada para respuestas inválidas o campos vacíos
 ```
 
 ## User Preferences
