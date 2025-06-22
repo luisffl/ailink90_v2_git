@@ -1,0 +1,26 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://ailink-diagnostic.replit.app/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Allow all search engines to index the main content
+Allow: /api/
+Allow: /assets/
+
+# Block any potentially sensitive paths (if any exist)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.json$
+
+# Block access to development files
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /dist/
+Disallow: /server/
+
+# Additional directives
+Host: ailink-diagnostic.replit.app
