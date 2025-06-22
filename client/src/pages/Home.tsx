@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import DiagnosticForm from "@/components/DiagnosticForm";
 import SuccessMessage from "@/components/SuccessMessage";
+import ErrorMessage from "@/components/ErrorMessage";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import { FormData } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -312,6 +313,12 @@ export default function Home() {
               ))}
             </div>
           </motion.div>
+        ) : hasError ? (
+          <ErrorMessage 
+            onRestart={handleRestart}
+            errorType={errorType}
+            errorMessage={errorMessage}
+          />
         ) : (
           <DiagnosticForm 
             formData={formData} 
