@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { AlertTriangle, RotateCcw, RefreshCw } from "lucide-react";
+import { AlertTriangle, RotateCcw, RefreshCw, Mail, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import logoPath from "@assets/WhatsApp Image 2025-06-21 at 10.11.41_1750494039124.jpeg";
 
 interface ErrorMessageProps {
@@ -111,6 +112,60 @@ export default function ErrorMessage({ onRestart, errorType = 'unknown', errorMe
         >
           <p className="text-gray-400 text-sm">
             {errorContent.suggestion}
+          </p>
+        </motion.div>
+
+        {/* Notificación al equipo técnico */}
+        <motion.div 
+          className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-6 mb-8"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <AlertTriangle className="w-5 h-5 text-blue-400" />
+            <h3 className="text-blue-300 font-medium">Notificación automática enviada</h3>
+          </div>
+          <p className="text-gray-300 text-sm leading-relaxed">
+            Este error ha sido reportado automáticamente al equipo técnico de <strong>AILINK</strong>. 
+            Estamos trabajando para resolverlo lo antes posible.
+          </p>
+        </motion.div>
+
+        {/* Opciones de contacto */}
+        <motion.div 
+          className="bg-gray-800/40 border border-gray-600/30 rounded-lg p-6 mb-8"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <MessageCircle className="w-5 h-5 text-gray-400" />
+            <h3 className="text-gray-200 font-medium">¿Necesitas ayuda inmediata?</h3>
+          </div>
+          
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Button
+              variant="outline"
+              className="bg-gray-700/50 border-gray-600 hover:bg-gray-600/50 text-gray-200 justify-start gap-3"
+              onClick={() => window.open('mailto:soporte@ailink.es?subject=Error en Diagnóstico Operativo&body=Hola, he experimentado un error en el diagnóstico operativo. Por favor, ayúdenme a resolverlo.', '_blank')}
+            >
+              <Mail className="w-4 h-4" />
+              Contactar por Email
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="bg-gray-700/50 border-gray-600 hover:bg-gray-600/50 text-gray-200 justify-start gap-3"
+              onClick={() => window.open('https://wa.me/34600000000?text=Hola, necesito ayuda con el diagnóstico operativo de AILINK', '_blank')}
+            >
+              <MessageCircle className="w-4 h-4" />
+              Contactar por WhatsApp
+            </Button>
+          </div>
+          
+          <p className="text-gray-400 text-xs mt-3">
+            Nuestro equipo de soporte responde en un plazo máximo de 2 horas durante horario laboral.
           </p>
         </motion.div>
 

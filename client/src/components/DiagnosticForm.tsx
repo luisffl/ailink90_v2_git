@@ -46,43 +46,61 @@ export default function DiagnosticForm({
   const validateCurrentStep = () => {
     const newErrors: Record<string, string> = {};
 
+    // Helper function to check if text contains meaningful content
+    const hasMinimumContent = (text: string, minWords: number = 3, minLength: number = 10) => {
+      if (!text || text.trim().length < minLength) return false;
+      const words = text.trim().split(/\s+/).filter(word => word.length > 1);
+      return words.length >= minWords;
+    };
+
+    const isValidName = (name: string) => {
+      if (!name || name.trim().length < 2) return false;
+      // Check for meaningful name (not just repeated characters or numbers)
+      const cleanName = name.trim();
+      if (/^(.)\1*$/.test(cleanName)) return false; // Same character repeated
+      if (/^\d+$/.test(cleanName)) return false; // Only numbers
+      if (cleanName.length < 2) return false;
+      return true;
+    };
+
+    const isValidLocation = (location: string) => {
+      if (!location || location.trim().length < 2) return false;
+      const cleanLocation = location.trim();
+      if (/^(.)\1*$/.test(cleanLocation)) return false; // Same character repeated
+      if (/^\d+$/.test(cleanLocation)) return false; // Only numbers
+      return true;
+    };
+
     // Validation rules for each step
     if (currentStep === 1) {
-      if (!formData.nombre_usuario) {
-        newErrors.nombre_usuario = "Tu nombre es requerido";
+      if (!isValidName(formData.nombre_usuario)) {
+        newErrors.nombre_usuario = "Por favor, introduce un nombre válido (mínimo 2 caracteres)";
       }
 
       if (!formData.correo_electronico_usuario) {
-        newErrors.correo_electronico_usuario =
-          "El correo electrónico es requerido";
-      } else if (
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo_electronico_usuario)
-      ) {
-        newErrors.correo_electronico_usuario =
-          "Por favor, introduce un correo electrónico válido";
+        newErrors.correo_electronico_usuario = "El correo electrónico es requerido";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo_electronico_usuario)) {
+        newErrors.correo_electronico_usuario = "Por favor, introduce un correo electrónico válido";
       }
 
-      if (!formData.ciudad_region_usuario) {
-        newErrors.ciudad_region_usuario = "La ciudad/región es requerida";
+      if (!isValidLocation(formData.ciudad_region_usuario)) {
+        newErrors.ciudad_region_usuario = "Por favor, introduce una ciudad/región válida";
       }
     } else if (currentStep === 2) {
-      if (!formData.experiencia_previa) {
-        newErrors.experiencia_previa =
-          "Por favor, describe tu experiencia previa";
+      if (!hasMinimumContent(formData.experiencia_previa, 5, 20)) {
+        newErrors.experiencia_previa = "Por favor, describe tu experiencia previa con más detalle (mínimo 20 caracteres, 5 palabras)";
       }
     } else if (currentStep === 3) {
-      if (!formData.tipo_colaboracion) {
-        newErrors.tipo_colaboracion =
-          "Por favor, describe el tipo de colaboración que buscas";
+      if (!hasMinimumContent(formData.tipo_colaboracion, 5, 20)) {
+        newErrors.tipo_colaboracion = "Por favor, describe el tipo de colaboración que buscas con más detalle (mínimo 20 caracteres, 5 palabras)";
       }
     } else if (currentStep === 4) {
-      if (!formData.aspectos_mejorar) {
-        newErrors.aspectos_mejorar =
-          "Por favor, describe qué aspectos te gustaría mejorar";
+      if (!hasMinimumContent(formData.aspectos_mejorar, 5, 20)) {
+        newErrors.aspectos_mejorar = "Por favor, describe qué aspectos te gustaría mejorar con más detalle (mínimo 20 caracteres, 5 palabras)";
       }
     } else if (currentStep === 5) {
-      if (!formData.ideas_proyectos) {
-        newErrors.ideas_proyectos = "Por favor, comparte tus ideas o proyectos";
+      if (!hasMinimumContent(formData.ideas_proyectos, 5, 20)) {
+        newErrors.ideas_proyectos = "Por favor, comparte tus ideas o proyectos con más detalle (mínimo 20 caracteres, 5 palabras)";
       }
     } else if (currentStep === 6) {
       if (!formData.terminos_aceptados) {

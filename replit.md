@@ -120,6 +120,9 @@ Changelog:
 - June 22, 2025. Movida clave de autenticación a variable de entorno WEBHOOK_AUTH_KEY por seguridad
 - June 22, 2025. Restaurada autenticación webhook usando secreto LAMBDA con header x-lambda-key - FUNCIONANDO
 - June 22, 2025. Implementado manejo de errores con pantalla dedicada para respuestas inválidas o campos vacíos
+- June 22, 2025. Actualizadas dependencias de seguridad: Vite 5.4.14 → 5.4.15 (CVE-2025-30208)
+- June 22, 2025. Mejoradas validaciones del formulario: nombres válidos, contenido mínimo, palabras requeridas
+- June 22, 2025. Añadido sistema de contacto en errores: email, WhatsApp, notificación automática al equipo técnico
 ```
 
 ## User Preferences
