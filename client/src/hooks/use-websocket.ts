@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 /**
  * Hook personalizado para usar WebSockets en componentes
  */
-export function useWebSocket() {
+export function useWebSocket(userSessionId?: string) {
   const { toast } = useToast();
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
@@ -33,32 +33,40 @@ export function useWebSocket() {
         console.log('WebSocket conectado');
       },
       onMessage: (data) => {
-        // Guardar el último mensaje recibido
-        setLastMessage(data);
-        addToHistory(data);
+        console.log('WebSocket: Mensaje recibido:', data);
         
-        // Procesar mensajes específicos
-        if (data.type === 'webhook_status' && data.status) {
-          setWebhookStatus(data.status);
-          if (data.message) {
-            setWebhookMessage(data.message);
-          }
+        // Solo procesar mensajes que no tienen userSessionId (mensajes globales) 
+        // o que coinciden con nuestro userSessionId
+        if (!data.userSessionId || !userSessionId || data.userSessionId === userSessionId) {
+          // Guardar el último mensaje recibido
+          setLastMessage(data);
+          addToHistory(data);
           
-          // Mostrar toast para algunos estados importantes
-          if (['error', 'timeout', 'processing_error'].includes(data.status)) {
-            toast({
-              title: 'Error de conexión',
-              description: data.message || 'Hubo un problema al conectar con el servicio',
-              variant: 'destructive',
-              duration: 5000,
-            });
-          } else if (data.status === 'success') {
-            toast({
-              title: 'Conexión exitosa',
-              description: 'Los datos se han procesado correctamente',
-              duration: 3000,
-            });
+          // Procesar mensajes específicos
+          if (data.type === 'webhook_status' && data.status) {
+            setWebhookStatus(data.status);
+            if (data.message) {
+              setWebhookMessage(data.message);
+            }
+            
+            // Mostrar toast para algunos estados importantes
+            if (['error', 'timeout', 'processing_error'].includes(data.status)) {
+              toast({
+                title: 'Error de conexión',
+                description: data.message || 'Hubo un problema al conectar con el servicio',
+                variant: 'destructive',
+                duration: 5000,
+              });
+            } else if (data.status === 'success') {
+              toast({
+                title: 'Conexión exitosa',
+                description: 'Los datos se han procesado correctamente',
+                duration: 3000,
+              });
+            }
           }
+        } else {
+          console.log('WebSocket: Mensaje filtrado, no corresponde a esta sesión');
         }
       },
       onClose: () => {

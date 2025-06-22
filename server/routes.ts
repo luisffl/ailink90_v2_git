@@ -27,9 +27,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     async (req: Request, res: Response) => {
       console.log("Recibiendo solicitud de proxy para webhook n8n");
 
-      // Generar un ID único para esta solicitud
-      const requestId =
-        Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
+      // Generar un ID único para esta solicitud específica del usuario
+      const userSessionId = req.body.userSessionId || Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const requestId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
       // Verificar si hay un campo honeypot - Protección adicional contra bots
       if (req.body.honeypot) {
@@ -72,7 +72,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const cleanData = {
           nombre: String(req.body.nombre || "").trim(),
           experiencia_previa: String(req.body.experiencia_previa || "").trim(),
-          correo:String(req.body.correo || "").trim(),
+          correo: String(req.body.correo || "").trim(),
           publico_interes: String(req.body.publico_interes || "").trim(),
           mejora_deseada: String(req.body.mejora_deseada || "").trim(),
           idea_libre: String(req.body.idea_libre || "").trim(),
@@ -111,14 +111,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: new Date().toISOString(),
         });
 
-        // Realizar la solicitud a n8n usando fetch con autenticación
+        // Obtener la clave de autenticación desde las variables de entorno
+        const webhookAuthKey = process.env.LAMBDA;
+        if (!webhookAuthKey) {
+          throw new Error(
+            "WEBHOOK_AUTH_KEY no está configurada en las variables de entorno",
+          );
+        }
+
+        // Realizar la solicitud a n8n usando fetch con autenticación segura
         const response = await fetch(webhookUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "User-Agent": "AILINK-Diagnostic-App/1.0",
-            "Accept": "application/json",
-            "x-lambda-key": "CNUdwjUN-rBulo%l8NzJSl%D-cyEn5Kx$jS4BnUk$CEZhfLiWtvhWgM$sDzP__lX",
+            Accept: "application/json",
+            "x-lambda-key": webhookAuthKey,
           },
           body: jsonPayload,
         });

@@ -149,6 +149,7 @@ export default function DiagnosticForm({
       mejora_deseada: formData.aspectos_mejorar,
       idea_libre: formData.ideas_proyectos,
       horas_semana: "5-10", // Por ahora fijo, podemos hacer una pregunta específica después
+      userSessionId, // ID único para identificar este usuario específico
     };
 
     console.log("Enviando payload al webhook:", webhookPayload);
