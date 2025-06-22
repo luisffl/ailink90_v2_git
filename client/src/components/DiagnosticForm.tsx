@@ -16,6 +16,7 @@ export default function DiagnosticForm({
   formData,
   setFormData,
   onSubmitSuccess,
+  userSessionId,
 }: DiagnosticFormProps) {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
