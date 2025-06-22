@@ -71,6 +71,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Preparar payload en el formato específico requerido
         const cleanData = {
           nombre: String(req.body.nombre || "").trim(),
+          correo: String(req.body.correo || "").trim(),
           experiencia_previa: String(req.body.experiencia_previa || "").trim(),
           publico_interes: String(req.body.publico_interes || "").trim(),
           mejora_deseada: String(req.body.mejora_deseada || "").trim(),
