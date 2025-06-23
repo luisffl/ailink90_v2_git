@@ -477,6 +477,7 @@ export default function Home() {
             setFormData={setFormData}
             onSubmitSuccess={handleSubmitSuccess}
             onSubmitError={handleSubmitError}
+            onSubmitStart={() => setIsProcessing(true)}
             userSessionId={userSessionId}
           />
         )}

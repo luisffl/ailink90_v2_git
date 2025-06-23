@@ -21,6 +21,7 @@ export default function DiagnosticForm({
   setFormData,
   onSubmitSuccess,
   onSubmitError,
+  onSubmitStart,
   userSessionId,
 }: DiagnosticFormProps) {
   const { toast } = useToast();
@@ -174,6 +175,11 @@ export default function DiagnosticForm({
     console.log("Validación exitosa, procediendo con envío");
     setIsSubmitting(true);
     setFormData((prev) => ({ ...prev, isSubmitting: true }));
+    
+    // Notificar al componente padre que se inició el procesamiento
+    if (onSubmitStart) {
+      onSubmitStart();
+    }
 
     toast({
       title: "Procesando diagnóstico...",

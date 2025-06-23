@@ -127,6 +127,7 @@ Changelog:
 - June 22, 2025. Añadido favicon de AILINK en la pestaña del navegador
 - June 22, 2025. Convertida URL del webhook a variable de entorno SECRET (WEBHOOK_URL) para mejorar seguridad
 - June 22, 2025. Renombrado archivo logo de WhatsApp Image a ailink-logo.jpeg para nomenclatura profesional
+- June 22, 2025. Implementado timer de delay: mensaje animado después de 5 segundos si webhook tarda en responder
 ```
 
 ## User Preferences
