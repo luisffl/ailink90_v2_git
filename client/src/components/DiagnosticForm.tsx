@@ -113,12 +113,12 @@ export default function DiagnosticForm({
           "Por favor, describe el tipo de colaboración que buscas con más detalle (mínimo 10 caracteres, 3 palabras)";
       }
     } else if (currentStep === 4) {
-      if (!hasMinimumContent(formData.aspectos_mejorar, 5, 20)) {
+      if (!hasMinimumContent(formData.aspectos_mejorar, 3, 10)) {
         newErrors.aspectos_mejorar =
           "Por favor, describe qué aspectos te gustaría mejorar con más detalle (mínimo 10 caracteres, 3 palabras)";
       }
     } else if (currentStep === 5) {
-      if (!hasMinimumContent(formData.ideas_proyectos, 5, 20)) {
+      if (!hasMinimumContent(formData.ideas_proyectos, 3, 10)) {
         newErrors.ideas_proyectos =
           "Por favor, comparte tus ideas o proyectos con más detalle (mínimo 10 caracteres, 3 palabras)";
       }
