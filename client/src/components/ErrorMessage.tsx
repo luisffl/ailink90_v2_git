@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { AlertTriangle, RotateCcw, RefreshCw, Mail, MessageCircle } from "lucide-react";
+import { AlertTriangle, RotateCcw, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logoPath from "@assets/ailink-logo.jpeg";
@@ -115,50 +115,15 @@ export default function ErrorMessage({ onRestart, errorType = 'unknown', errorMe
           </p>
         </motion.div>
 
-        {/* Notificación al equipo técnico */}
-        <motion.div 
-          className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-6 mb-8"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <AlertTriangle className="w-5 h-5 text-blue-400" />
-            <h3 className="text-blue-300 font-medium">Notificación automática enviada</h3>
-          </div>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            Este error ha sido reportado automáticamente al equipo técnico de <strong>AILINK</strong>. 
-            Estamos trabajando para resolverlo lo antes posible.
-          </p>
-        </motion.div>
-
-        {/* Opciones de contacto */}
+        {/* Información de contacto simplificada */}
         <motion.div 
           className="bg-gray-800/40 border border-gray-600/30 rounded-lg p-6 mb-8"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.6 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <Mail className="w-5 h-5 text-gray-400" />
-            <h3 className="text-gray-200 font-medium">¿Necesitas ayuda?</h3>
-          </div>
-          
-          <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-            Si necesitas asistencia técnica, puedes contactar con nuestro equipo enviando un correo electrónico detallando el problema que has experimentado.
-          </p>
-          
-          <Button
-            variant="outline"
-            className="bg-gray-700/50 border-gray-600 hover:bg-gray-600/50 text-gray-200 justify-center gap-3 w-full"
-            onClick={() => window.open('mailto:ejemplo@tecnico.com?subject=Error en Diagnóstico Operativo AILINK&body=Hola,%0D%0A%0D%0AHe experimentado un error en el diagnóstico operativo de AILINK.%0D%0A%0D%0ADetalles del error:%0D%0A- Fecha y hora: ' + new Date().toLocaleString() + '%0D%0A- Descripción: [Describe aquí lo que estabas haciendo cuando ocurrió el error]%0D%0A%0D%0AGracias por su atención.', '_blank')}
-          >
-            <Mail className="w-4 h-4" />
-            Enviar Correo al Soporte Técnico
-          </Button>
-          
-          <p className="text-gray-400 text-xs mt-3 text-center">
-            <strong>ejemplo@tecnico.com</strong> - Nuestro equipo técnico responderá lo antes posible.
+          <p className="text-gray-300 text-sm leading-relaxed">
+            Puedes volver a intentarlo. Si el error persiste, por favor contacta con un administrador de Skool para obtener asistencia.
           </p>
         </motion.div>
 
@@ -177,15 +142,7 @@ export default function ErrorMessage({ onRestart, errorType = 'unknown', errorMe
           </Button>
         </motion.div>
 
-        {/* Mensaje de soporte */}
-        <motion.p 
-          className="text-gray-500 text-sm mt-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.6 }}
-        >
-          Si el problema persiste, contacta con nuestro equipo de soporte.
-        </motion.p>
+
       </motion.div>
     </div>
   );
