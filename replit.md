@@ -129,6 +129,7 @@ Changelog:
 - June 22, 2025. Renombrado archivo logo de WhatsApp Image a ailink-logo.jpeg para nomenclatura profesional
 - June 22, 2025. Implementado timer de delay: mensaje animado después de 5 segundos si webhook tarda en responder
 - June 23, 2025. Implementado sistema de logging estructurado con Winston para mejor organización de logs en producción
+- June 23, 2025. Creados scripts de diagnóstico automático para personal no técnico: diagnostico-problemas.sh y ayuda-no-tecnica.md
 ```
 
 ## User Preferences
@@ -137,4 +138,5 @@ Changelog:
 Preferred communication style: Simple, everyday language.
 Design philosophy: Minimalismo elegante funcional, estilo Apple, pulcritud y coherencia con el diseño existente del proyecto.
 UI/UX: Priorizar minimalismo y elegancia por encima de elementos decorativos excesivos.
+Diagnostics: Always use diagnostic scripts (./diagnostico-problemas.sh, ./view-logs.sh) when asked about application status or problems.
 ```
