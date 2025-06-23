@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { WebSocketServer } from "ws";
 import { webhookLimiter } from "./index";
+import { log } from "./logger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
@@ -25,16 +26,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     "/api/n8n-webhook",
     webhookLimiter,
     async (req: Request, res: Response) => {
-      console.log("Recibiendo solicitud de proxy para webhook n8n");
+      const startTime = Date.now();
+      const requestId = Math.random().toString(36).substring(2, 15);
+      const userSessionId = req.body.userSessionId || requestId;
+      
+      log.webhook("Recibiendo solicitud de proxy", { 
+        requestId, 
+        userSessionId,
+        ip: req.ip,
+        userAgent: req.get('User-Agent')
+      });
 
       try {
-        // Generar un ID único para esta solicitud específica del usuario
-        const userSessionId = req.body.userSessionId || Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const requestId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        // IDs ya generados arriba
 
         // Verificar si hay un campo honeypot - Protección adicional contra bots
         if (req.body.honeypot) {
-          console.log("Detectado bot por honeypot en el servidor");
+          log.warn("Bot detectado por honeypot", { requestId, userSessionId, service: "security" });
           // Simular respuesta exitosa pero no procesar realmente
           return res.status(200).json({
             saludo: "Hola",
@@ -78,7 +86,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           horas_semana: String(req.body.horas_semana || "5-10").trim(),
         };
 
-        console.log("Datos limpios preparados para envío:", cleanData);
+        log.webhook("Datos preparados para envío", { requestId, userSessionId, dataFields: Object.keys(cleanData) });
 
         // Notificar por WebSocket que los datos se han preparado SOLO para este usuario
         broadcastToClients({
@@ -100,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           throw new Error("WEBHOOK_URL no está configurada en las variables de entorno");
         }
 
-        console.log("Enviando datos a n8n:", cleanData);
+        log.webhook("Enviando datos a webhook externo", { requestId, userSessionId, webhookUrl: webhookUrl?.substring(0, 50) + "..." });
 
         // Notificar por WebSocket que se está enviando la solicitud SOLO para este usuario
         broadcastToClients({
@@ -132,9 +140,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           body: jsonPayload,
         });
 
-        console.log("Respuesta de n8n - Status:", response.status);
         const responseText = await response.text();
-        console.log("Respuesta de n8n - Texto:", responseText);
+        const duration = Date.now() - startTime;
+        
+        log.webhook("Respuesta recibida del webhook", { 
+          requestId, 
+          userSessionId, 
+          statusCode: response.status, 
+          duration,
+          responseLength: responseText.length 
+        });
 
         let jsonResponse;
         try {
@@ -151,7 +166,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           res.status(200).json(jsonResponse);
         } catch (parseError) {
-          console.log("La respuesta no es JSON válido:", parseError);
+          log.warn("Respuesta no es JSON válido", { requestId, userSessionId, error: parseError });
 
           broadcastToClients({
             type: "webhook_status",
@@ -168,7 +183,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       } catch (error) {
-        console.error("Error al procesar la solicitud:", error);
+        const duration = Date.now() - startTime;
+        log.error("Error al procesar solicitud webhook", { 
+          requestId, 
+          userSessionId, 
+          duration,
+          service: "webhook" 
+        }, error as Error);
 
         // Notificar error por WebSocket
         broadcastToClients({
@@ -208,7 +229,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   (global as any).broadcastToClients = broadcastToClients;
 
   wss.on("connection", (ws) => {
-    console.log("Nueva conexión WebSocket establecida");
+    const connectionId = Math.random().toString(36).substring(2, 15);
+    log.websocket("Nueva conexión establecida", { connectionId });
     clients.add(ws);
 
     // Send welcome message
@@ -236,19 +258,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           );
         }
       } catch (error) {
-        console.error("Error al procesar mensaje WebSocket:", error);
+        log.error("Error al procesar mensaje WebSocket", { connectionId, service: "websocket" }, error as Error);
       }
     });
 
     // Handle connection close
     ws.on("close", () => {
-      console.log("Conexión WebSocket cerrada");
+      log.websocket("Conexión cerrada", { connectionId });
       clients.delete(ws);
     });
 
     // Handle errors
     ws.on("error", (error) => {
-      console.error("Error en WebSocket:", error);
+      log.error("Error en WebSocket", { connectionId, service: "websocket" }, error);
       clients.delete(ws);
     });
   });
