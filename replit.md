@@ -123,6 +123,7 @@ Changelog:
 - June 22, 2025. Actualizadas dependencias de seguridad: Vite 5.4.14 → 5.4.15 (CVE-2025-30208)
 - June 22, 2025. Mejoradas validaciones del formulario: nombres válidos, contenido mínimo, palabras requeridas
 - June 22, 2025. Añadido sistema de contacto en errores: email, WhatsApp, notificación automática al equipo técnico
+- June 22, 2025. Actualizado sistema de contacto: removido WhatsApp, solo email a ejemplo@tecnico.com
 ```
 
 ## User Preferences

@@ -140,32 +140,25 @@ export default function ErrorMessage({ onRestart, errorType = 'unknown', errorMe
           transition={{ delay: 1.4, duration: 0.6 }}
         >
           <div className="flex items-center gap-3 mb-4">
-            <MessageCircle className="w-5 h-5 text-gray-400" />
-            <h3 className="text-gray-200 font-medium">¿Necesitas ayuda inmediata?</h3>
+            <Mail className="w-5 h-5 text-gray-400" />
+            <h3 className="text-gray-200 font-medium">¿Necesitas ayuda?</h3>
           </div>
           
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Button
-              variant="outline"
-              className="bg-gray-700/50 border-gray-600 hover:bg-gray-600/50 text-gray-200 justify-start gap-3"
-              onClick={() => window.open('mailto:soporte@ailink.es?subject=Error en Diagnóstico Operativo&body=Hola, he experimentado un error en el diagnóstico operativo. Por favor, ayúdenme a resolverlo.', '_blank')}
-            >
-              <Mail className="w-4 h-4" />
-              Contactar por Email
-            </Button>
-            
-            <Button
-              variant="outline"
-              className="bg-gray-700/50 border-gray-600 hover:bg-gray-600/50 text-gray-200 justify-start gap-3"
-              onClick={() => window.open('https://wa.me/34600000000?text=Hola, necesito ayuda con el diagnóstico operativo de AILINK', '_blank')}
-            >
-              <MessageCircle className="w-4 h-4" />
-              Contactar por WhatsApp
-            </Button>
-          </div>
+          <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+            Si necesitas asistencia técnica, puedes contactar con nuestro equipo enviando un correo electrónico detallando el problema que has experimentado.
+          </p>
           
-          <p className="text-gray-400 text-xs mt-3">
-            Nuestro equipo de soporte responde en un plazo máximo de 2 horas durante horario laboral.
+          <Button
+            variant="outline"
+            className="bg-gray-700/50 border-gray-600 hover:bg-gray-600/50 text-gray-200 justify-center gap-3 w-full"
+            onClick={() => window.open('mailto:ejemplo@tecnico.com?subject=Error en Diagnóstico Operativo AILINK&body=Hola,%0D%0A%0D%0AHe experimentado un error en el diagnóstico operativo de AILINK.%0D%0A%0D%0ADetalles del error:%0D%0A- Fecha y hora: ' + new Date().toLocaleString() + '%0D%0A- Descripción: [Describe aquí lo que estabas haciendo cuando ocurrió el error]%0D%0A%0D%0AGracias por su atención.', '_blank')}
+          >
+            <Mail className="w-4 h-4" />
+            Enviar Correo al Soporte Técnico
+          </Button>
+          
+          <p className="text-gray-400 text-xs mt-3 text-center">
+            <strong>ejemplo@tecnico.com</strong> - Nuestro equipo técnico responderá lo antes posible.
           </p>
         </motion.div>
 
