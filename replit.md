@@ -124,6 +124,7 @@ Changelog:
 - June 22, 2025. Mejoradas validaciones del formulario: nombres válidos, contenido mínimo, palabras requeridas
 - June 22, 2025. Añadido sistema de contacto en errores: email, WhatsApp, notificación automática al equipo técnico
 - June 22, 2025. Actualizado sistema de contacto: removido WhatsApp, solo email a ejemplo@tecnico.com
+- June 22, 2025. Añadido favicon de AILINK en la pestaña del navegador
 ```
 
 ## User Preferences
