@@ -6,8 +6,7 @@ import session from 'express-session';
 import csrf from 'csurf';
 import MemoryStore from 'memorystore';
 import helmet from 'helmet';
-import { log } from "./logger";
-import { errorLoggerMiddleware, slowRequestMiddleware, securityLoggerMiddleware } from "./middleware/logging";
+import { log as logger } from "./logger";
 
 // Rate limiting middleware para protección contra DDoS
 const limiter = rateLimit({
@@ -86,6 +85,30 @@ const csrfProtection = csrf({
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
 });
 
+// Middleware de logging HTTP simple
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const startTime = Date.now();
+  const requestId = Math.random().toString(36).substring(2, 15);
+  
+  (req as any).requestId = requestId;
+  
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+    if (!req.originalUrl.match(/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2)$/)) {
+      logger.info(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`, {
+        requestId,
+        method: req.method,
+        url: req.originalUrl,
+        statusCode: res.statusCode,
+        duration,
+        service: 'http'
+      });
+    }
+  });
+  
+  next();
+});
+
 // Aplicar el rate limiter global a todas las solicitudes
 app.use(limiter);
 
@@ -144,12 +167,22 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+    const requestId = (req as any).requestId;
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
+    
+    logger.error("Error interno del servidor", {
+      requestId,
+      statusCode: status,
+      url: req.originalUrl,
+      method: req.method,
+      service: "server"
+    }, err);
+    
+    res.status(status).json({ 
+      error: "Error interno del servidor",
+      message: "Por favor, intenta nuevamente más tarde"
+    });
   });
 
   // importantly only setup vite in development and after
@@ -171,7 +204,7 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     viteLog(`serving on port ${port}`);
-    log.info("Servidor iniciado", { 
+    logger.info("Servidor iniciado correctamente", { 
       port, 
       environment: process.env.NODE_ENV || 'development',
       service: 'server'
