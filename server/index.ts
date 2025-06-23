@@ -1,11 +1,13 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, serveStatic, log as viteLog } from "./vite";
 import rateLimit from "express-rate-limit";
 import session from 'express-session';
 import csrf from 'csurf';
 import MemoryStore from 'memorystore';
 import helmet from 'helmet';
+import { log } from "./logger";
+import { errorLoggerMiddleware, slowRequestMiddleware, securityLoggerMiddleware } from "./middleware/logging";
 
 // Rate limiting middleware para protección contra DDoS
 const limiter = rateLimit({
@@ -132,7 +134,7 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + "…";
       }
 
-      log(logLine);
+      viteLog(logLine);
     }
   });
 
@@ -168,6 +170,11 @@ app.use((req, res, next) => {
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    viteLog(`serving on port ${port}`);
+    log.info("Servidor iniciado", { 
+      port, 
+      environment: process.env.NODE_ENV || 'development',
+      service: 'server'
+    });
   });
 })();
