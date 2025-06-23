@@ -40,6 +40,8 @@ export default function Home() {
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15),
   );
+  const [showDelayMessage, setShowDelayMessage] = useState(false);
+  const [processingTime, setProcessingTime] = useState(0);
   const { toast } = useToast();
 
   // Configurar WebSocket para recibir actualizaciones del webhook con filtrado por sesión
@@ -78,6 +80,30 @@ export default function Home() {
       }
     }
   }, [lastMessage]);
+
+  // Timer para mostrar mensaje de delay después de 5 segundos
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    let intervalTimer: NodeJS.Timeout;
+    
+    if (isProcessing) {
+      // Iniciar contador de tiempo
+      setProcessingTime(0);
+      intervalTimer = setInterval(() => {
+        setProcessingTime(prev => prev + 1);
+      }, 1000);
+      
+      // Mostrar mensaje de delay después de 5 segundos
+      timer = setTimeout(() => {
+        setShowDelayMessage(true);
+      }, 5000);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      if (intervalTimer) clearInterval(intervalTimer);
+    };
+  }, [isProcessing]);
 
   // Escuchar mensajes del webhook a través de postMessage
   useEffect(() => {
@@ -186,6 +212,8 @@ export default function Home() {
     );
     setIsSubmitted(false);
     setIsProcessing(false);
+    setShowDelayMessage(false);
+    setProcessingTime(0);
   };
 
   const handleRestart = () => {
@@ -198,6 +226,8 @@ export default function Home() {
     setHasError(false);
     setErrorType("unknown");
     setErrorMessage("");
+    setShowDelayMessage(false);
+    setProcessingTime(0);
   };
 
   return (
@@ -302,6 +332,88 @@ export default function Home() {
               {statusMessage ||
                 "Estamos analizando tus datos para generar un diagnóstico personalizado"}
             </p>
+            
+            {/* Mensaje de delay con animación */}
+            {showDelayMessage && (
+              <motion.div 
+                className="mt-8 p-6 bg-blue-900/20 border border-blue-700/30 rounded-lg max-w-md mx-auto"
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+              >
+                <motion.div 
+                  className="flex items-center justify-center mb-3"
+                  animate={{ 
+                    rotate: [0, 5, -5, 0],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                >
+                  <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <motion.div 
+                      className="w-4 h-4 bg-blue-400 rounded-full"
+                      animate={{ 
+                        opacity: [0.3, 1, 0.3],
+                        scale: [0.8, 1.2, 0.8]
+                      }}
+                      transition={{ 
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </div>
+                </motion.div>
+                
+                <motion.h3 
+                  className="text-blue-300 font-medium text-sm mb-2 text-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  Alto volumen de tráfico detectado
+                </motion.h3>
+                
+                <motion.p 
+                  className="text-blue-200/80 text-xs text-center leading-relaxed"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  Debido al volumen de solicitudes, el procesamiento puede tardar un poco más de lo habitual. 
+                  <br />
+                  <span className="text-blue-300 font-medium">Tiempo transcurrido: {processingTime}s</span>
+                </motion.p>
+                
+                <motion.div 
+                  className="flex justify-center mt-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  {[...Array(3)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="w-1 h-1 rounded-full bg-blue-400/60 mx-1"
+                      animate={{
+                        y: [-2, -8, -2],
+                        opacity: [0.4, 1, 0.4]
+                      }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        delay: i * 0.2,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  ))}
+                </motion.div>
+              </motion.div>
+            )}
 
             {webhookStatus && (
               <motion.div
