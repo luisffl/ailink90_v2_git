@@ -9,7 +9,10 @@ interface DiagnosticFormProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   onSubmitSuccess: (response?: any) => void;
-  onSubmitError?: (error: any, type?: 'processing' | 'validation' | 'network' | 'unknown') => void;
+  onSubmitError?: (
+    error: any,
+    type?: "processing" | "validation" | "network" | "unknown",
+  ) => void;
   userSessionId?: string;
 }
 
@@ -47,9 +50,16 @@ export default function DiagnosticForm({
     const newErrors: Record<string, string> = {};
 
     // Helper function to check if text contains meaningful content
-    const hasMinimumContent = (text: string, minWords: number = 3, minLength: number = 10) => {
+    const hasMinimumContent = (
+      text: string,
+      minWords: number = 3,
+      minLength: number = 10,
+    ) => {
       if (!text || text.trim().length < minLength) return false;
-      const words = text.trim().split(/\s+/).filter(word => word.length > 1);
+      const words = text
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length > 1);
       return words.length >= minWords;
     };
 
@@ -74,33 +84,43 @@ export default function DiagnosticForm({
     // Validation rules for each step
     if (currentStep === 1) {
       if (!isValidName(formData.nombre_usuario)) {
-        newErrors.nombre_usuario = "Por favor, introduce un nombre válido (mínimo 2 caracteres)";
+        newErrors.nombre_usuario =
+          "Por favor, introduce un nombre válido (mínimo 2 caracteres)";
       }
 
       if (!formData.correo_electronico_usuario) {
-        newErrors.correo_electronico_usuario = "El correo electrónico es requerido";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo_electronico_usuario)) {
-        newErrors.correo_electronico_usuario = "Por favor, introduce un correo electrónico válido";
+        newErrors.correo_electronico_usuario =
+          "El correo electrónico es requerido";
+      } else if (
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo_electronico_usuario)
+      ) {
+        newErrors.correo_electronico_usuario =
+          "Por favor, introduce un correo electrónico válido";
       }
 
       if (!isValidLocation(formData.ciudad_region_usuario)) {
-        newErrors.ciudad_region_usuario = "Por favor, introduce una ciudad/región válida";
+        newErrors.ciudad_region_usuario =
+          "Por favor, introduce una ciudad/región válida";
       }
     } else if (currentStep === 2) {
-      if (!hasMinimumContent(formData.experiencia_previa, 5, 20)) {
-        newErrors.experiencia_previa = "Por favor, describe tu experiencia previa con más detalle (mínimo 20 caracteres, 5 palabras)";
+      if (!hasMinimumContent(formData.experiencia_previa, 3, 10)) {
+        newErrors.experiencia_previa =
+          "Por favor, describe tu experiencia previa con más detalle (mínimo 10 caracteres, 3 palabras)";
       }
     } else if (currentStep === 3) {
-      if (!hasMinimumContent(formData.tipo_colaboracion, 5, 20)) {
-        newErrors.tipo_colaboracion = "Por favor, describe el tipo de colaboración que buscas con más detalle (mínimo 20 caracteres, 5 palabras)";
+      if (!hasMinimumContent(formData.tipo_colaboracion, 3, 10)) {
+        newErrors.tipo_colaboracion =
+          "Por favor, describe el tipo de colaboración que buscas con más detalle (mínimo 10 caracteres, 3 palabras)";
       }
     } else if (currentStep === 4) {
       if (!hasMinimumContent(formData.aspectos_mejorar, 5, 20)) {
-        newErrors.aspectos_mejorar = "Por favor, describe qué aspectos te gustaría mejorar con más detalle (mínimo 20 caracteres, 5 palabras)";
+        newErrors.aspectos_mejorar =
+          "Por favor, describe qué aspectos te gustaría mejorar con más detalle (mínimo 10 caracteres, 3 palabras)";
       }
     } else if (currentStep === 5) {
       if (!hasMinimumContent(formData.ideas_proyectos, 5, 20)) {
-        newErrors.ideas_proyectos = "Por favor, comparte tus ideas o proyectos con más detalle (mínimo 20 caracteres, 5 palabras)";
+        newErrors.ideas_proyectos =
+          "Por favor, comparte tus ideas o proyectos con más detalle (mínimo 10 caracteres, 3 palabras)";
       }
     } else if (currentStep === 6) {
       if (!formData.terminos_aceptados) {
@@ -204,7 +224,8 @@ export default function DiagnosticForm({
 
         // Verificar si la respuesta contiene un error
         if (data.error || data.message === "Authorization data is wrong!") {
-          const errorMsg = data.error || data.message || "Error en la respuesta del servidor";
+          const errorMsg =
+            data.error || data.message || "Error en la respuesta del servidor";
           throw new Error(errorMsg);
         }
 
@@ -224,19 +245,27 @@ export default function DiagnosticForm({
         setFormData((prev) => ({ ...prev, isSubmitting: false }));
 
         // Determinar el tipo de error
-        let errorType: 'processing' | 'validation' | 'network' | 'unknown' = 'unknown';
-        
-        if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
-          errorType = 'network';
-        } else if (error.message.includes("autenticación") || error.message.includes("Authorization")) {
-          errorType = 'processing';
+        let errorType: "processing" | "validation" | "network" | "unknown" =
+          "unknown";
+
+        if (
+          error.message.includes("Failed to fetch") ||
+          error.message.includes("NetworkError")
+        ) {
+          errorType = "network";
+        } else if (
+          error.message.includes("autenticación") ||
+          error.message.includes("Authorization")
+        ) {
+          errorType = "processing";
         } else if (error.message.includes("HTTP error")) {
-          errorType = 'network';
+          errorType = "network";
         }
 
         toast({
           title: "Error en el procesamiento",
-          description: "Hubo un problema al procesar tu diagnóstico. Intenta nuevamente.",
+          description:
+            "Hubo un problema al procesar tu diagnóstico. Intenta nuevamente.",
           variant: "destructive",
         });
 
