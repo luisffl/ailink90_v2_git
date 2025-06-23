@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, Download, RotateCcw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import logoPath from "@assets/WhatsApp Image 2025-06-21 at 10.11.41_1750494039124.jpeg";
+import logoPath from "@assets/ailink-logo.jpeg";
 
 interface SuccessMessageProps {
   onRestart: () => void;

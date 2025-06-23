@@ -125,6 +125,8 @@ Changelog:
 - June 22, 2025. Añadido sistema de contacto en errores: email, WhatsApp, notificación automática al equipo técnico
 - June 22, 2025. Actualizado sistema de contacto: removido WhatsApp, solo email a ejemplo@tecnico.com
 - June 22, 2025. Añadido favicon de AILINK en la pestaña del navegador
+- June 22, 2025. Convertida URL del webhook a variable de entorno SECRET (WEBHOOK_URL) para mejorar seguridad
+- June 22, 2025. Renombrado archivo logo de WhatsApp Image a ailink-logo.jpeg para nomenclatura profesional
 ```
 
 ## User Preferences

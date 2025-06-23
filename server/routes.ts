@@ -93,10 +93,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Usar JSON como formato de envío
         const jsonPayload = JSON.stringify(cleanData);
 
-        // Preparar la solicitud a n8n con la nueva URL
-        // const webhookUrl = "https://ailink.app.n8n.cloud/webhook-test/67bdb302-d71e-4eb4-9ced-6a23b74fb7e7";
-        const webhookUrl =
-          "https://tutorialyoutubeailink.app.n8n.cloud/webhook/67bdb302-d71e-4eb4-9ced-6a23b74fb7e7";
+        // Obtener la URL del webhook desde las variables de entorno
+        const webhookUrl = process.env.WEBHOOK_URL;
+        
+        if (!webhookUrl) {
+          throw new Error("WEBHOOK_URL no está configurada en las variables de entorno");
+        }
 
         console.log("Enviando datos a n8n:", cleanData);
 
